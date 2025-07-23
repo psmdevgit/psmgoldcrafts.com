@@ -106,7 +106,7 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   });
 
   /* ---------------------- API ---------------------- */
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
   useEffect(() => {
     fetchPartyLedgers();
