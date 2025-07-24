@@ -309,6 +309,7 @@ const SettingDetailsPage = () => {
 
       if (result.success) {
         toast.success('Setting details updated successfully');
+        alert('Setting details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Setting/Setting_Table';

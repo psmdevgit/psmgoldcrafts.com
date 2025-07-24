@@ -241,7 +241,8 @@ const GrindingDetailsPage = () => {
       };
 
       console.log('Submitting data:', formData);
-
+      alert('Submitting grinding details...');
+      console.log('[GrindingReceived] Submitting data:', formData);
       const response = await fetch(
         `${apiBaseUrl}/api/grinding/update/${idParts.prefix}/${idParts.date}/${idParts.month}/${idParts.year}/${idParts.number}/${idParts.subnumber}`,
         {
@@ -257,6 +258,7 @@ const GrindingDetailsPage = () => {
 
       if (result.success) {
         toast.success('Grinding details updated successfully');
+        alert('Grinding details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Grinding/Grinding_Table';
@@ -266,6 +268,7 @@ const GrindingDetailsPage = () => {
       }
     } catch (error) {
       console.error('[GrindingReceived] Error:', error);
+      alert('Failed to update grinding details');
       toast.error(error.message || 'Failed to update grinding details');
     } finally {
       setIsSubmitting(false);

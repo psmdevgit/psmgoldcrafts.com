@@ -206,12 +206,14 @@ const PlatingDetailsPage = () => {
       if (result.success) {
         toast.success('Plating details updated successfully');
         // Redirect to plating list page after successful update
+        alert('Plating details updated successfully');
         window.location.href = '/Departments/Plating/Plating_Table';
       } else {
         throw new Error(result.message || 'Failed to update plating details');
       }
     } catch (error) {
       console.error('[PlatingReceived] Error:', error);
+      alert('Failed to update plating details');
       toast.error(error.message || 'Failed to update plating details');
     } finally {
       setIsSubmitting(false);

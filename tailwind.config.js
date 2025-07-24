@@ -11,6 +11,16 @@ module.exports = {
     // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+   theme: {
+    extend: {
+      colors: {
+        maroon: {
+          700: '#800000',
+          800: '#660000',
+        },
+      },
+    },
+  },
   darkMode: 'class',
   theme: {
     screens: {

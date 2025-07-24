@@ -232,8 +232,11 @@ const FilingDetailsPage = () => {
       console.log('[FilingReceived] API response:', result);
 
       if (result.success) {
+      
         console.log('[FilingReceived] Update successful');
+          alert('Filing details updated successfully');
         toast.success('Filing details updated successfully');
+
         await refreshData();
         
         // Redirect back to the filing table page after successful submission
@@ -246,6 +249,7 @@ const FilingDetailsPage = () => {
       }
     } catch (error) {
       console.error('[FilingReceived] Error in submission:', error);
+       alert('Failed to update filing details');
       toast.error(error.message || 'Failed to update filing details');
     } finally {
       console.log('[FilingReceived] Submission completed');

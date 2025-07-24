@@ -212,6 +212,7 @@ export default function PolishingReceivedDetails() {
 
       if (result.success) {
         toast.success('Polishing details updated successfully');
+        alert('Polishing details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Polishing/Polishing_Table';
