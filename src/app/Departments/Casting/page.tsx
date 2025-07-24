@@ -13,7 +13,7 @@ import CastingTable from "@/components/casting/castingtable";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 
-const apiUrl = "https://erp-server-r9wh.onrender.com";
+const apiUrl =process.env.NEXT_PUBLIC_API_URL;
 interface InventoryItem {
   id: string;
   itemName: string;
