@@ -53,7 +53,7 @@ const departments: Department[] = [
   { value: 'dull', label: 'Dull', path: '/Departments/Dull/add_dull_details' }
 ];
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
 const downloadPDF = async (pdfUrl: string) => {
   try {
     const response = await fetch(pdfUrl, {
