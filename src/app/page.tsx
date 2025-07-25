@@ -50,7 +50,8 @@ export default function Login() {
   };
 
   return (
-    <div className="container">
+    <div className="bg-login">
+    <div className="container ">
       <div className="form">
         <div className="sign-in-section">
 <div className="flex justify-center items-center flex-col">
@@ -109,6 +110,7 @@ export default function Login() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
