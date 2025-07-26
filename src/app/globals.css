@@ -13,12 +13,26 @@
     .text-body {
         @apply text-gray-700 dark:text-gray-300;
     }
+
+
+    body {
+  /* fallback for old browsers */
+  background-repeat: no-repeat;
+  background-size: cover;         /* Ensures the image covers the entire viewport */
+  background-position: center;    /* Centers the image */
+  background-attachment: fixed;   /* Optional: makes the background stay fixed on scroll */
+  background-color: #f0f0f0;      /* Fallback background color in case image doesn't load */
+  font-family: "Raleway", sans-serif;
+  color: #f0f0f0;
+  margin: 0;
+  padding: 0;
 }
-body {
-    /* background-image: url('../../assets/O6YDMS0.jpg'); */
-    background-color: red;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    position: relative;
+    .bg-login {
+/* Add your image in public folder */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
 }
