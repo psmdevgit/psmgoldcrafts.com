@@ -1,8 +1,10 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import "@/styles/loginpage.css"; // ✅ Ensure your custom CSS is loaded
 
+import "@/styles/loginpage.css"; // ✅ Ensure your custom CSS is loaded
+import pothylogo from "../../assets/PothysLogo.png"  // ✅ Import your logo image
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -37,10 +39,7 @@ export default function Login() {
       if (response.ok && data.success) {
         console.log("✅ Login successful!", data);
         localStorage.setItem("userId", data.userId); // Store user ID if needed
-        router.push("/Orders"); // Redirect user to dashboard
-        // router.push(`/Orders?username=${encodeURIComponent(username)}`);// Redirect user to dashboard
-        localStorage.setItem("username", username); // Add this line
-
+       router.push(`/Orders?username=${encodeURIComponent(username)}`);// Redirect user to dashboard
       } else {
         setError(data.error || "Invalid login credentials.");
       }
@@ -52,9 +51,19 @@ export default function Login() {
   };
 
   return (
-    <div className="container">
+    <div className="bg-login">
+    <div className="container ">
       <div className="form">
         <div className="sign-in-section">
+<div className="flex justify-center items-center flex-col">
+          <Image src={pothylogo} alt="Pothys Logo" className="logo" width={200} height={200}/>                        
+  <h3>PSM GOLD CRAFTS</h3> 
+</div>
+
+<div className="form-content">
+  {error && <p className="error-message">{error}</p>}
+</div>
+
           <h1>Log in</h1>
 
           <form onSubmit={handleLogin}>
@@ -69,7 +78,7 @@ export default function Login() {
                 required
               />
             </div>
-
+          
             <div className="form-field">
               <label htmlFor="password">Password</label>
               <input
@@ -90,7 +99,7 @@ export default function Login() {
               <a href="#">Forgot Password?</a>
             </div>
 
-            <button type="submit" className="btn btn-signin" disabled={loading}>
+            <button type="submit" className={`btn btn-signin bg-maroon-700 hover:bg-maroon-800 text-white`}   disabled={loading}>
               {loading ? "Logging in..." : "Submit"}
             </button>
           </form>
@@ -102,6 +111,7 @@ export default function Login() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
