@@ -63,23 +63,25 @@ const DashboardHeader = () => {
   return (
     <>
       {/* -- App header area start -- */}
-      <div className="app__header__area">
-        <div className="app__header-inner">
+     <div className="app__header__area ">
+
+       <div className="app__header-inner text-white" style={{ backgroundColor: '#1A7A75' }}>
+
           <div className="app__header-left">
             <div className="flex">
               <button
                 id="sidebar__active"
                 onClick={sidebarHandle}
-                className="app__header-toggle"
+                className="app__header-toggle text-white"
               >
-                <div className="bar-icon-2">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                <div className="bar-icon-2 text-white">
+                  <span className="text-white"></span>
+                  <span className="text-white"></span>
+                  <span className="text-white"></span>
                 </div>
               </button>
             </div>
-            <h2 className="header__title">
+            <h2 className="header__title text-white">
               PSM GOLD CRAFTS{" "}
               <span>
          
@@ -90,6 +92,7 @@ const DashboardHeader = () => {
           <div className="app__header-right">
             <div className="app__herader-input relative">
               <input
+              style={{ backgroundColor: '#fff' }}
                 type="search"
                 id="search-field"
                 name="search-field"
@@ -152,6 +155,16 @@ const DashboardHeader = () => {
       </div>
       <div className="body__overlay"></div>
       {/* -- App header area end -- */}
+
+      <style jsx>{`
+  .bar-icon-2 span {
+    background-color: #fff !important;
+  }
+
+
+`}</style>
+
+
     </>
   );
 };

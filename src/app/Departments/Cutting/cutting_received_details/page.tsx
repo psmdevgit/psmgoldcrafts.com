@@ -236,6 +236,7 @@ const CuttingDetailsPage = () => {
       const result = await response.json();
 
       if (result.success) {
+        alert('Cutting details updated successfully');
         toast.success('Cutting details updated successfully');
         window.location.reload();
       } else {

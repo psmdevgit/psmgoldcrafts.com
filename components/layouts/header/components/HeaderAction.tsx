@@ -82,7 +82,7 @@ const HeaderAction = () => {
         <>
             <div className="app__header-action">
                 <ul>
-                    <li>
+                    {/* <li>
                         <div className="nav-item relative">
                             <button id="langdropdown" className="langdropdown" onClick={handleShowLanguage}>
                                 <span>
@@ -147,18 +147,18 @@ const HeaderAction = () => {
                             </div>
                             )}
                         </div>
-                    </li>
+                    </li> */}
                     <li>
                         <button onClick={handleToggleFullScreen} className='flex'>
                             <div className="nav-item">
-                                <div className="notification__icon cursor-pointer">
+                                <div className="notification__icon cursor-pointer text-white">
                                  <ZoomScreen/>
                                 </div>
                             </div>
                         </button>
                     </li>
-                    <EmailNotification handleShowNotificationEmail={handleShowNotificationEmail} isOpenEmail={isOpenEmail}/>
-                    <Notification handleShowNotification={handleShowNotification} isOpenNotification={isOpenNotification}/>
+                    {/* <EmailNotification handleShowNotificationEmail={handleShowNotificationEmail} isOpenEmail={isOpenEmail}/>
+                    <Notification handleShowNotification={handleShowNotification} isOpenNotification={isOpenNotification}/> */}
                 </ul>
             </div>
             <HeaderUserProfile handleShowUserDrowdown={handleShowUserDrowdown} isOpenUserDropdown={isOpenUserDropdown}/>

@@ -1,4 +1,6 @@
 "use client";
+
+
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -21,6 +23,7 @@ export default function Login() {
     // ✅ Client-side validation before sending request
     if (!username.trim() || !password.trim()) {
       setError("Username and password are required.");
+
       setLoading(false);
       return;
     }
@@ -50,8 +53,8 @@ export default function Login() {
   };
 
   return (
-    <div className="bg-login">
-    <div className="container ">
+  
+    <div className="container bods ">
       <div className="form">
         <div className="sign-in-section">
 <div className="flex justify-center items-center flex-col">
@@ -95,7 +98,7 @@ export default function Login() {
                 <input id="rememberMe" type="checkbox" />
                 <label htmlFor="rememberMe">Remember Me</label>
               </div>
-              <a href="#">Forgot Password?</a>
+              {/* <a href="#">Forgot Password?</a> */}
             </div>
 
             <button type="submit" className={`btn btn-signin bg-maroon-700 hover:bg-maroon-800 text-white`}   disabled={loading}>
@@ -105,12 +108,13 @@ export default function Login() {
 
           {/* ✅ Terms & Conditions and Privacy Policy Links */}
           <div className="links">
-            <a href="/terms-and-conditions">Terms & Conditions</a>
-            <a href="/privacy-policy">Privacy Policy</a>
+            {/* <a href="/terms-and-conditions">Terms & Conditions</a>
+            <a href="/privacy-policy">Privacy Policy</a> */}
           </div>
         </div>
       </div>
+      
     </div>
-    </div>
+ 
   );
 }

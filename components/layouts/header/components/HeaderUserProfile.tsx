@@ -1,3 +1,4 @@
+"use client";
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -7,13 +8,28 @@ import ChatIcon from '@/svg/header-svg/Profile/ChatIcon';
 import EmailIcon from '@/svg/header-svg/Profile/EmailIcon';
 import AddAccountIcon from '@/svg/header-svg/Profile/AddAccountIcon';
 import LogOut from '@/svg/header-svg/Profile/LogOut';
+import { useRouter } from 'next/router';
 //types
 type TUserProps={
     handleShowUserDrowdown:()=>void;
     isOpenUserDropdown:boolean;
 }
 
+import { useEffect, useState } from "react";
+
+
+  
 const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserProps) => {
+
+     const [username, setUsername] = useState("");
+
+   useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
     return (
         <>
             <div className="nav-item relative">
@@ -23,8 +39,8 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
                         <div className="user__portfolio-thumb">
                             <Image src={avatarImg} alt="img not found" />
                         </div>
-                        <div className="user__content">
-                            <h5>Issue Counter</h5>
+                        <div className="user__content text-white">
+                            <h5 className='text-white'>{username}</h5>
                             <span>online</span>
                         </div>
                     </div>

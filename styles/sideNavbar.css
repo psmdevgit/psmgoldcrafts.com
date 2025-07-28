@@ -1,0 +1,13 @@
+.common-scrollbar{
+              background-color: #1A7A75;
+              color:white;
+              }
+
+              .app-sidebar.collapsed {
+              background-color: #1A7A75;
+              color:white; 
+            }
+              .app-sideba r.collapsed .main-sidebar-header {
+              background-color: #1A7A75;
+              color:white;
+              }

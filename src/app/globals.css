@@ -13,12 +13,8 @@
     .text-body {
         @apply text-gray-700 dark:text-gray-300;
     }
-    .bg-login {
-  background-image: url('../../assets/back.jpg'); /* Add your image in public folder */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 100vh;
+    .body {
+ 
 }
 
 }

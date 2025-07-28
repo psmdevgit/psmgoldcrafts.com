@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import sidebarMainLogo from "../../../assets/PothysLogo.png";
 import sidebarDarkLogo from "../../../public/assets/images/logo/logo-white.svg";
 import useGlobalContext from "@/hooks/use-context";
-import sidebarImg from "../../../public/assets/images/bg/side-bar.png";
+// import sidebarImg from "../../../public/assets/images/bg/side-bar.png";
 import sidebarData from "@/data/sidebar-data";
 import { usePathname } from "next/navigation";
 
@@ -123,9 +123,10 @@ const DashBoardSidebar = () => {
   return (
     <>
       <div
-        className={`app-sidebar ${isCollapse ? "collapsed close_sidebar" : ""}`}
-      >
-        <div className="main-sidebar-header max-w-[300px] overflow-hidden">
+        // className={`app-sidebar ${isCollapse ? "collapsed close_sidebar " : ""}  `}
+        className="app-sidebar"
+>
+        <div className="main-sidebar-header max-w-[300px] overflow-hidden ">
          
             <Image
               className="main-logo w-200 h-[85px]"
@@ -137,19 +138,19 @@ const DashBoardSidebar = () => {
               style={{ 
                 objectFit: 'contain',
                 maxWidth: '100%',
-                maxHeight: '85px'
+                maxHeight: '70px'
               }}
             />
             
       
         </div>
 
-        <div className="common-scrollbar max-h-screen overflow-y-auto">
+        <div className="common-scrollbar ">
           <nav className="main-menu-container nav nav-pills flex-column sub-open mt-[80px]">
             <ul className="main-menu" style={{ display: "block" }}>
               {sidebarData.map((category) => (
                 <React.Fragment key={category.id}>
-                  <li className="sidebar__menu-category">
+                  <li className="sidebar__menu-category ">
                     <span className="category-name">{category.category}</span>
                   </li>
                   {category.items.map((item) => (
@@ -212,11 +213,20 @@ const DashBoardSidebar = () => {
                                   }
                                   handleClickTwo(index);
                                 }}
+                                // className={`sidebar__menu-item transition-all active:scale-95 ${
+                                //   linkIdTwo === index ? "active" : ""
+                                // }`}
+
                                 className={`sidebar__menu-item transition-all active:scale-95 ${
-                                  linkIdTwo === index ? "active" : ""
+                                  pathName === subOne.link ? "text-[#ae100d]" : ""
                                 }`}
+
+
                               >
                                 {subOne.label}
+
+
+
                                 {subOne.subItems && (
                                   <i className="fa-regular fa-angle-down side-menu__angle"></i>
                                 )}
@@ -300,29 +310,127 @@ const DashBoardSidebar = () => {
             </ul>
           </nav>
 
-          <style jsx>{`
-            .sidebar__menu-item {
-              cursor: pointer;
-              transition: all 0.2s ease;
-              width: 100%;
-              text-align: left;
-              display: flex;
-              align-items: center;
-            }
-            .sidebar__menu-item:active {
-              transform: scale(0.98);
-            }
-            .sidebar__menu-item:hover {
-              background-color: rgba(0, 0, 0, 0.04);
-            }
-            .sidebar__menu-item.active {
-              background-color: rgba(0, 0, 0, 0.08);
-            }
-          `}</style>
+<style jsx>{`
+  .app-sidebar,
+  .common-scrollbar,
+  .main-sidebar-header {
+    background-color: #1a7a75 !important;
+  }
+
+
+
+
+
+.common-scrollbar {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  /* Optional: prevent body scrolling when sidebar is open (mobile) */
+  .app-sidebar {
+    position: relative;
+    height: 100vh;
+  }
+
+  /* Also update if using tailwind-style props directly */
+  :global(.common-scrollbar) {
+    height: 100vh !important;
+  }
+  .sidebar__menu-item {
+    display: flex;
+    align-items: center;
+    color: white;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar__menu-label {
+    color: white;
+    margin-left: 10px;
+    flex: 1;
+  }
+
+  .side-menu__icon {
+    color: white;
+    margin-right: 8px;
+  }
+
+  .sidebar__menu-category {
+    color: white;
+    font-weight: 600;
+    font-size: 14px;  
+    margin: 10px 20px 5px;
+  }
+
+  .sidebar__menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar__menu-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .sidebar__menu-item.active .sidebar__menu-label,
+  .sidebar__menu-item.active .side-menu__icon,
+  .sidebar__menu-item.active .menu-arrow {
+    color: white;
+  }
+
+  .menu-arrow,
+  .sidebar__menu-item .fa,
+  .sidebar__menu-item .ri-arrow-down-s-line,
+  .sidebar__menu-item .lucide,
+  .sidebar__menu-item svg {
+    color: white !important;
+  }
+
+  .sidebar__menu-item ul li:hover,
+  .sidebar__menu-item ul li:hover a,
+  .sidebar__menu-item ul li:hover span {
+    color: white !important;
+  }
+
+  /* ✅ Ensure main-sidebar-header override */
+  .main-sidebar-header {
+    background-color: #1a7a75 !important;
+  }
+     .sidebar-menu li .sidebar__menu-item {
+    color: white !important;
+  }
+
+  .sidebar-menu li .sidebar__menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white !important;
+  }
+
+  /* ✅ Active submenu item */
+  .sidebar-menu li .sidebar__menu-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ae100d !important;
+  }
+
+  /* ✅ Sub-submenu and arrow color fix */
+  .sidebar-menu li .sidebar__menu-item.active i,
+  .sidebar-menu li .sidebar__menu-item i,
+  .sidebar-menu li .sidebar__menu-item svg {
+      color: #ae100d !important;
+  }
+
+  
+  /* Optional: Arrow rotation for open state */
+  .slide.open > .sidebar__menu-item .fa-angle-down {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
+`}</style>
+
+
+
+
 
           <div
             className="sidebar__thumb sidebar-bg"
-            style={{ backgroundImage: `url(${sidebarImg.src})` }}
+            // style={{ backgroundImage: `url(${sidebarImg.src})` }}
           >
             {/*<div className="sidebar__thumb-content">
               <p className="sidebar__thumb-title">
@@ -338,11 +446,11 @@ const DashBoardSidebar = () => {
           </div>
         </div>
       </div>
-      <div className="app__offcanvas-overlay"></div>
+      {/* <div className="app__offcanvas-overlay"></div>
       <div
         onClick={() => setIsCollapse(false)}
         className={`app__offcanvas-overlay ${isCollapse ? "overlay-open" : ""}`}
-      ></div>
+      ></div> */}
     </>
   );
 };

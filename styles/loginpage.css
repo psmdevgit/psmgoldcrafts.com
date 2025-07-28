@@ -1,6 +1,10 @@
 /* General Styles */
 body {
-    background: #f9f9f9; /* fallback for old browsers */
+   background-image: url('../assets/back.jpg'); /* Add your image in public folder */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;/* fallback for old browsers */
     font-family: "Raleway", sans-serif;
     color: #151515;
   }
@@ -32,6 +36,7 @@ body {
     justify-content: center;
     height: 100vh;
     padding-left: 60px;
+   
   }
   
   /* Form */
@@ -70,8 +75,8 @@ body {
     left: 0;
     right: 0;
     width: 40px;
-    background: #7F00FF;
-    background: linear-gradient(to right, #E100FF, #7F00FF);
+    background: #eb380c;
+    background: linear-gradient(to right, #f01414, #f03f32);
     transition: 0.25s;
   }
   
@@ -124,7 +129,7 @@ body {
   }
   
   .form-field input:focus {
-    border: 1px solid #AE00FF;
+    border: 1px solid #e92323;
   }
   
   /* Remember Me & Forgot Password */
@@ -155,7 +160,7 @@ body {
   
   .btn-signin {
     cursor: pointer;
-    background: linear-gradient(to right, #E100FF, #7F00FF);
+    background: linear-gradient(to right, #ff0040, #ec3434f8);
     box-shadow: 0px 5px 15px 5px #840fe440;
     color: #fff;
   }

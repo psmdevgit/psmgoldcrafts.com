@@ -130,7 +130,7 @@ module.exports = {
           dark: '#FFFFFF',    // dark mode
         },
         primary: {
-          DEFAULT: '#6C5FFC', // light mode
+          DEFAULT: '#EDB652', // light mode
           dark: '#6C5FFC',    // dark mode
         },
         secondary: {
