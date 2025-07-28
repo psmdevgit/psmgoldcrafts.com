@@ -50,7 +50,12 @@ export default function CreateFilingFromDepartment() {
   const [filingId, setFilingId] = useState<string>('');
   const [filingWeight, setFilingWeight] = useState<number>(0);
   const [selectedPouches, setSelectedPouches] = useState<{ [key: string]: boolean }>({});
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+  // const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
+  
   const router = useRouter();
 
   // Fetch department records when department changes

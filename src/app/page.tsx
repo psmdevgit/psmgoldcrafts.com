@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import "@/styles/loginpage.css"; // ✅ Ensure your custom CSS is loaded
+import {pothylogo} from '../../assets/PothysLogo.png';
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,7 +12,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   // API base URL (Uses `.env.local` for flexibility)
-  const API_BASE_URL="https://erp-server-r9wh.onrender.com";
+  // const API_BASE_URL="https://erp-server-r9wh.onrender.com";
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,6 +58,10 @@ export default function Login() {
   return (
     <div className="container">
       <div className="form">
+          <div className="flex justify-center items-center flex-col">
+          <Image src={pothylogo} alt="Pothys Logo" className="logo" width={200} height={200} />
+          <h3>PSM GOLD CRAFTS</h3>
+        </div>
         <div className="sign-in-section">
           <h1>Log in</h1>
 

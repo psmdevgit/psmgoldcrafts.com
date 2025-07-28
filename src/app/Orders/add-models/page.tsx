@@ -18,7 +18,9 @@ const margin = 30;
 const summaryHeaderWidth = 150; // Fixed width for summary table columns
 
 const AddModel = () => {
- const apiBaseUrl ="https://erp-server-r9wh.onrender.com";
+//  const apiBaseUrl ="https://erp-server-r9wh.onrender.com";
+ 
+   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
  const router = useRouter();
  const searchParams = useSearchParams();
  const orderId = searchParams.get('orderId');

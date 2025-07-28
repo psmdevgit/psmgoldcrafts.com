@@ -16,7 +16,9 @@ import {
 } from "@/components/ui/select";
 import "../Orders/add-order/add-order.css";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
 
 interface InventoryItem {
   name: string;

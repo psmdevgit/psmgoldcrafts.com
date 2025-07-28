@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 import { Label } from "@/components/ui/label";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = apiBaseUrl;
 
 interface Polishing {
   Id: string;
@@ -69,6 +69,7 @@ export default function PolishingReceivedDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
   useEffect(() => {
     const fetchPolishingDetails = async () => {
       if (!polishingId) {
@@ -83,11 +84,11 @@ export default function PolishingReceivedDetails() {
         
         console.log('[Polishing Details] Fetching details for:', {
           prefix, date, month, year, number,
-          url: `${process.env.NEXT_PUBLIC_API_URL}/api/polishing/${prefix}/${date}/${month}/${year}/${number}/pouches`
+          url: `${apiBaseUrl}/api/polishing/${prefix}/${date}/${month}/${year}/${number}/pouches`
         });
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/polishing/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`
+          `${apiBaseUrl}/api/polishing/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`
         );
 
         const result = await response.json();
@@ -187,7 +188,7 @@ export default function PolishingReceivedDetails() {
       console.log('[PolishingReceived] Combined datetime:', combinedDateTime);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/polishing/update/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`,
+        `${apiBaseUrl}/api/polishing/update/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`,
         {
           method: 'POST',
           headers: {

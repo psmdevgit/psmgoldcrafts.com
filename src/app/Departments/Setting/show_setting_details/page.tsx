@@ -65,6 +65,7 @@ const SettingDetailsPage = () => {
   const searchParams = useSearchParams();
   const settingId = searchParams.get('settingId');
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
   useEffect(() => {
     const fetchDetails = async () => {
       if (!settingId) {
@@ -76,7 +77,7 @@ const SettingDetailsPage = () => {
       try {
         const [prefix, date, month, year, number] = settingId.split('/');
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/setting-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/setting-details/${prefix}/${date}/${month}/${year}/${number}`
         );
         const result = await response.json();
         

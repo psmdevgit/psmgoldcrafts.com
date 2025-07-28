@@ -15,8 +15,8 @@
     }
 }
 body {
-    /* background-image: url('../../assets/O6YDMS0.jpg'); */
-    background-color: red;
+    background-image: url('../../assets/O6YDMS0.jpg');
+    /* background-color: red; */
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
