@@ -529,9 +529,12 @@ const CastingForm = () => {
             purity: item.purity,
             issueWeight: Number(item.issueWeight)
           }))
+          
+          
         })
-      });
-
+        
+      })
+console.log("taking update inventory weights:", inventoryItems)
       const inventoryResult = await inventoryUpdateResponse.json();
       
       if (!inventoryResult.success) {
@@ -577,9 +580,31 @@ const CastingForm = () => {
     }
   };
 
+  // const handleRemoveInventoryItem = (id: string) => {
+  //   setInventoryItems(inventoryItems.filter(item => item.id !== id));
+  // };
+
+
   const handleRemoveInventoryItem = (id: string) => {
-    setInventoryItems(inventoryItems.filter(item => item.id !== id));
-  };
+  const removedItem = inventoryItems.find(item => item.id === id);
+  if (!removedItem) return;
+
+  // Restore the weight back to inventoryApiItems
+  const restoredInventoryApiItems = inventoryApiItems.map(item => {
+    if (item.name === removedItem.itemName) {
+      return {
+        ...item,
+        availableWeight: item.availableWeight + removedItem.issueWeight
+      };
+    }
+    return item;
+  });
+
+  // Update both states
+  setInventoryItems(inventoryItems.filter(item => item.id !== id));
+  setInventoryApiItems(restoredInventoryApiItems);
+};
+
 
   // Set current date on component mount
   useEffect(() => {

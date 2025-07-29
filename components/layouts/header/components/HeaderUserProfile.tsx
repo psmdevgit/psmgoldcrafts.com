@@ -10,6 +10,8 @@ import AddAccountIcon from '@/svg/header-svg/Profile/AddAccountIcon';
 import LogOut from '@/svg/header-svg/Profile/LogOut';
 import { useRouter } from 'next/router';
 //types
+
+
 type TUserProps={
     handleShowUserDrowdown:()=>void;
     isOpenUserDropdown:boolean;

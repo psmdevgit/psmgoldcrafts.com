@@ -101,31 +101,31 @@ const getStatusClass = (status: string) => {
 };
 
 const departments = [
-  /*{ 
+{ 
     value: 'Grinding', 
     label: 'Grinding',
     path: '/Departments/Grinding/add_grinding_details'
-  },*/
+  },
   { 
     value: 'Filing', 
     label: 'Filing',
     path: '/Departments/Filing/add_filing_details'
   },
- /* { 
+ { 
     value: 'Setting', 
     label: 'Setting',
     path: '/Departments/Setting/add_setting_details'
-  },*/
- /* { 
+  },
+ { 
     value: 'Polishing', 
     label: 'Polishing',
     path: '/Departments/Polishing/add_polishing_details'
-  },*/
-  /*{ 
+  },
+{  
     value: 'Dull', 
     label: 'Dull',
     path: '/Departments/Dull/add_dull_details'
-  },*/
+  },
 ];
 
 // Add this type for weight breakdown
