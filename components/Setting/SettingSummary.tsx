@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import { fetchSettingData } from "@/data/crm/setting-data";
@@ -213,6 +214,14 @@ import "react-datepicker/dist/react-datepicker.css";
     // Calculate setting loss as the difference between issued and received weight
     const totalSettingLoss = totalIssuedWeight - totalReceivedWeight;
 
+ const totalProcessingWeight = filteredData.reduce((sum, item) => {
+    const received = Number(item.receivedWeight || 0);
+    if (!received) {
+      return sum + Number(item.issuedWeight || 0);
+    }
+    return sum;
+  }, 0);
+
     // Calculate percentages
     const settingLossPercentage = totalIssuedWeight
       ? ((totalSettingLoss / totalIssuedWeight) * 100).toFixed(2)
@@ -231,6 +240,14 @@ import "react-datepicker/dist/react-datepicker.css";
         percentageChange: "",
         isIncrease: true,
       },
+        {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received",
+      percentageChange: "",
+      isIncrease: true,
+    },
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",

@@ -10,12 +10,14 @@ const sidebarData: SidebarCategory[] = [
         label: "Dashboards",
         icon: "fa-solid fa-gauge",
         subItems: [
-          { label: "HRM Dashboard", link: "/dashboard/hrm-dashboard" },
-          {
-            label: "Employee Dashboard",
-            link: "/dashboard/employee-dashboard",
-          },
-          { label: "CRM Analytics", link: "/dashboard/crm-dashboard" },
+ 
+          { label: "Current Process", link: "/DashBoard" },
+          // { label: "HRM Dashboard", link: "/dashboard/hrm-dashboard" },
+          // {
+          //   label: "Employee Dashboard",
+          //   link: "/dashboard/employee-dashboard",
+          // },
+          // { label: "CRM Analytics", link: "/dashboard/crm-dashboard" },
         ],
       },
       /*{

@@ -30,8 +30,6 @@ const CastingMainArea = () => {
               >
                 Create Casting order
               </Link>    
-
-              
             </div>
           </div>
         </div>

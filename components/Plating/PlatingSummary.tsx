@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import { fetchPlatingData } from "@/data/crm/plating-data";
@@ -185,15 +186,20 @@ const PlatingSummary: React.FC = () => {
       0
     );
     const totalReceivedWeight = filteredData.reduce(
-      (sum, item) => sum + Number(item.
-        Returned_Weight__c || 0),
+      (sum, item) => sum + Number(item.Returned_weight__c || 0),
       0
     );
     const totalPlatingLoss = filteredData.reduce(
       (sum, item) => sum + Number(item.Plating_Loss__c || 0),
       0
     );
-
+  const totalProcessingWeight = filteredData.reduce((sum, item) => {
+    const received = Number(item.Returned_weight__c || 0);
+    if (!received) {
+      return sum + Number(item.Returned_weight__c || 0);
+    }
+    return sum;
+  }, 0);
     // Calculate percentages
     const platingLossPercentage = totalIssuedWeight
       ? ((totalPlatingLoss / totalIssuedWeight) * 100).toFixed(2)
@@ -212,6 +218,14 @@ const PlatingSummary: React.FC = () => {
         percentageChange: "",
         isIncrease: true,
       },
+         {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received",
+      percentageChange: "",
+      isIncrease: true,
+    },
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",

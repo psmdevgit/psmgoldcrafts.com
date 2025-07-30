@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "@/styles/loginpage.css";
+
 import "./globals.css";
 import "../../styles/index.scss";
 

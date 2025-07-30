@@ -151,6 +151,7 @@ const CastingSummary: React.FC = () => {
         percentageChange: "",
         isIncrease: true,
       },
+    
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",

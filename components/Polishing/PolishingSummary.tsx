@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import { fetchPolishingData } from "@/data/crm/polishing-data";
@@ -219,7 +220,13 @@ const PolishingSummary: React.FC = () => {
           (sum, item) => sum + Number(item.polishingLoss || 0),
       0
     );
-
+ const totalProcessingWeight = filteredData.reduce((sum, item) => {
+    const received = Number(item.receivedWeight || 0);
+    if (!received) {
+      return sum + Number(item.issuedWeight || 0);
+    }
+    return sum;
+  }, 0);
     // Calculate percentages
     const polishingLossPercentage = totalIssuedWeight
       ? ((totalPolishingLoss / totalIssuedWeight) * 100).toFixed(2)
@@ -238,6 +245,14 @@ const PolishingSummary: React.FC = () => {
         percentageChange: "",
         isIncrease: true,
       },
+        {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received",
+      percentageChange: "",
+      isIncrease: true,
+    },
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",

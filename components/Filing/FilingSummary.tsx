@@ -1,3 +1,5 @@
+
+"use client";
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import { fetchGrindingData } from "@/data/crm/filing-data";
@@ -212,73 +214,81 @@ const FilingSummary: React.FC = () => {
       }))
     });
   }, [dateRange, customStartDate, customEndDate, filteredData]);
+const calculateSummary = () => {
+  const totalFilings = filteredData.length;
+  const totalIssuedWeight = filteredData.reduce(
+    (sum, item) => sum + (Number(item.issuedWeight) || 0),
+    0
+  );
+  const totalReceivedWeight = filteredData.reduce(
+    (sum, item) => sum + (Number(item.receivedWeight) || 0),
+    0
+  );
+  const totalFilingLoss = filteredData.reduce(
+    (sum, item) => sum + (Number(item.grindingLoss) || 0),
+    0
+  );
 
-  // Calculate summary statistics
-  const calculateSummary = () => {
-    console.log('Calculating summary for filtered data:', {
-      totalRecords: filteredData.length,
-      sample: filteredData.slice(0, 2)
-    });
+  const totalProcessingWeight = filteredData.reduce((sum, item) => {
+    const received = Number(item.receivedWeight || 0);
+    if (!received) {
+      return sum + Number(item.issuedWeight || 0);
+    }
+    return sum;
+  }, 0);
 
-    const totalFilings = filteredData.length;
-    const totalIssuedWeight = filteredData.reduce(
-      (sum, item) => sum + (Number(item.issuedWeight) || 0),
-      0
-    );
-    const totalReceivedWeight = filteredData.reduce(
-      (sum, item) => sum + (Number(item.receivedWeight) || 0),
-      0
-    );
-    
-    const totalFilingLoss = filteredData.reduce(
-      (sum, item) => sum + (Number(item.grindingLoss) || 0),
-      0
-    );
+  const filingLossPercentage = totalIssuedWeight > 0
+    ? ((totalFilingLoss / totalIssuedWeight) * 100).toFixed(2)
+    : "0";
 
-    // Calculate percentages with null checks
-    const filingLossPercentage = totalIssuedWeight > 0
-      ? ((totalFilingLoss / totalIssuedWeight) * 100).toFixed(2)
-      : "0";
-    
-    const receivedPercentage = totalIssuedWeight > 0
-      ? ((totalReceivedWeight / totalIssuedWeight) * 100).toFixed(2)
-      : "0";
+  const receivedPercentage = totalIssuedWeight > 0
+    ? ((totalReceivedWeight / totalIssuedWeight) * 100).toFixed(2)
+    : "0";
 
-    return [
-      {
-        iconClass: "fa-light fa-gem",
-        title: "Filing Issued",
-        value: totalFilings.toString(),
-        description: "Total filing jobs",
-        percentageChange: "",
-        isIncrease: true,
-      },
-      {
-        iconClass: "fa-light fa-weight-scale",
-        title: "Weight Issued",
-        value: totalIssuedWeight.toFixed(2) + " g",
-        description: "Total gold issued",
-        percentageChange: "",
-        isIncrease: true,
-      },
-      {
-        iconClass: "fa-light fa-scale-balanced",
-        title: "Weight Received",
-        value: totalReceivedWeight.toFixed(2) + " g",
-        description: receivedPercentage + "% of issued",
-        percentageChange: receivedPercentage,
-        isIncrease: true,
-      },  
-      {
-        iconClass: "fa-light fa-arrow-trend-down",
-        title: "Filing Loss",
-        value: totalFilingLoss.toFixed(2) + " g",
-        description: filingLossPercentage + "% of issued",
-        percentageChange: filingLossPercentage,
-        isIncrease: false
-      },
-    ];
-  };
+  return [
+    {
+      iconClass: "fa-light fa-gem",
+      title: "Filing Issued",
+      value: totalFilings.toString(),
+      description: "Total filing jobs",
+      percentageChange: "",
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received",
+      percentageChange: "",
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Weight Issued",
+      value: totalIssuedWeight.toFixed(2) + " g",
+      description: "Total gold issued",
+      percentageChange: "",
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-scale-balanced",
+      title: "Weight Received",
+      value: totalReceivedWeight.toFixed(2) + " g",
+      description: receivedPercentage + "% of issued",
+      percentageChange: receivedPercentage,
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-arrow-trend-down",
+      title: "Filing Loss",
+      value: totalFilingLoss.toFixed(2) + " g",
+      description: filingLossPercentage + "% of issued",
+      percentageChange: filingLossPercentage,
+      isIncrease: false,
+    },
+  ];
+};
+
 
   // Handle date range change
   const handleDateRangeChange = (range: string) => {

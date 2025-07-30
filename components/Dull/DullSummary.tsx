@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import { fetchGrindingData } from "@/data/crm/filing-data";
@@ -238,6 +239,14 @@ const DullSummary: React.FC = () => {
       0
     );
 
+        // FIXED: Proper processing weight
+    const totalProcessingWeight = filteredData.reduce((sum, item) => {
+        const received = Number(item.receivedWeight || 0);
+        if (!received) {
+            return sum + Number(item.issuedWeight || 0);
+        }
+        return sum;
+    }, 0);
     // Calculate percentages
     const dullLossPercentage = totalIssuedWeight
       ? ((totalDullLoss / totalIssuedWeight) * 100).toFixed(2)
@@ -256,6 +265,14 @@ const DullSummary: React.FC = () => {
         percentageChange: "",
         isIncrease: true,
       },
+           {
+            iconClass: "fa-light fa-weight-scale",
+            title: "Processing Weight",
+            value: totalProcessingWeight.toFixed(2) + " g",
+            description: "Issued but not received",
+            percentageChange: "",
+            isIncrease: true,
+        },
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",

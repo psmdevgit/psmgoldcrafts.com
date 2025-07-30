@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import fetchcuttingData from "@/data/crm/cutting-data"; 
@@ -167,7 +168,13 @@ const CuttingSummary: React.FC = () => {
       (sum, item) => sum + Number(item.CuttinfLoss || 0), // Note the typo in property name
       0
     );
-
+    const totalProcessingWeight = filteredData.reduce((sum, item) => {
+    const received = Number(item.returnedWeight || 0);
+    if (!received) {
+      return sum + Number(item.issuedWeight || 0);
+    }
+    return sum;
+  }, 0);
     // Calculate percentages
     const cuttingLossPercentage = totalIssuedWeight
       ? ((totalCuttingLoss / totalIssuedWeight) * 100).toFixed(2)
@@ -183,6 +190,22 @@ const CuttingSummary: React.FC = () => {
         title: "Cutting Issued",
         value: totalCutting.toString(),
         description: "Total cutting jobs",
+        percentageChange: "",
+        isIncrease: true,
+      },
+        {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received",
+      percentageChange: "",
+      isIncrease: true,
+    },
+      {
+        iconClass: "fa-light fa-weight-scale",
+        title: "Pending Cuttings",
+        value: totalIssuedWeight.toFixed(2) + " g",
+        description: "Total gold issued",
         percentageChange: "",
         isIncrease: true,
       },
