@@ -11,7 +11,8 @@ const sidebarData: SidebarCategory[] = [
         icon: "fa-solid fa-gauge",
         subItems: [
  
-          { label: "Current Process", link: "/DashBoard" },
+          { label: "Current Process", link: "/DashBoard" },          
+          { label: "Inventory Summary", link: "/InventorySummary" },
           // { label: "HRM Dashboard", link: "/dashboard/hrm-dashboard" },
           // {
           //   label: "Employee Dashboard",
