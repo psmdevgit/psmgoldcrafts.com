@@ -16,7 +16,7 @@ const DealsMain = () => {
       <div className="text-center mb-4">
         <h1 style={{textAlign:"center"}}>Current Process</h1>
       </div>
-        <h1>Casting </h1>
+       <h1>Casting </h1>
       <DealsMainArea />
        <h1>Filing </h1>
       <FilingData />

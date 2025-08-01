@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "react-hot-toast";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
 interface Order {
   Id: string;
@@ -107,9 +107,11 @@ export default function AddGrindingDetails() {
         return;
       }
       
+      console.log("Casting Orders:", castingDetails.orders);
+
       try {
         setLoading(true);
-        const [year, month, date, number] = castingId.split('/');
+        const [date, month, year , number] = castingId.split('/');
         console.log('Parsed date components:', { year, month, date, number });
         
         const apiUrl = `${apiBaseUrl}/api/casting/all/${date}/${month}/${year}/${number}`;
@@ -124,7 +126,8 @@ export default function AddGrindingDetails() {
         
         const responseData = await response.json();
         console.log('Full API Response:', responseData);
-        
+         
+        console.log(castingId);
         // Log the casting data structure to debug
         console.log('Casting data structure:', responseData.data.casting);
         
@@ -699,6 +702,9 @@ export default function AddGrindingDetails() {
   };
 
   return (
+        <div className="h-screen overflow-hidden">
+      <div className="h-full overflow-y-auto p-4 pt-40 mt-[-30px] bg-gray-50">
+        <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-6">
     <div className="container mx-auto py-6">
       <div className="bg-white rounded-lg shadow-md">
         <div className="p-6">
@@ -936,6 +942,9 @@ export default function AddGrindingDetails() {
               </Button>
             </form>
           )}
+        </div>
+      </div>
+    </div>
         </div>
       </div>
     </div>
