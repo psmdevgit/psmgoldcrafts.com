@@ -771,12 +771,12 @@ export default function AddGrindingDetails() {
                   <div>
                     <Label>Select Order</Label>
                     <Select value={selectedOrder} onValueChange={handleOrderSelect}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-white text-black">
                         <SelectValue placeholder="Select an order" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white text-black">
                         {castingDetails.orders.map((order) => (
-                          <SelectItem key={order.Id} value={order.Id}>
+                          <SelectItem key={order.Id} value={order.Id} className="bg-white text-black hover:bg-gray-100">
                             {order.Order_Id__c}
                           </SelectItem>
                         ))}
@@ -790,12 +790,12 @@ export default function AddGrindingDetails() {
                     <Label>Select Category</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <Select value={selectedCategory} onValueChange={handleCategorySelect}>
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full bg-white text-black">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white text-black">
                           {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
+                            <SelectItem key={category} value={category} className="bg-white text-black hover:bg-gray-100">
                               {category}
                             </SelectItem>
                           ))}
