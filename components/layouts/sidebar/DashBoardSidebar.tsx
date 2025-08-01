@@ -126,7 +126,7 @@ const DashBoardSidebar = () => {
         // className={`app-sidebar ${isCollapse ? "collapsed close_sidebar " : ""}  `}
         className="app-sidebar"
 >
-        <div className="main-sidebar-header max-w-[300px] overflow-hidden ">
+        <div className="main-sidebar-header max-w-[300px] overflow-hidden " style={{background:"#1a7a75",border:"none"}} >
          
             <Image
               className="main-logo w-200 h-[85px]"
