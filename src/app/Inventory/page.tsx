@@ -192,7 +192,7 @@ const InventoryUpdateForm = () => {
                 <SelectTrigger className="w-full bg-white border border-gray-200">
                   <SelectValue placeholder="Select an item" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200">
+                <SelectContent className="bg-white border border-gray-200 max-h-60 min-h-20 overflow-y-auto">
                   <SelectItem value="custom" className="hover:bg-gray-100">Add Custom Item</SelectItem>
                   {inventoryItems.map((item) => (
                     <SelectItem 
