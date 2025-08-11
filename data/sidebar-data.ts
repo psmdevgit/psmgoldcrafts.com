@@ -12,7 +12,7 @@ const sidebarData: SidebarCategory[] = [
         subItems: [
  
           { label: "Current Process", link: "/DashBoard" },          
-          { label: "Inventory Summary", link: "/InventorySummary" },
+          // { label: "Inventory Summary", link: "/InventorySummary" },
           // { label: "HRM Dashboard", link: "/dashboard/hrm-dashboard" },
           // {
           //   label: "Employee Dashboard",
@@ -20,6 +20,16 @@ const sidebarData: SidebarCategory[] = [
           // },
           // { label: "CRM Analytics", link: "/dashboard/crm-dashboard" },
         ],
+      },
+        {
+        id : 2,
+        label:"Reports",
+        icon: "fa-solid fa-file",
+        subItems:[        
+          { label: "Current Progress", link: "/Reports//Process" },
+          { label: "Inventory Items", link: "/Reports/InventoryItems" },
+          { label: "Inventory Transactions", link: "/Reports/InventoryIssued" },
+        ]
       },
       /*{
         id: 2,
@@ -44,7 +54,7 @@ const sidebarData: SidebarCategory[] = [
         ],
       },*/
       {
-        id: 2,
+        id: 3,
         label: "Master",
         icon: "fa-solid fa-gear",
         subItems: [
@@ -53,7 +63,7 @@ const sidebarData: SidebarCategory[] = [
         ],
       },
       {
-        id: 3,
+        id: 4,
         label: "Orders",
         icon: "icon-crm",
         subItems: [
@@ -63,7 +73,7 @@ const sidebarData: SidebarCategory[] = [
         ],
       },
       {
-        id: 4,
+        id: 5,
         label: "Making Progress",
         icon: "fa-solid fa-arrow-progress",
         subItems: [
@@ -81,7 +91,7 @@ const sidebarData: SidebarCategory[] = [
         ],
       },
      {
-        id: 5,
+        id: 6,
         label:"Billing",
         icon: "fa-sharp fa-light fa-wallet",
         subItems: [

@@ -318,7 +318,11 @@ const DashBoardSidebar = () => {
   }
 
 
-
+.app-sidebar .main-sidebar-header {
+    background:  #1a7a75 !important;
+    border:  none !important;
+    outline: none !important;
+}
 
 
 .common-scrollbar {
