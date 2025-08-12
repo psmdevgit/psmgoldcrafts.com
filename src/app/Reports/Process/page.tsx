@@ -345,7 +345,10 @@ export default function SummaryPage() {
   const [fromDate, setFromDate] = useState(getStartOfYear);
   const [toDate, setToDate] = useState(getToday());
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+//  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
+
 
   const fetchData = async () => {
     if (fromDate && toDate) {
