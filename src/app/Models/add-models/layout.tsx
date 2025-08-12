@@ -23,7 +23,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <Header />
 
         {/* Main Body */}
-        <main className="flex-2 overflow-y-auto p-6 bg-gray-100">
+        <main className="flex-2 overflow-y-auto p-6  main">
           {children}
         </main>
       </div>
@@ -44,7 +44,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           }
         }
       `}</style>
-      
+
     </div>
   );
 };
