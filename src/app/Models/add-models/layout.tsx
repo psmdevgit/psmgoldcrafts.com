@@ -27,6 +27,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </main>
       </div>
+
+        <style jsx global>{`
+        .main {
+          height: 100vh;
+          padding-top: 75px;
+          width: 85%;
+          margin-left: auto;
+          margin-right: 0;
+        }
+     
+        @media (max-width: 768px) {
+          .main {
+            width: 100%;
+            margin: 0 auto;
+          }
+        }
+      `}</style>
+      
     </div>
   );
 };
