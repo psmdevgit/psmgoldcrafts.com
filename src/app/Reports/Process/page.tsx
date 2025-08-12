@@ -350,6 +350,7 @@ export default function SummaryPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
 
 
+
   const fetchData = async () => {
     if (fromDate && toDate) {
       const from = new Date(fromDate);

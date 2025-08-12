@@ -6,14 +6,14 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import SummarySingleCard from "@/components/common/SummarySingleCard";
 import { fetchGrindingData } from "@/data/crm/grinding-data";
-import { IGrinding } from "@/interface/table.interface";
+import { IFiling } from "@/interface/table.interface";
 // import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import logo from "@/assets/PothysLogo.png"
 
 const FilingSummary: React.FC = () => {
-  const [filingData, setFilingData] = useState<IGrinding[]>([]);
+  const [filingData, setFilingData] = useState<IFiling[]>([]);
   // const [filingData, setfilingData] = useState<ICasting[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   // const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
@@ -86,7 +86,7 @@ const FilingSummary: React.FC = () => {
       0
     );
     const totalFilingLoss = filingData.reduce(
-      (sum, item) => sum + (Number(item.lossWeight) || 0),
+      (sum, item) => sum + (Number(item.grindingLoss) || 0),
       0
     );
     const totalProcessingWeight = filingData.reduce((sum, item) => {
@@ -231,7 +231,7 @@ const FilingSummary: React.FC = () => {
 
         {loading ? (
           <div className="col-span-full text-center py-8 text-gray-500">
-            Loading filing data...
+            Loading grinding data...
           </div>
         ) : (
           summaryData.map((item, index) => (

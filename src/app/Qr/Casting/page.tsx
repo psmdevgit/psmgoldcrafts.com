@@ -85,7 +85,7 @@ const FilingSummary: React.FC = () => {
       0
     );
     const totalFilingLoss = filingData.reduce(
-      (sum, item) => sum + (Number(item.lossWeight) || 0),
+      (sum, item) => sum + (Number(item.castingLoss) || 0),
       0
     );
     const totalProcessingWeight = filingData.reduce((sum, item) => {
@@ -230,7 +230,7 @@ const FilingSummary: React.FC = () => {
 
         {loading ? (
           <div className="col-span-full text-center py-8 text-gray-500">
-            Loading filing data...
+            Loading Casting data...
           </div>
         ) : (
           summaryData.map((item, index) => (

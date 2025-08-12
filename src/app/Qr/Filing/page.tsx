@@ -86,7 +86,7 @@ const FilingSummary: React.FC = () => {
       0
     );
     const totalFilingLoss = filingData.reduce(
-      (sum, item) => sum + (Number(item.lossWeight) || 0),
+      (sum, item) => sum + (Number(item.grindingLoss) || 0),
       0
     );
     const totalProcessingWeight = filingData.reduce((sum, item) => {
