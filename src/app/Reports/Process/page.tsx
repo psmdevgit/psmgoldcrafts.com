@@ -350,10 +350,10 @@ export default function SummaryPage() {
 
 //  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
 
   
-  const API_URL =  "http://localhost:5001" ;
+  // const API_URL =  "http://localhost:5001" ;
 
 
   const fetchData = async () => {
@@ -395,7 +395,7 @@ export default function SummaryPage() {
     finally {
       setLoading(false); // ✅ stop loading
     }
-    
+
   };
 
   useEffect(() => {
