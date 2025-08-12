@@ -73,13 +73,18 @@ useEffect(() => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {reports.map((report, index) => (
-                  <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
-                    <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
-                    <td className="px-4 py-2 text-sm text-gray-800">{report.availableWeight}</td>
-                  </tr>
-                ))}
+             
+
+                 {reports
+    .filter(report => report.availableWeight > 0) // Only keep items with positive weight
+    .map((report, index) => (
+      <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
+        <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
+        <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
+        <td className="px-4 py-2 text-sm text-gray-800">{report.availableWeight.toFixed(2)}</td>
+      </tr>
+    ))}
+    
               </tbody>
             </table>
           </div>
@@ -90,3 +95,12 @@ useEffect(() => {
 };
 
 export default InventoryItemSummary;
+
+
+  //  {reports.map((report, index) => (
+  //                 <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
+  //                   <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
+  //                   <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
+  //                   <td className="px-4 py-2 text-sm text-gray-800">{report.availableWeight}</td>
+  //                 </tr>
+  //               ))}

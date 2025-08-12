@@ -333,7 +333,8 @@ const getToday = () => {
 
 interface ProcessRow {
   process: string;
-  issued_wt: number;
+  issued_wt: number;  
+  process_wt: number;
   received_wt: number;
   loss_wt: number;
   scrap_wt: number;
@@ -344,11 +345,15 @@ export default function SummaryPage() {
   const [data, setData] = useState<ProcessRow[]>([]);
   const [fromDate, setFromDate] = useState(getStartOfYear);
   const [toDate, setToDate] = useState(getToday());
+  
+  const [loading, setLoading] = useState(false); // ✅ new
 
 //  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
+  // const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
 
+  
+  const API_URL =  "http://localhost:5001" ;
 
 
   const fetchData = async () => {
@@ -371,9 +376,12 @@ export default function SummaryPage() {
 
     const query = `${API_URL}/api/process-summary?fromDate=${fromDate}&toDate=${toDate}`;
 
+    setLoading(true); 
     try {
       const res = await fetch(query);
       const result = await res.json();
+
+      console.log(result)
 
       if (!result.success) {
         console.error("Error fetching data:", result.message);
@@ -384,6 +392,10 @@ export default function SummaryPage() {
     } catch (err) {
       console.error("Fetch error:", err);
     }
+    finally {
+      setLoading(false); // ✅ stop loading
+    }
+    
   };
 
   useEffect(() => {
@@ -417,48 +429,45 @@ export default function SummaryPage() {
 </div>
 
 <div className="mt-5 p-5 overflow-x-auto tablediv" style={{display:"flex", justifyContent:"center", alignItems:"center", backgroundColor:"#eee", borderRadius:"20px"}}>
-     <table className="w-full border border-collapse" style={{width:"75%", backgroundColor:"#fff"}}>
-        <thead>
-         <tr className="bg-gray-100" style={{ backgroundColor: "#EDB652", color: "#222", fontSize: "1rem" }}>
-  <th className="border p-2">
-    Process
-  </th>
-  <th className="border p-2">
-    Issued Wt
-    <span className="text-xs ps-2 text-gray-700">(gm)</span>
-  </th>
-  <th className="border p-2">
-    Received Wt
-    <span className="text-xs ps-2 text-gray-700">(gm)</span>
-  </th>
-  <th className="border p-2">
-    Loss Wt
-    <span className="text-xs ps-2 text-gray-700">(gm)</span>
-  </th>
-  <th className="border p-2">
-    Scrap Wt
-    <span className="text-xs ps-2 text-gray-700">(gm)</span>
-  </th>
-  <th className="border p-2">
-    Dust Wt
-    <span className="text-xs ps-2 text-gray-700">(gm)</span>
-  </th>
-</tr>
+     {loading ? (
+          <p className="text-lg font-semibold">Loading...</p> // ✅ loading text
+        ) : (
+          <table className="w-full border border-collapse" style={{ width: "75%", backgroundColor: "#fff" }}>
+            <thead>
+              <tr className="bg-gray-100" style={{ backgroundColor: "#EDB652", color: "#222", fontSize: "1rem" }}>
+                <th className="border p-2">Process</th>
+                <th className="border p-2">Issued Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+                <th className="border p-2">Processing Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+                <th className="border p-2">Received Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+                <th className="border p-2">Loss Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+                <th className="border p-2">Scrap Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+                <th className="border p-2">Dust Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center p-4 text-gray-500">
+                    No records found
+                  </td>
+                </tr>
+              ) : (
+                data.map((row, idx) => (
+                  <tr key={idx} className="text-center">
+                    <td className="border p-2" style={{ color: "#444", fontWeight: "700" }}>{row.process}</td>
+                    <td className="border p-2">{Number(row.issued_wt || 0).toFixed(2)}</td>
+                    <td className="border p-2">{Number(row.process_wt || 0).toFixed(2)}</td>
+                    <td className="border p-2">{Number(row.received_wt || 0).toFixed(2)}</td>
+                    <td className="border p-2">{Number(row.loss_wt || 0).toFixed(2)}</td>
+                    <td className="border p-2">{Number(row.scrap_wt || 0).toFixed(2)}</td>
+                    <td className="border p-2">{Number(row.dust_wt || 0).toFixed(2)}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
 
-        </thead>
-        <tbody>
-          {data.map((row, idx) => (
-            <tr key={idx} className="text-center">
-              <td className="border p-2" style={{color:"#444", fontWeight:"700"}}>{row.process}</td>
-              <td className="border p-2">{+row.issued_wt.toFixed(2)}</td>
-              <td className="border p-2">{+row.received_wt.toFixed(2)}</td>
-              <td className="border p-2">{+row.loss_wt.toFixed(2)}</td>
-              <td className="border p-2">{+row.scrap_wt.toFixed(2)}</td>
-              <td className="border p-2">{+row.dust_wt.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
 </div>
 
  
