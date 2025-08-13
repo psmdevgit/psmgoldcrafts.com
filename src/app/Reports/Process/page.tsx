@@ -53,6 +53,8 @@ interface Report {
       }
 
       setData(result.data);
+
+      console.log(result.data);
     } catch (err) {
       console.error("Fetch error:", err);
     }
@@ -132,7 +134,10 @@ interface Report {
               <th className="border p-2">Process</th>
               <th className="border p-2">
                 Processing Wt <span className="text-xs ps-2 text-gray-700">(gm)</span>
-              </th>
+              </th> 
+              {/* <th className="border p-2">
+                Received Wt <span className="text-xs ps-2 text-gray-700">(gm)</span>
+              </th> */}
             </tr>
           </thead>
           <tbody>
@@ -149,6 +154,8 @@ interface Report {
                     {row.process}
                   </td>
                   <td className="border p-2">{Number(row.process_wt || 0).toFixed(2)}</td>
+                  {/* <td className="border p-2">{Number(row.received_wt || 0).toFixed(2)}</td> */}
+                  {/* <td className="border p-2">{Number(row.issued_wt || 0).toFixed(2)}</td> */}
                 </tr>
               ))
             )}
@@ -188,21 +195,45 @@ interface Report {
               <th className="px-4 py-2 text-left text-sm font-semibold">Item</th>
               <th className="px-4 py-2 text-left text-sm font-semibold">Purity</th>
               <th className="px-4 py-2 text-left text-sm font-semibold">Avl Weight (g)</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold">Purity Gold Wt (g)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-[#fff]">
-            {reports
-              .filter((report) => report.availableWeight > 0)
-              .map((report, index) => (
-                <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
-                  <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
-                  <td className="px-4 py-2 text-sm text-gray-800">
-                    {report.availableWeight.toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-          </tbody>
+          <tbody className="divide-y divide-gray-100">
+                {reports
+                  .filter(
+                    (report) => Number(report.availableWeight) > 0
+                  )
+                .map((report, index) => {
+  // Normalize the purity string for comparison
+  const purityString = String(report.purity).trim().toLowerCase();
+
+  let purityValue: number;
+
+  if (purityString.includes("22k")) {
+    purityValue = 91.7; // hardcode percentage for 22K gold
+  } else {
+    purityValue = parseFloat(purityString) || 0;
+  }
+
+  const availableWeightValue = Number(report.availableWeight) || 0;
+
+  const purityGoldWeight = (
+    (purityValue * availableWeightValue) / 100
+  ).toFixed(4);
+
+  return (
+    <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
+      <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
+      <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
+      <td className="px-4 py-2 text-sm text-gray-800">{availableWeightValue.toFixed(4)}</td>
+      <td className="px-4 py-2 text-sm text-gray-800">{purityGoldWeight}</td>
+    </tr>
+  );
+})
+
+                  
+                  }
+              </tbody>
         </table>
       </div>
     )}
