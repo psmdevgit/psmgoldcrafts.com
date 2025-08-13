@@ -103,6 +103,14 @@ const FilingSummary: React.FC = () => {
       : "0";
 
     return [
+        {
+        iconClass: "fa-light fa-weight-scale",
+        title: "Processing Weight",
+        value: totalProcessingWeight.toFixed(2) + " g",
+        description: "Issued but not yet received",
+        percentageChange: "",
+        isIncrease: true,
+      },
       {
         iconClass: "fa-light fa-gem",
         title: "Cutting Issued",
@@ -111,14 +119,7 @@ const FilingSummary: React.FC = () => {
         percentageChange: "",
         isIncrease: true,
       },
-      {
-        iconClass: "fa-light fa-weight-scale",
-        title: "Processing Weight",
-        value: totalProcessingWeight.toFixed(2) + " g",
-        description: "Issued but not yet received",
-        percentageChange: "",
-        isIncrease: true,
-      },
+    
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",
