@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 interface Report {
   name: string;
   availableWeight: number;
-  purity: string;
+  purity: number;
 }
 
 const InventoryItemSummary: React.FC = () => {
@@ -51,7 +51,7 @@ useEffect(() => {
 
 
   return (
-    <div className="w-full mt-20">
+    <div className="w-full mt-20 " style={{height:"100vh"}}>
       <div className="max-w-screen-md mx-auto p-6 bg-white shadow rounded-lg">
         <h1 className="text-2xl font-bold mb-4 text-[#1A7A75]">Inventory Items</h1>
 
@@ -70,6 +70,7 @@ useEffect(() => {
                   <th className="px-4 py-2 text-left text-sm font-semibold ">Item</th>
                   <th className="px-4 py-2 text-left text-sm font-semibold ">Purity</th>
                   <th className="px-4 py-2 text-left text-sm font-semibold ">Avl Weight (g)</th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold ">Purity Gold Wt (g)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -81,7 +82,8 @@ useEffect(() => {
       <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
         <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
         <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
-        <td className="px-4 py-2 text-sm text-gray-800">{report.availableWeight.toFixed(2)}</td>
+        <td className="px-4 py-2 text-sm text-gray-800">{report.availableWeight.toFixed(2)}</td>        
+        <td className="px-4 py-2 text-sm text-gray-800">  {((report.purity * report.availableWeight) / 100).toFixed(2)}</td>
       </tr>
     ))}
     
