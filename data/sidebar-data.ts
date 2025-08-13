@@ -58,8 +58,8 @@ const sidebarData: SidebarCategory[] = [
         label: "Master",
         icon: "fa-solid fa-gear",
         subItems: [
-          { label: "Add Inventory", link: "/Inventory" },
-          { label: "Add Models", link: "/Models/add-models" }
+          { label: "Inventory", link: "/Inventory" },
+          { label: "Models", link: "/Models/add-models" }
         ],
       },
       {
