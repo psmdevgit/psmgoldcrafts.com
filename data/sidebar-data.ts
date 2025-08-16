@@ -11,7 +11,7 @@ const sidebarData: SidebarCategory[] = [
         icon: "fa-solid fa-gauge",
         subItems: [
  
-          { label: "Overall Process", link: "/DashBoard/Overallprocess" },                    
+          { label: "Current Stock", link: "/Reports/Process" },                    
           // { label: "Inventory Summary", link: "/InventorySummary" },
           // { label: "HRM Dashboard", link: "/dashboard/hrm-dashboard" },
           // {
@@ -26,7 +26,7 @@ const sidebarData: SidebarCategory[] = [
         label:"Reports",
         icon: "fa-solid fa-file",
         subItems:[        
-          { label: "Current Progress", link: "/Reports/Process" },
+          { label: "Current Process", link: " /DashBoard/Overallprocess " },
           { label: "Inventory Items", link: "/Reports/InventoryItems" },
           { label: "Inventory Transactions", link: "/Reports/InventoryIssued" },
         ]

@@ -20,10 +20,21 @@ export default function SummaryPage() {
   const [data, setData] = useState<ProcessRow[]>([]);
   
     const [isLoading, setIsLoading] = useState(true);
-  const [loading, setLoading] = useState(false); // ✅ new
+  const [loading, setLoading] = useState(false); // ✅ newL
   
     const [reports, setReports] = useState<Report[]>([]);
     const [error, setError] = useState<string | null>(null);
+
+
+
+     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
 
 interface Report {
   name: string;
@@ -107,33 +118,33 @@ interface Report {
   return (
   <div className="p-4 progress-report flex flex-col lg:flex-row gap-6">
   {/* Left Column */}
-  <div className="flex-1">
+  <div className="">
     <h1 className="text-xl font-bold mb-4">Process Summary</h1>
     <div
       className="mt-5 p-5 overflow-x-auto"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#eee",
-        borderRadius: "20px",
-      }}
+      // style={{
+      //   display: "flex",
+      //   justifyContent: "center",
+      //   alignItems: "center",
+      //   backgroundColor: "#eee",
+      //   borderRadius: "20px",
+      // }}
     >
       {loading ? (
         <p className="text-lg font-semibold">Loading...</p>
       ) : (
         <table
           className="border border-collapse"
-          style={{ width: "100%", backgroundColor: "#fff" }}
+          style={{  width:"100%", backgroundColor: "#fff" }}
         >
           <thead>
             <tr
               className="bg-gray-100"
-              style={{ backgroundColor: "#EDB652", color: "#222", fontSize: "1rem" }}
+              style={{ backgroundColor: "#1a7a75", color: "#fff", fontSize:"1rem" }}
             >
               <th className="border p-2">Process</th>
               <th className="border p-2">
-                Processing Wt <span className="text-xs ps-2 text-gray-700">(gm)</span>
+                Processing Wt <span className="text-xs ps-2 text-white-700">(gm)</span>
               </th> 
               {/* <th className="border p-2">
                 Received Wt <span className="text-xs ps-2 text-gray-700">(gm)</span>
@@ -150,7 +161,7 @@ interface Report {
             ) : (
               data.map((row, idx) => (
                 <tr key={idx} className="text-center">
-                  <td className="border p-2" style={{ color: "#444", fontWeight: "700" }}>
+                  <td className="border p-2 text-left" style={{ color: "#444", fontWeight: "500" }}>
                     {row.process}
                   </td>
                   <td className="border p-2">{Number(row.process_wt || 0).toFixed(2)}</td>
@@ -166,16 +177,18 @@ interface Report {
   </div>
 
   {/* Right Column */}
-  <div className="flex-1">
+  <div className="" style={{marginRight:'-250px; !important'}}>
     <h1 className="text-xl font-bold mb-4 ">Inventory Items</h1>
 
-<div className="mt-5 p-5 overflow-x-auto"  style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#eee",
-        borderRadius: "20px",
-      }}>
+<div className="mt-5  overflow-x-auto" 
+//  style={{
+//         display: "flex",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         backgroundColor: "#eee",
+//         borderRadius: "20px",
+//       }}
+      >
 
   {isLoading && <p className="text-gray-500">Loading...</p>}
     {error && <p className="text-red-500">Error: {error}</p>}

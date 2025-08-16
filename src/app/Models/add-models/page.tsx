@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-
+import ImageShowPage from '@/components/ModelPreview/modelPreview';
 // Types
 interface StoneDetail {
   name: string;
@@ -142,7 +142,11 @@ const StoneDetailsModal = ({
 
 // Main Component
 const AddJewelryModel = () => {
-  const apiBaseUrl = process.env.API_URL || "https://erp-server-r9wh.onrender.com" ;
+  // const apiBaseUrl = process.env.API_URL || "https://erp-server-r9wh.onrender.com" ;
+
+  
+  const apiBaseUrl = process.env.API_URL || "http://localhost:5001" ;
+
   const router = useRouter();
 
   // States
@@ -277,6 +281,8 @@ const AddJewelryModel = () => {
         formDataToSend.append('item-image', modelImage);
       }
 
+      console.log(formattedStoneDetails);
+
       const response = await fetch(`${apiBaseUrl}/api/add-jewelry`, {
         method: 'POST',
         body: formDataToSend,
@@ -325,8 +331,12 @@ const AddJewelryModel = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="mb-8">
+    <div className="container mx-auto p-4 " >
+        <div className="flex flex-col lg:flex-row gap-4">
+            {/* Left side: Form */}
+            <div className="flex-1 lg:w-3/4 addmodel w-full">
+
+      <Card className="mb-8 ">
         <CardHeader>
           <CardTitle>Add Jewelry Model</CardTitle>
         </CardHeader>
@@ -502,7 +512,27 @@ const AddJewelryModel = () => {
         onSave={handleStoneDetailsSave}
         existingStones={stoneDetails}
       />
+      
+      </div>
+
+      <div className="preview lg:w-1/4 flex-1">
+      <ImageShowPage></ImageShowPage>
+      </div>
+
     </div>
+     <style jsx>{`
+    /* Optional: Ensure height matches in desktop view */
+    @media (min-width: 1024px) {
+      .addmodel {
+        flex: 0 0 70%;
+      }
+      .preview {
+        flex: 0 0 30%;
+      }
+    }
+  `}</style>
+</div>
+ 
   );
 };
 

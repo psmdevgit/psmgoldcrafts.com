@@ -124,14 +124,14 @@ export default function SummaryPage() {
         ) : (
           <table className="w-full border border-collapse" style={{ width: "75%", backgroundColor: "#fff" }}>
             <thead>
-              <tr className="bg-gray-100" style={{ backgroundColor: "#EDB652", color: "#222", fontSize: "1rem" }}>
+              <tr className="bg-gray-100" style={{ backgroundColor: "#1a7a75", color: "#fff", fontSize: "1rem" }}>
                 <th className="border p-2">Process</th>
-                <th className="border p-2">Issued Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
-                <th className="border p-2">Processing Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
-                <th className="border p-2">Received Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
-                <th className="border p-2">Loss Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
-                <th className="border p-2">Scrap Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
-                <th className="border p-2">Dust Wt <span className="text-xs ps-2 text-gray-700">(gm)</span></th>
+                <th className="border p-2">Issued Wt <span className="text-xs ps-2 text-white-700">(gm)</span></th>
+                <th className="border p-2">Processing Wt <span className="text-xs ps-2 text-white-700">(gm)</span></th>
+                <th className="border p-2">Received Wt <span className="text-xs ps-2 text-white-700">(gm)</span></th>
+                <th className="border p-2">Loss Wt <span className="text-xs ps-2 text-white-700">(gm)</span></th>
+                <th className="border p-2">Scrap Wt <span className="text-xs ps-2 text-white-700">(gm)</span></th>
+                <th className="border p-2">Dust Wt <span className="text-xs ps-2 text-white-700">(gm)</span></th>
               </tr>
             </thead>
             <tbody>
