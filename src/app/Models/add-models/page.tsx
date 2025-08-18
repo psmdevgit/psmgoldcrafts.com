@@ -205,6 +205,35 @@ const AddJewelryModel = () => {
     }));
   };
 
+  // inside AddJewelryModel.tsx
+
+const handleCategoryChange = async (value: string) => {
+  handleInputChange("category", value);
+
+  if (!value) return;
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/generate-model-name`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ category: value }),
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      setFormData(prev => ({
+        ...prev,
+        modelName: result.modelName, // auto-fill
+      }));
+    } else {
+      console.error("Model generation failed:", result.message);
+    }
+  } catch (err) {
+    console.error("Error generating model name:", err);
+  }
+};
+
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -383,7 +412,7 @@ const AddJewelryModel = () => {
               <select
                 id="category"
                 value={formData.category}
-                onChange={(e) => handleInputChange('category', e.target.value)}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 className="w-full border p-2 rounded"
                 required
               >

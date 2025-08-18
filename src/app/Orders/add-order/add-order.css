@@ -6,6 +6,7 @@
   transform: none !important;
 }
 
+
 /* Main container */
 .container {
   display: flex;
@@ -25,8 +26,8 @@
 .page-title {
   text-align: center;
   width: 100%;
-  padding: 20px 0;
-  font-size: 24px;
+  padding-top: 50px ;
+  font-size: 25px !important;
   color: #333;
   @apply text-xl font-semibold mb-4;
 }
@@ -126,7 +127,7 @@ th {
 .button-group {
   display: flex;
   gap: 15px;
-  margin-top: 30px;
+  margin-top: -20px;
   justify-content: center;
   width: 100%;
 }

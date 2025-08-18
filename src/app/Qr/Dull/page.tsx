@@ -4,7 +4,7 @@
 import Image from "next/image";
 
 import React, { useState, useEffect } from "react";
-import SummarySingleCard from "@/components/common/SummarySingleCard";
+import SummaryQrCard from "@/components/common/QrCard";
 import { fetchDullData } from "@/data/crm/dull-data";
 import { IDull } from "@/interface/table.interface";
 // import DatePicker from "react-datepicker";
@@ -12,20 +12,10 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import logo from "@/assets/PothysLogo.png"
 
-const FilingSummary: React.FC = () => {
-  const [filingData, setFilingData] = useState<IDull[]>([]);
-  // const [filingData, setfilingData] = useState<ICasting[]>([]);
+const DullSummary: React.FC = () => {
+  const [dullData, setDullData] = useState<IDull[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  // const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
-  // const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
 
-  // Initialize default date range on mount
-  // useEffect(() => {
-  //   const now = new Date();
-  //   const startOfYear = new Date(now.getFullYear(), 0, 1);
-  //   setCustomStartDate(startOfYear);
-  //   setCustomEndDate(now);
-  // }, []);
 
   // Fetch data on load
   useEffect(() => {
@@ -33,7 +23,7 @@ const FilingSummary: React.FC = () => {
       try {
         setLoading(true);
         const data = await fetchDullData();
-        setFilingData(data);
+        setDullData(data);
         // setfilingData(data); // initially show all
       } catch (error) {
         console.error("Error fetching filing data:", error);
@@ -44,108 +34,162 @@ const FilingSummary: React.FC = () => {
     getData();
   }, []);
 
-  // Apply filter when both dates are selected
-  // useEffect(() => {
-  //   if (customStartDate && customEndDate) {
-  //     const start = new Date(Date.UTC(
-  //       customStartDate.getFullYear(),
-  //       customStartDate.getMonth(),
-  //       customStartDate.getDate(),
-  //       0, 0, 0, 0
-  //     ));
-  //     const end = new Date(Date.UTC(
-  //       customEndDate.getFullYear(),
-  //       customEndDate.getMonth(),
-  //       customEndDate.getDate(),
-  //       23, 59, 59, 999
-  //     ));
+    const calculateSummary = () => {
+  const today = new Date().toISOString().split("T")[0]; // format YYYY-MM-DD
 
-  //     const filtered = filingData.filter((item) => {
-  //       const itemDate = new Date(item.issuedDate);
-  //       const itemUTC = new Date(Date.UTC(
-  //         itemDate.getUTCFullYear(),
-  //         itemDate.getUTCMonth(),
-  //         itemDate.getUTCDate(),
-  //         0, 0, 0, 0
-  //       ));
-  //       return itemUTC >= start && itemUTC <= end;
-  //     });
+  // Today's data only
+  const todayData = dullData.filter(
+    (item) =>
+      item.issuedDate && item.issuedDate.split("T")[0] === today
+  );
 
-  //     setfilingData(filtered);
-  //   }
-  // }, [customStartDate, customEndDate, filingData]);
+  // ---- All data (for processing weight only) ----
+  const totalProcessingWeight = dullData.reduce((sum, item) => {
+    const received = Number(item.receivedWeight || 0);
+    return received ? sum : sum + Number(item.issuedWeight || 0);
+  }, 0);
 
-  const calculateSummary = () => {
-    const totalFilings = filingData.length;
-    const totalIssuedWeight = filingData.reduce(
-      (sum, item) => sum + (Number(item.issuedWeight) || 0),
-      0
-    );
-    const totalReceivedWeight = filingData.reduce(
-      (sum, item) => sum + (Number(item.receivedWeight) || 0),
-      0
-    );
-    const totalFilingLoss = filingData.reduce(
-      (sum, item) => sum + (Number(item.dullLoss) || 0),
-      0
-    );
-    const totalProcessingWeight = filingData.reduce((sum, item) => {
-      const received = Number(item.receivedWeight || 0);
-      return received ? sum : sum + Number(item.issuedWeight || 0);
-    }, 0);
+  // ---- Today’s calculations ----
+  const totalFilings = todayData.length;
+  const totalIssuedWeight = todayData.reduce(
+    (sum, item) => sum + (Number(item.issuedWeight) || 0),
+    0
+  );
+  const totalReceivedWeight = todayData.reduce(
+    (sum, item) => sum + (Number(item.receivedWeight) || 0),
+    0
+  );
+  const totalFilingLoss = todayData.reduce(
+    (sum, item) => sum + (Number(item.dullLoss) || 0),
+    0
+  );
 
-    const filingLossPercentage = totalIssuedWeight > 0
+  const filingLossPercentage =
+    totalIssuedWeight > 0
       ? ((totalFilingLoss / totalIssuedWeight) * 100).toFixed(2)
       : "0";
 
-    const receivedPercentage = totalIssuedWeight > 0
+  const receivedPercentage =
+    totalIssuedWeight > 0
       ? ((totalReceivedWeight / totalIssuedWeight) * 100).toFixed(2)
       : "0";
 
-    return [
-       {
-        iconClass: "fa-light fa-weight-scale",
-        title: "Processing Weight",
-        value: totalProcessingWeight.toFixed(2) + " g",
-        description: "Issued but not yet received",
-        percentageChange: "",
-        isIncrease: true,
-      },
-      {
-        iconClass: "fa-light fa-gem",
-        title: "Dull Issued",
-        value: totalFilings.toString(),
-        description: "Total Dull jobs",
-        percentageChange: "",
-        isIncrease: true,
-      },
+  return [
+    {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received (All Time)",
+      percentageChange: "",
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-gem",
+      title: "Dull Issued",
+      value: totalFilings.toString(),
+      description: "Today’s Dull jobs",
+      percentageChange: "",
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Weight Issued",
+      value: totalIssuedWeight.toFixed(2) + " g",
+      description: "Today’s gold issued",
+      percentageChange: "",
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-scale-balanced",
+      title: "Weight Received",
+      value: totalReceivedWeight.toFixed(2) + " g",
+      description: receivedPercentage + "% of today’s issued",
+      percentageChange: receivedPercentage,
+      isIncrease: true,
+    },
+    {
+      iconClass: "fa-light fa-arrow-trend-down",
+      title: "Dull Loss",
+      value: totalFilingLoss.toFixed(2) + " g",
+      description: filingLossPercentage + "% of today’s issued",
+      percentageChange: filingLossPercentage,
+      isIncrease: false,
+    },
+  ];
+};
+
+
+  // const calculateSummary = () => {
+  //   const totalFilings = filingData.length;
+  //   const totalIssuedWeight = filingData.reduce(
+  //     (sum, item) => sum + (Number(item.issuedWeight) || 0),
+  //     0
+  //   );
+  //   const totalReceivedWeight = filingData.reduce(
+  //     (sum, item) => sum + (Number(item.receivedWeight) || 0),
+  //     0
+  //   );
+  //   const totalFilingLoss = filingData.reduce(
+  //     (sum, item) => sum + (Number(item.dullLoss) || 0),
+  //     0
+  //   );
+  //   const totalProcessingWeight = filingData.reduce((sum, item) => {
+  //     const received = Number(item.receivedWeight || 0);
+  //     return received ? sum : sum + Number(item.issuedWeight || 0);
+  //   }, 0);
+
+  //   const filingLossPercentage = totalIssuedWeight > 0
+  //     ? ((totalFilingLoss / totalIssuedWeight) * 100).toFixed(2)
+  //     : "0";
+
+  //   const receivedPercentage = totalIssuedWeight > 0
+  //     ? ((totalReceivedWeight / totalIssuedWeight) * 100).toFixed(2)
+  //     : "0";
+
+  //   return [
+  //      {
+  //       iconClass: "fa-light fa-weight-scale",
+  //       title: "Processing Weight",
+  //       value: totalProcessingWeight.toFixed(2) + " g",
+  //       description: "Issued but not yet received",
+  //       percentageChange: "",
+  //       isIncrease: true,
+  //     },
+  //     {
+  //       iconClass: "fa-light fa-gem",
+  //       title: "Dull Issued",
+  //       value: totalFilings.toString(),
+  //       description: "Total Dull jobs",
+  //       percentageChange: "",
+  //       isIncrease: true,
+  //     },
      
-      {
-        iconClass: "fa-light fa-weight-scale",
-        title: "Weight Issued",
-        value: totalIssuedWeight.toFixed(2) + " g",
-        description: "Total gold issued",
-        percentageChange: "",
-        isIncrease: true,
-      },
-      {
-        iconClass: "fa-light fa-scale-balanced",
-        title: "Weight Received",
-        value: totalReceivedWeight.toFixed(2) + " g",
-        description: receivedPercentage + "% of issued",
-        percentageChange: receivedPercentage,
-        isIncrease: true,
-      },
-      {
-        iconClass: "fa-light fa-arrow-trend-down",
-        title: "Dull Loss",
-        value: totalFilingLoss.toFixed(2) + " g",
-        description: filingLossPercentage + "% of issued",
-        percentageChange: filingLossPercentage,
-        isIncrease: false,
-      },
-    ];
-  };
+  //     {
+  //       iconClass: "fa-light fa-weight-scale",
+  //       title: "Weight Issued",
+  //       value: totalIssuedWeight.toFixed(2) + " g",
+  //       description: "Total gold issued",
+  //       percentageChange: "",
+  //       isIncrease: true,
+  //     },
+  //     {
+  //       iconClass: "fa-light fa-scale-balanced",
+  //       title: "Weight Received",
+  //       value: totalReceivedWeight.toFixed(2) + " g",
+  //       description: receivedPercentage + "% of issued",
+  //       percentageChange: receivedPercentage,
+  //       isIncrease: true,
+  //     },
+  //     {
+  //       iconClass: "fa-light fa-arrow-trend-down",
+  //       title: "Dull Loss",
+  //       value: totalFilingLoss.toFixed(2) + " g",
+  //       description: filingLossPercentage + "% of issued",
+  //       percentageChange: filingLossPercentage,
+  //       isIncrease: false,
+  //     },
+  //   ];
+  // };
 
   const summaryData = calculateSummary();
 
@@ -199,38 +243,9 @@ const FilingSummary: React.FC = () => {
 
 
 
+    <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 summary-card gap-0 sm:gap-4 mt-1 sm:mt-5">
 
-      {/* Custom Date Filter */}
-      {/* <div className="flex flex-wrap items-center gap-3 mb-6">
-        <div className="text-sm font-medium">Select Date Range:</div>
-        <div className="flex items-center gap-2">
-          <DatePicker
-            selected={customStartDate}
-            onChange={(date) => setCustomStartDate(date)}
-            selectsStart
-            startDate={customStartDate}
-            endDate={customEndDate}
-            placeholderText="From Date"
-            className="px-2 py-1 text-sm border rounded"
-          />
-          <span>to</span>
-          <DatePicker
-            selected={customEndDate}
-            onChange={(date) => setCustomEndDate(date)}
-            selectsEnd
-            startDate={customStartDate}
-            endDate={customEndDate}
-            minDate={customStartDate}
-            placeholderText="To Date"
-            className="px-2 py-1 text-sm border rounded"
-          />
-        </div>
-      </div> */}
-
-      {/* Summary Cards */}
-    <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 summary-card gap-0 sm:gap-4 mt-0 sm:mt-5">
-
-        {loading ? (
+        {/* {loading ? (
           <div className="col-span-full text-center py-8 text-gray-500">
             Loading dull data...
           </div>
@@ -240,7 +255,34 @@ const FilingSummary: React.FC = () => {
               <SummarySingleCard {...item} />
             </div>
           ))
-        )}
+        )} */}
+
+         {loading ? (
+  <div className="col-span-full text-center py-8 text-gray-500">
+    Loading Dull data...
+  </div>
+) : (
+  <>
+      {/* Row 1 - Processing Weight */}
+    <div className="w-full max-w-7xl grid grid-cols-1 ">
+      <SummaryQrCard {...summaryData[0]} />
+    </div>
+
+    {/* ✅ Row 2 - Today Label */}
+    <div className="w-full text-center ">
+      <span className="text-base font-bold text-gray-700">Today</span>
+    </div>
+
+    {/* ✅ Row 3 - Other 4 cards */}
+ {/* Row 3 - Other 4 cards */}
+<div className="w-full max-w-7xl grid grid-cols-1 gap-2 ">
+  {summaryData.slice(1).map((item, index) => (
+    <SummaryQrCard key={index} {...item} />
+  ))}
+</div>
+  </>
+)}
+
       </div>
 
       <style jsx>{`
@@ -259,8 +301,8 @@ const FilingSummary: React.FC = () => {
   }
 
   .summmary-body {
-    padding-top: 100px;
-    background-color: #d7e7e7;
+    // padding-top: 100px;
+    background-color: #fff;
   }
 
   @media (max-width: 768px) {
@@ -276,4 +318,4 @@ const FilingSummary: React.FC = () => {
   );
 };
 
-export default FilingSummary;
+export default DullSummary;

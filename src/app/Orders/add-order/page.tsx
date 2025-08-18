@@ -108,6 +108,10 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   /* ---------------------- API ---------------------- */
   const apiBaseUrl ="https://erp-server-r9wh.onrender.com";;
 
+
+   const [activeTab, setActiveTab] = useState<"addItem" | "designBank">("addItem");
+
+
   useEffect(() => {
     fetchPartyLedgers();
   }, []);
@@ -758,7 +762,7 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
       <div className="forms-container">
         {/* First Form */}
         <div className="form-card">
-          <h2>Order Information</h2>
+          <h2 style={{textAlign:"center"}}>Order Information</h2>
           <div className="two-column-form">
             {/* Party Ledger */}
             <div className="field-group">
@@ -893,8 +897,11 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
         </div>
 
         {/* Second Form */}
-        <div className="form-card">
-          <h2>Add Item</h2>
+
+  {/* {activeTab === "addItem" && ( */}
+
+        <div className="form-card" id="AddItemBox">
+          <h2 style={{textAlign:"center"}}>Add Item</h2>
           <div className="one-column-form">
             <div className="field-group">
               <Label htmlFor="category">Category</Label>
@@ -957,7 +964,6 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
               />
             </div>
 
-            {/* Update Design Image Upload UI with centered red icon */}
             <div className="field-group">
               <Label htmlFor="designImage">Design Image</Label>
               <div className="flex items-center gap-4">
@@ -1016,6 +1022,163 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
             Add Item
           </button>
         </div>
+
+
+   {/* design bank  */}
+
+      {/* {activeTab === "designBank" && (
+         <div className="form-card" id="AddItemBox">
+          <h2 style={{textAlign:"center"}}>Design Bank</h2>
+          <div className="one-column-form">
+            <div className="field-group">
+              <Label htmlFor="category">Category</Label>
+              <Input
+                id="designcategory"
+                value={formData.category}
+                onChange={(e) =>
+                  handleInputChange("category", e.target.value)
+                }
+                placeholder="e.g., Pendant"
+                disabled={!isOrderSaved}
+              />
+            </div>
+
+            <div className="field-group">
+              <Label htmlFor="wtRange">Weight Range</Label>
+              <Input
+                id="wtRange"
+                value={formData.wtRange}
+                onChange={(e) => handleInputChange("wtRange", e.target.value)}
+                placeholder="e.g., 10-15g"
+                disabled={!isOrderSaved}
+              />
+            </div>
+
+            <div className="field-group">
+              <Label htmlFor="size">Size</Label>
+              <Input
+                id="size"
+                value={formData.size}
+                onChange={(e) => handleInputChange("size", e.target.value)}
+                placeholder="Size"
+                disabled={!isOrderSaved}
+              />
+            </div>
+
+            <div className="field-group">
+              <Label htmlFor="quantity">Quantity</Label>
+              <Input
+                id="quantity"
+                type="number"
+                min="1"
+                value={formData.quantity}
+                onChange={(e) => handleInputChange("quantity", e.target.value)}
+                placeholder="Quantity"
+                disabled={!isOrderSaved}
+              />
+            </div>
+
+            <div className="field-group">
+              <Label htmlFor="itemRemark">Item Remark</Label>
+              <Input
+                id="itemRemark"
+                value={formData.itemRemark}
+                onChange={(e) =>
+                  handleInputChange("itemRemark", e.target.value)
+                }
+                placeholder="Any special instructions"
+                disabled={!isOrderSaved}
+              />
+            </div>
+
+            <div className="field-group">
+              <Label htmlFor="designImage">Design Image</Label>
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="designImage"
+                  />
+                  {!imagePreview ? (
+                    <Button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full"
+                    >
+                      Upload Design Image
+                    </Button>
+                  ) : (
+                    <div className="flex items-center gap-4 p-3 border rounded-md bg-white">
+                      <div className="relative w-20 h-20 flex-shrink-0">
+                        <Image
+                          src={imagePreview}
+                          alt="Design preview"
+                          fill
+                          className="object-contain rounded-md"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          setDesignImage(null);
+                          setImagePreview(null);
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = '';
+                          }
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <button 
+            className="add-item-button" 
+            onClick={handleAddItem}
+            disabled={!isOrderSaved}
+          >
+            Add Item
+          </button>
+        </div>
+             )} */}
+                  {/* ========  design bank button ========= */}
+
+        {/* <div className="flex flex-col gap-2 ">
+          <button
+            onClick={() => setActiveTab("addItem")}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              activeTab === "addItem"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Add Item
+          </button>
+
+          <button
+            onClick={() => setActiveTab("designBank")}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              activeTab === "designBank"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Design Bank
+          </button>
+        </div> */}
+
+
+
+
       </div>
 
       {/* Tables Container */}
