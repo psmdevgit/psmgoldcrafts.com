@@ -32,6 +32,8 @@ interface OrderFormModalProps {
   setOpen: (open: boolean) => void;
 }
 
+
+
 interface FormData {
   partyLedger: string;
   subname: string;
@@ -107,6 +109,71 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
 
   /* ---------------------- API ---------------------- */
   const apiBaseUrl ="https://erp-server-r9wh.onrender.com";;
+
+
+  interface Category {
+  Id: string;
+  Name: string;
+}
+
+interface Model {
+  Id: string;
+  Name: string;
+  Image_URL__c?: string;
+}
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedModel, setSelectedModel] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+
+    useEffect(() => {
+      fetchCategories();
+    }, []);
+
+      // Fetch categories on page load
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/category-groups`);
+      const result = await response.json();
+      if (result.success) {
+        setCategories(result.data);
+        console.log("cat"+result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+    // Fetch models when category changes
+  useEffect(() => {
+    if (!selectedCategory) {
+      setModels([]);
+      setSelectedModel("");
+      setImageUrl("");
+      return;
+    }
+
+    fetch(`${apiBaseUrl}/api/previewModels?categoryId=${selectedCategory}`)
+      .then((res) => res.json())
+      .then((data) => setModels(data))
+      .catch((err) => console.error(err));
+  }, [selectedCategory]);
+  
+    useEffect(() => {
+    if (!selectedModel) {
+      setImagePreview("");
+      return;
+    }
+
+    const model = models.find((m) => m.Id === selectedModel);
+    if (model && model.Image_URL__c) {
+      setImagePreview(model.Image_URL__c);
+    } else {
+      setImagePreview("");
+    }
+  }, [selectedModel, models]);
 
 
    const [activeTab, setActiveTab] = useState<"addItem" | "designBank">("addItem");
@@ -243,7 +310,8 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
 
   const handleAddItem = () => {
     if (!isOrderSaved) {
-      toast.error("Please save the order first");
+      // toast.error("Please save the order first");
+      alert("Please save the order first");
       return;
     }
 
@@ -556,7 +624,7 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
       height: logoHeight,
     });
   
-    page.drawText("Needha Gold Order Invoice", {
+    page.drawText("PSM Gold Crafts Order Invoice", {
       x: margin + logoWidth + 10,
       y,
       size: 16,
@@ -898,7 +966,7 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
 
         {/* Second Form */}
 
-  {/* {activeTab === "addItem" && ( */}
+  {activeTab === "addItem" && (
 
         <div className="form-card" id="AddItemBox">
           <h2 style={{textAlign:"center"}}>Add Item</h2>
@@ -1022,73 +1090,114 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
             Add Item
           </button>
         </div>
-
+  )}
 
    {/* design bank  */}
 
-      {/* {activeTab === "designBank" && (
+      {activeTab === "designBank" && (
          <div className="form-card" id="AddItemBox">
           <h2 style={{textAlign:"center"}}>Design Bank</h2>
           <div className="one-column-form">
-            <div className="field-group">
-              <Label htmlFor="category">Category</Label>
-              <Input
-                id="designcategory"
-                value={formData.category}
-                onChange={(e) =>
-                  handleInputChange("category", e.target.value)
-                }
-                placeholder="e.g., Pendant"
-                disabled={!isOrderSaved}
-              />
+            <div className="fieldgroup flex gap-2">
+
+              <div style={{width:"50%"}}> 
+                  <Label htmlFor="category" className="font-bold">Category</Label>
+                  <select
+                      value={selectedCategory}
+                      onChange={(e) =>  {handleInputChange("category", e.target.value); setSelectedCategory(e.target.value);}}
+                                className="w-full border p-2 rounded"
+                                // disabled={!isOrderSaved}
+                    >
+                      <option value="">-- Select Category --</option>
+                      {categories.map((cat) => (
+                        <option key={cat.Id} value={cat.Id}>
+                          {cat.Name}
+                        </option>
+                      ))}
+                    </select>
+
+              </div>
+            
+              <div style={{width:"50%"}}>
+                     <label className="font-bold">Model Name: </label>
+                    <select
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value)}
+                      disabled={!selectedCategory || models.length === 0}
+                      className="w-full border p-2 rounded"
+                    >
+                      {models.length === 0 ? (
+                        <option value="">No Models</option>
+                      ) : (
+                        <>
+                          <option value="">-- Select Model --</option>
+                          {models.map((model) => (
+                            <option key={model.Id} value={model.Id}>
+                              {model.Name}
+                            </option>
+                          ))}
+                        </>
+                      )}
+                    </select>
+              </div>
+
+              
             </div>
 
-            <div className="field-group">
-              <Label htmlFor="wtRange">Weight Range</Label>
-              <Input
-                id="wtRange"
-                value={formData.wtRange}
-                onChange={(e) => handleInputChange("wtRange", e.target.value)}
-                placeholder="e.g., 10-15g"
-                disabled={!isOrderSaved}
-              />
+            <div className="fieldgroup flex gap-2" >
+              
+              <div style={{width:"50%"}}>
+                  <Label htmlFor="wtRange">Weight Range</Label>
+                    <Input
+                      id="wtRange"
+                      value={formData.wtRange}
+                      onChange={(e) => handleInputChange("wtRange", e.target.value)}
+                      placeholder="e.g., 10-15g"
+                      disabled={!isOrderSaved}
+                    />
+              </div>
+            
+                <div style={{width:"50%"}}>
+                   <Label htmlFor="size">Size</Label>
+                    <Input
+                      id="size"
+                      value={formData.size}
+                      onChange={(e) => handleInputChange("size", e.target.value)}
+                      placeholder="Size"
+                      disabled={!isOrderSaved}
+                    />
+                </div>
             </div>
 
-            <div className="field-group">
-              <Label htmlFor="size">Size</Label>
-              <Input
-                id="size"
-                value={formData.size}
-                onChange={(e) => handleInputChange("size", e.target.value)}
-                placeholder="Size"
-                disabled={!isOrderSaved}
-              />
-            </div>
 
-            <div className="field-group">
-              <Label htmlFor="quantity">Quantity</Label>
-              <Input
-                id="quantity"
-                type="number"
-                min="1"
-                value={formData.quantity}
-                onChange={(e) => handleInputChange("quantity", e.target.value)}
-                placeholder="Quantity"
-                disabled={!isOrderSaved}
-              />
-            </div>
+            <div className="fieldgroup flex gap-2">
+              
+                <div style={{width:"50%"}}>
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    value={formData.quantity}
+                    onChange={(e) => handleInputChange("quantity", e.target.value)}
+                    placeholder="Quantity"
+                    disabled={!isOrderSaved}
+                  />
+                </div>
+                
+                <div style={{width:"50%"}}>
+                  <Label htmlFor="itemRemark">Item Remark</Label>
+                  <Input
+                    id="itemRemark"
+                    value={formData.itemRemark}
+                    onChange={(e) =>
+                      handleInputChange("itemRemark", e.target.value)
+                    }
+                    placeholder="Any special instructions"
+                    disabled={!isOrderSaved}
+                  />
+                </div>
 
-            <div className="field-group">
-              <Label htmlFor="itemRemark">Item Remark</Label>
-              <Input
-                id="itemRemark"
-                value={formData.itemRemark}
-                onChange={(e) =>
-                  handleInputChange("itemRemark", e.target.value)
-                }
-                placeholder="Any special instructions"
-                disabled={!isOrderSaved}
-              />
             </div>
 
             <div className="field-group">
@@ -1104,21 +1213,19 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
                     id="designImage"
                   />
                   {!imagePreview ? (
-                    <Button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
+                    <Label
                       className="w-full"
                     >
-                      Upload Design Image
-                    </Button>
+                      Select category and model.
+                    </Label>
                   ) : (
                     <div className="flex items-center gap-4 p-3 border rounded-md bg-white">
-                      <div className="relative w-20 h-20 flex-shrink-0">
+                      <div className="relative w-80 h-80 flex-shrink-0">
                         <Image
                           src={imagePreview}
                           alt="Design preview"
                           fill
-                          className="object-contain rounded-md"
+                          className="object-contain rounded-md w-40"
                         />
                       </div>
                       <Button
@@ -1149,10 +1256,11 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
             Add Item
           </button>
         </div>
-             )} */}
+             )}
+
                   {/* ========  design bank button ========= */}
 
-        {/* <div className="flex flex-col gap-2 ">
+        <div className="flex flex-col gap-2 ">
           <button
             onClick={() => setActiveTab("addItem")}
             className={`px-4 py-2 rounded-lg font-medium ${
@@ -1174,7 +1282,7 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
           >
             Design Bank
           </button>
-        </div> */}
+        </div>
 
 
 

@@ -74,7 +74,7 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
                             </Link>
                         </li>
                         <li>
-                            <Link href="">
+                            <Link href="/">
                         <LogOut/>
                                 Log Out</Link>
                         </li>

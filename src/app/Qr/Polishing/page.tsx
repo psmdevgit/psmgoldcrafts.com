@@ -153,7 +153,7 @@ const PolishingSummary: React.FC = () => {
       iconClass: "fa-light fa-weight-scale",
       title: "Processing Weight",
       value: totalProcessingWeight.toFixed(2) + " g",
-      description: "Issued but not yet received (All Time)",
+      description: "Issued but not yet received",
       percentageChange: "",
       isIncrease: true,
     },

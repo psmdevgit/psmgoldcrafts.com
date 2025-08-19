@@ -119,6 +119,12 @@ const CastingSummary: React.FC = () => {
 
   // Calculate summary statistics
   const calculateSummary = () => {
+
+      const totalProcessingWeight = castingData.reduce((sum, item) => {
+    const received = Number(item.receivedWeight || 0);
+    return received ? sum : sum + Number(item.issuedWeight || 0);
+  }, 0);
+
     const totalCastings = filteredData.length;
     const totalIssuedWeight = filteredData.reduce(
       (sum, item) => sum + Number(item.issuedWeight || 0),
@@ -151,7 +157,14 @@ const CastingSummary: React.FC = () => {
         percentageChange: "",
         isIncrease: true,
       },
-    
+        {
+      iconClass: "fa-light fa-weight-scale",
+      title: "Processing Weight",
+      value: totalProcessingWeight.toFixed(2) + " g",
+      description: "Issued but not yet received",
+      percentageChange: "",
+      isIncrease: true,
+    },
       {
         iconClass: "fa-light fa-weight-scale",
         title: "Weight Issued",

@@ -27,9 +27,10 @@ export default function SummaryPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ||
-    "https://erp-server-r9wh.onrender.com";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com";
+  
+  // const API_URL = "http://localhost:5001";
+
 
   const fetchData = async () => {
     const query = `${API_URL}/api/process-report`;

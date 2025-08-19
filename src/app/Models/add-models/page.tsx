@@ -142,10 +142,10 @@ const StoneDetailsModal = ({
 
 // Main Component
 const AddJewelryModel = () => {
-  // const apiBaseUrl = process.env.API_URL || "https://erp-server-r9wh.onrender.com" ;
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
 
   
-  const apiBaseUrl = process.env.API_URL || "http://localhost:5001" ;
+  // const apiBaseUrl = process.env.API_URL || "http://localhost:5001" ;
 
   const router = useRouter();
 
