@@ -142,10 +142,10 @@ const StoneDetailsModal = ({
 
 // Main Component
 const AddJewelryModel = () => {
-  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
+  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
   
-  // const apiBaseUrl = process.env.API_URL || "http://localhost:5001" ;
+  // const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001" ;
 
   const router = useRouter();
 
@@ -207,31 +207,31 @@ const AddJewelryModel = () => {
 
   // inside AddJewelryModel.tsx
 
-const handleCategoryChange = async (value: string) => {
-  handleInputChange("category", value);
+// const handleCategoryChange = async (value: string) => {
+//   handleInputChange("category", value);
 
-  if (!value) return;
+//   if (!value) return;
 
-  try {
-    const response = await fetch(`${apiBaseUrl}/generate-model-name`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category: value }),
-    });
+//   try {
+//     const response = await fetch(`${apiBaseUrl}/generate-model-name`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ category: value }),
+//     });
 
-    const result = await response.json();
-    if (result.success) {
-      setFormData(prev => ({
-        ...prev,
-        modelName: result.modelName, // auto-fill
-      }));
-    } else {
-      console.error("Model generation failed:", result.message);
-    }
-  } catch (err) {
-    console.error("Error generating model name:", err);
-  }
-};
+//     const result = await response.json();
+//     if (result.success) {
+//       setFormData(prev => ({
+//         ...prev,
+//         modelName: result.modelName, // auto-fill
+//       }));
+//     } else {
+//       console.error("Model generation failed:", result.message);
+//     }
+//   } catch (err) {
+//     console.error("Error generating model name:", err);
+//   }
+// };
 
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -412,7 +412,7 @@ const handleCategoryChange = async (value: string) => {
               <select
                 id="category"
                 value={formData.category}
-                onChange={(e) => handleCategoryChange(e.target.value)}
+                onChange={(e) => handleInputChange('category',e.target.value)}
                 className="w-full border p-2 rounded"
                 required
               >
