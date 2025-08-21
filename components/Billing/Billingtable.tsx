@@ -36,7 +36,9 @@ import * as XLSX from 'xlsx';
 import BillingTableControls from "./BillingTableControls";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
 const downloadPDF = async (pdfUrl: string) => {
   try {
     const response = await fetch(pdfUrl, {

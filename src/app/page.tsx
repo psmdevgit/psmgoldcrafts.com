@@ -13,7 +13,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   // API base URL (Uses `.env.local` for flexibility)
-  const API_BASE_URL="https://erp-server-r9wh.onrender.com";
+  const API_BASE_URL = "https://erp-server-r9wh.onrender.com" ;
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

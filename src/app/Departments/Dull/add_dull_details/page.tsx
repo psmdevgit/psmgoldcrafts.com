@@ -39,6 +39,8 @@ export default function AddDullDetails() {
   const [orderId, setOrderId] = useState<string>('');
   const router = useRouter();
 
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const initializeDull = async () => {
       if (!sourceId) {
@@ -58,9 +60,9 @@ export default function AddDullDetails() {
         // Determine the API endpoint based on source type
         let apiEndpoint;
         if (sourceType === 'polishing') {
-          apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/polish/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+          apiEndpoint = `${apiBaseUrl}/api/polish/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
         } else if (sourceType === 'grinding') {
-          apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/grinding/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+          apiEndpoint = `${apiBaseUrl}/api/grinding/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
         } else {
           throw new Error('Invalid source type');
         }
@@ -197,11 +199,11 @@ export default function AddDullDetails() {
       };
 
       console.log('[Add Dull] Submitting to API:', {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/api/dull/create`,
+        url: `${apiBaseUrl}/api/dull/create`,
         data: JSON.stringify(dullData, null, 2)
       });
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/dull/create`, {
+      const response = await fetch(`${apiBaseUrl}/api/dull/create`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json'

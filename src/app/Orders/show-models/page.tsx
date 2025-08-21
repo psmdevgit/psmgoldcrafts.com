@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 
-const apiBaseUrl ="https://erp-server-r9wh.onrender.com";
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
 interface OrderDetails {
   orderId: string;

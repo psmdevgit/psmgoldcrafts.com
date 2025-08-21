@@ -16,6 +16,8 @@ function DashbordSummary() {
     const [showCustomDatePicker, setShowCustomDatePicker] = useState<boolean>(false);
 const [ProcesWt, setProcesWeight] = useState<number>(0);
 
+
+
     // Fetch casting data
     useEffect(() => {
         const getData = async () => {

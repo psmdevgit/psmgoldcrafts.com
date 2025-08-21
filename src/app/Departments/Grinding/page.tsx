@@ -51,8 +51,10 @@ export default function CreateGrindingFromDepartment() {
   const [filingId, setFilingId] = useState<string>('');
   const [filingWeight, setFilingWeight] = useState<number>(0);
   const [selectedPouches, setSelectedPouches] = useState<{ [key: string]: boolean }>({});
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
   const router = useRouter();
+
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
   // Fetch department records when department changes
   useEffect(() => {

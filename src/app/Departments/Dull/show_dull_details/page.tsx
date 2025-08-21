@@ -65,6 +65,9 @@ const DullDetailsPage = () => {
   const searchParams = useSearchParams();
   const dullId = searchParams.get('dullId');
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!dullId) {
@@ -78,11 +81,11 @@ const DullDetailsPage = () => {
         const [prefix, date, month, year, number] = dullId.split('/');
         console.log('[Show Dull] Fetching details for:', {
           prefix, date, month, year, number,
-          url: `${process.env.NEXT_PUBLIC_API_URL}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}`
+          url: `${apiBaseUrl}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}`
         });
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}`
         );      
         const result = await response.json();
         

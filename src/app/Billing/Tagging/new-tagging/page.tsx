@@ -70,7 +70,9 @@ const NewTagging = () => {
   const [submittedItems, setSubmittedItems] = useState<SubmittedTaggedItem[]>([]);
   const [isSubmittingModels, setIsSubmittingModels] = useState(false);
   const [isSubmittingTagging, setIsSubmittingTagging] = useState(false);
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
+  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
   // Add this helper function at the top of your component
   const getInitialTaggingNumber = () => {

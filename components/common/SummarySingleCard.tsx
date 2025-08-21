@@ -58,6 +58,11 @@ const SummarySingleCard: React.FC<CardProps> = ({
           </div>
         </div>
       </div>
+ <style jsx>{`
+  .card__desc{
+    font-size:.7rem;
+  }
+  `}</style>
     </div>
   );
 };

@@ -23,6 +23,9 @@ const RefinerySummary: React.FC = () => {
   const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
   const [showCustomDatePicker, setShowCustomDatePicker] = useState<boolean>(false);
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   const fetchSummaryData = async (startDate: Date, endDate: Date) => {
     try {
       setLoading(true);
@@ -43,7 +46,7 @@ const RefinerySummary: React.FC = () => {
       });
       
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/department-losses?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
+        `${apiBaseUrl}/api/department-losses?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
       );
 
       if (!response.ok) throw new Error('Failed to fetch data');

@@ -23,6 +23,7 @@ interface FormData {
   modelName: string;
   size: string;
   grossWeight: string;
+  submitBy: string;
 }
 
 // Stone Details Modal Component
@@ -156,7 +157,8 @@ const AddJewelryModel = () => {
     category: '',
     modelName: '',
     size: '',
-    grossWeight: ''
+    grossWeight: '',
+    submitBy: ''
   });
 
   const [itemGroups, setItemGroups] = useState([]);
@@ -271,6 +273,7 @@ const AddJewelryModel = () => {
         "category": formData.category || '',
         "size": formData.size || '',
         "gross-weight": formData.grossWeight || '',
+        "submitby": formData.submitBy || '',
         "project": "",
         "die-no": "",
         "sketch-no": "",
@@ -337,7 +340,9 @@ const AddJewelryModel = () => {
           category: '',
           modelName: '',
           size: '',
-          grossWeight: ''
+          grossWeight: '',
+          submitBy: ''
+
         });
         // Reset stone details
         setStoneDetails([]);
@@ -463,7 +468,7 @@ const AddJewelryModel = () => {
             </div>
 
             {/* Image Upload */}
-            <div className="col-span-2">
+            <div className="">
               <Label htmlFor="modelImage">Model Image</Label>
               <Input
                 id="modelImage"
@@ -480,6 +485,19 @@ const AddJewelryModel = () => {
                 />
               )}
             </div>
+
+                {/* Submit By */}
+            <div>
+              <Label htmlFor="submitBy">Submit By</Label>
+              <Input
+                id="submitBy"
+                value={formData.submitBy}
+                onChange={(e) => handleInputChange('submitBy', e.target.value)}
+                placeholder=""
+                required
+              />
+            </div>
+
 
             {/* Stone Details */}
             <div className="col-span-2">

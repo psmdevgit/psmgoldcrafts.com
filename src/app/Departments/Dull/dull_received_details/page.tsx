@@ -8,7 +8,9 @@ import { z } from 'zod';
 import { Label } from "@/components/ui/label";
 import { useRouter } from 'next/navigation';
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
 interface Setting {
   Id: string;

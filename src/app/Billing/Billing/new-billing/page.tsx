@@ -111,11 +111,14 @@ export default function InvoiceGenerator() {
   // Add custom percentages state
   const [customPercentages, setCustomPercentages] = useState<{ [key: string]: number }>({});
 
+  
+  const API_BASE_URL = "https://erp-server-r9wh.onrender.com" ;
+
   // Fetch all tagging IDs on component mount
   useEffect(() => {
     const fetchTaggingOptions = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tagging`);
+        const response = await fetch(`${API_BASE_URL}/api/tagging`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -148,7 +151,7 @@ export default function InvoiceGenerator() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tagging-details/${taggingId}`);
+        const response = await fetch(`${API_BASE_URL}/api/tagging-details/${taggingId}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -174,7 +177,7 @@ export default function InvoiceGenerator() {
   const fetchPartyDetails = async (partyCode: string) => {
     try {
       console.log('Fetching party details for:', partyCode);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/partyledger/${partyCode}`);
+      const response = await fetch(`${API_BASE_URL}/api/partyledger/${partyCode}`);
       
       if (!response.ok) {
         console.error('Response not OK:', response.status, response.statusText);
@@ -1316,7 +1319,7 @@ export default function InvoiceGenerator() {
       });
 
       // Submit to API
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/submit`, {
+      const response = await fetch(`${API_BASE_URL}/api/billing/submit`, {
         method: 'POST',
         body: formData
       });

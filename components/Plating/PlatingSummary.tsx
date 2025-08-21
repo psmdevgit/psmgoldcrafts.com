@@ -354,7 +354,7 @@ const PlatingSummary: React.FC = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {loading ? (
           <div className="col-span-full text-center py-8 text-gray-500">
             Loading plating data...

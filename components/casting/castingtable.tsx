@@ -34,7 +34,8 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
 const downloadPDF = async (pdfUrl: string) => {
   try {
     const response = await fetch(pdfUrl, {

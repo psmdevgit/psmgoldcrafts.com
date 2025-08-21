@@ -55,7 +55,11 @@ const departments: Department[] = [
   { value: 'plating', label: 'Plating', path: '/Departments/Plating/add_plating_details' }
 ];
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
 const downloadPDF = async (pdfUrl: string) => {
   try {
     const response = await fetch(pdfUrl, {

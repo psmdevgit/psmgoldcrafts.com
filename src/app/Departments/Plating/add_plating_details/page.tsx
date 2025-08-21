@@ -35,6 +35,9 @@ export default function AddPlatingDetails() {
   const [orderId, setOrderId] = useState<string>('');
   const router = useRouter();
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const initializePlating = async () => {
       if (!dullId) {
@@ -52,11 +55,11 @@ export default function AddPlatingDetails() {
         setFormattedId(generatedPlatingId);
 
         console.log('[Add Plating] Fetching pouches from:', {
-          url: `${process.env.NEXT_PUBLIC_API_URL}/api/dull/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`
+          url: `${apiBaseUrl}/api/dull/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`
         });
 
         const pouchResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/dull/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`
+          `${apiBaseUrl}/api/dull/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`
         );
 
         const pouchResult = await pouchResponse.json();
@@ -168,11 +171,11 @@ export default function AddPlatingDetails() {
       };
 
       console.log('[Add Plating] Submitting to API:', {
-        url: `${process.env.NEXT_PUBLIC_API_URL}/api/plating/create`,
+        url: `${apiBaseUrl}/api/plating/create`,
         data: JSON.stringify(platingData, null, 2)
       });
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/plating/create`, {
+      const response = await fetch(`${apiBaseUrl}/api/plating/create`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json'

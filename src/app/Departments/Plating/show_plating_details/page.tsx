@@ -72,6 +72,9 @@ const PlatingDetailsPage = () => {
   const searchParams = useSearchParams();
   const platingId = searchParams.get('platingId');
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const fetchPlatingDetails = async () => {
       if (!platingId) {
@@ -89,7 +92,7 @@ const PlatingDetailsPage = () => {
           throw new Error('Invalid plating ID format');
         }
 
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/plating-details/${prefix}/${date}/${month}/${year}/${number}`;
+        const apiUrl = `${apiBaseUrl}/api/plating-details/${prefix}/${date}/${month}/${year}/${number}`;
         console.log('[Plating Details] Fetching from:', apiUrl);
 
         const response = await fetch(apiUrl);

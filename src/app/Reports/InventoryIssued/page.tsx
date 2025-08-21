@@ -149,7 +149,7 @@ const [allNames, setAllNames] = useState<string[]>([]);
 
 
   // const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com" ;
+  const API_URL = "https://erp-server-r9wh.onrender.com" ;
 
 
   useEffect(() => {

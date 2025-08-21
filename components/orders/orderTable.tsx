@@ -36,7 +36,7 @@ interface Column {
   format?: (value: any) => string;
 }
 
-const apiBaseUrl = process.env.apu_url || "https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
 
 const downloadPDF = async (pdfUrl: string) => {
   try {

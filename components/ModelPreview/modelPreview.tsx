@@ -19,7 +19,7 @@ export default function ImageShowPage() {
   const [selectedModel, setSelectedModel] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
-    const apiBaseUrl = process.env.API_URL || "https://erp-server-r9wh.onrender.com" ;
+    const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
   
   // const apiBaseUrl = process.env.API_URL || "http://localhost:5001" ;

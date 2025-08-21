@@ -12,10 +12,8 @@ const InventoryItemSummary: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL =  process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com";
-
-  // const API_URL =   "http://localhost:5001";
-
+  const API_URL = "https://erp-server-r9wh.onrender.com";
+  // const API_URL = "http://localhost:5001";
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -52,6 +50,11 @@ const InventoryItemSummary: React.FC = () => {
     fetchReports();
   }, []);
 
+  // ✅ filter here so we can reuse
+  const filteredReports = reports.filter(
+    (report) => Number(report.availableWeight) > 0
+  );
+
   return (
     <div className="w-full mt-20" style={{ height: "100vh" }}>
       <div className="max-w-screen-md mx-auto p-6 bg-white shadow rounded-lg">
@@ -62,17 +65,14 @@ const InventoryItemSummary: React.FC = () => {
         {isLoading && <p className="text-gray-500">Loading...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
 
-        {!isLoading && !error && reports.length === 0 && (
+        {!isLoading && !error && filteredReports.length === 0 && (
           <p className="text-gray-500">No reports found.</p>
         )}
 
-        {!isLoading && !error && reports.length > 0 && (
+        {!isLoading && !error && filteredReports.length > 0 && (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead
-                className="bg-[#1A7A75]"
-                style={{ color: "white" }}
-              >
+              <thead className="bg-[#1A7A75]" style={{ color: "white" }}>
                 <tr>
                   <th className="px-4 py-2 text-left text-sm font-semibold">
                     Item
@@ -89,40 +89,43 @@ const InventoryItemSummary: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {reports
-                  .filter(
-                    (report) => Number(report.availableWeight) > 0
-                  )
-                .map((report, index) => {
-  // Normalize the purity string for comparison
-  const purityString = String(report.purity).trim().toLowerCase();
+                {filteredReports.map((report, index) => {
+                  const purityString = String(report.purity).trim().toLowerCase();
+                  let purityValue: number;
 
-  let purityValue: number;
-
-  if (purityString.includes("22k")) {
-    purityValue = 91.7; // hardcode percentage for 22K gold
-  } else {
-    purityValue = parseFloat(purityString) || 0;
-  }
-
-  const availableWeightValue = Number(report.availableWeight) || 0;
-
-  const purityGoldWeight = (
-    (purityValue * availableWeightValue) / 100
-  ).toFixed(4);
-
-  return (
-    <tr key={`${report.name}-${index}`} className="hover:bg-gray-50">
-      <td className="px-4 py-2 text-sm text-gray-800">{report.name}</td>
-      <td className="px-4 py-2 text-sm text-gray-800">{report.purity}</td>
-      <td className="px-4 py-2 text-sm text-gray-800">{availableWeightValue.toFixed(4)}</td>
-      <td className="px-4 py-2 text-sm text-gray-800">{purityGoldWeight}</td>
-    </tr>
-  );
-})
-
-                  
+                  if (purityString.includes("22k")) {
+                    purityValue = 91.7; // 22K gold percentage
+                  } else {
+                    purityValue = parseFloat(purityString) || 0;
                   }
+
+                  const availableWeightValue =
+                    Number(report.availableWeight) || 0;
+
+                  const purityGoldWeight = (
+                    (purityValue * availableWeightValue) / 100
+                  ).toFixed(4);
+
+                  return (
+                    <tr
+                      key={`${report.name}-${index}`}
+                      className="hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-2 text-sm text-gray-800">
+                        {report.name}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-800">
+                        {report.purity}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-800">
+                        {availableWeightValue.toFixed(4)}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-800">
+                        {purityGoldWeight}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

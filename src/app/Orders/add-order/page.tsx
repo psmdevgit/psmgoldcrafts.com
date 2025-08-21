@@ -78,10 +78,23 @@ interface OrderItem {
   designImage?: string;
 }
 
+interface OrderSelectedItem {
+  category: string;
+  weightRange: string;
+  size: string;
+  quantity: string;
+  remark: string;
+  designImage?: string;
+}
+
+
 const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   /* ---------------------- STATE ---------------------- */
   const [orderInfo, setOrderInfo] = useState<OrderInfo | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  
+  const [orderSelectedItems, setOrderSelectedItems] = useState<OrderSelectedItem[]>([]);
+
   const [partyLedgers, setPartyLedgers] = useState<string[]>([]);
   const [isOrderSaved, setIsOrderSaved] = useState(false);
   const [designImage, setDesignImage] = useState<File | null>(null);
@@ -108,7 +121,7 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   });
 
   /* ---------------------- API ---------------------- */
-  const apiBaseUrl ="https://erp-server-r9wh.onrender.com";;
+  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
 
   interface Category {
@@ -125,8 +138,19 @@ interface Model {
   const [categories, setCategories] = useState<Category[]>([]);
   const [models, setModels] = useState<Model[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedModel, setSelectedModel] = useState("");
+  
+const [selectedModels, setSelectedModels] = useState([]);
+
+
   const [imageUrl, setImageUrl] = useState("");
+
+const handleModelSelect = (modelId) => {
+  setSelectedModels((prev) =>
+    prev.includes(modelId) ? prev.filter((id) => id !== modelId) : [...prev, modelId]
+  );
+};
+
+
 
     useEffect(() => {
       fetchCategories();
@@ -150,7 +174,6 @@ interface Model {
   useEffect(() => {
     if (!selectedCategory) {
       setModels([]);
-      setSelectedModel("");
       setImageUrl("");
       return;
     }
@@ -161,19 +184,20 @@ interface Model {
       .catch((err) => console.error(err));
   }, [selectedCategory]);
   
-    useEffect(() => {
-    if (!selectedModel) {
-      setImagePreview("");
-      return;
-    }
+  
+  //   useEffect(() => {
+  //   if (!selectedModel) {
+  //     setImagePreview("");
+  //     return;
+  //   }
 
-    const model = models.find((m) => m.Id === selectedModel);
-    if (model && model.Image_URL__c) {
-      setImagePreview(model.Image_URL__c);
-    } else {
-      setImagePreview("");
-    }
-  }, [selectedModel, models]);
+  //   const model = models.find((m) => m.Id === selectedModel);
+  //   if (model && model.Image_URL__c) {
+  //     setImagePreview(model.Image_URL__c);
+  //   } else {
+  //     setImagePreview("");
+  //   }
+  // }, [selectedModel, models]);
 
 
    const [activeTab, setActiveTab] = useState<"addItem" | "designBank">("addItem");
@@ -340,6 +364,54 @@ interface Model {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleAddSelectedItem = () => {
+      // if (!isOrderSaved) {
+    //   // toast.error("Please save the order first");
+    //   alert("Please save the order first");
+    //   return;
+    // }
+  if (selectedModels.length === 0) {
+    alert("Please select at least one model");
+    return;
+  }
+
+  const newItems = selectedModels.map((modelId) => {
+    const model = models.find((m) => m.Id === modelId);
+
+    return {
+      category: formData.category,
+      weightRange: formData.wtRange,
+      size: formData.size,
+      quantity: formData.quantity,
+      remark: formData.itemRemark,
+      designImage: model?.Image_URL__c || null,
+      modelName: model?.Name || ""
+    };
+  });
+
+  setOrderSelectedItems([...orderSelectedItems, ...newItems]);
+
+  console.log(orderSelectedItems);
+  // reset form
+  setFormData({
+    ...formData,
+    category: "",
+    wtRange: "",
+    size: "",
+    quantity: "",
+    itemRemark: ""
+  });
+  setSelectedModels([]);
+};
+
+
+    
+const handleRemoveSelectedItem = (index: number) => {
+    const updated = [...orderSelectedItems];
+    updated.splice(index, 1);
+    setOrderSelectedItems(updated);
   };
 
   const handleRemoveItem = (index: number) => {
@@ -823,13 +895,13 @@ interface Model {
   }
   /* ---------------------- RENDER ---------------------- */
   return (
-    <div className="container">
+    <div className="container ">
       <h1 className="page-title">Create Order</h1>
       
       {/* Both forms wrapped in a single container */}
-      <div className="forms-container">
+      <div className="forms-containe grid grid-cols-1 md:grid-cols-[50%_50%] gap-4 w-full">
         {/* First Form */}
-        <div className="form-card">
+        <div className="form-card ">
           <h2 style={{textAlign:"center"}}>Order Information</h2>
           <div className="two-column-form">
             {/* Party Ledger */}
@@ -964,14 +1036,45 @@ interface Model {
           <button className="save-button" onClick={handleSaveOrder}>Save Order</button>
         </div>
 
-        {/* Second Form */}
+
+
+
+<div>
+  
+         {/* ========  design bank button ========= */}
+     <div className="flex flex gap-2 justify-center my-3">
+          <button
+            onClick={() => setActiveTab("addItem")}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              activeTab === "addItem"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Add Item
+          </button>
+
+          <button
+            onClick={() => setActiveTab("designBank")}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              activeTab === "designBank"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Design Bank
+          </button>
+        </div>
+
+
+  {/* Second Form */}
 
   {activeTab === "addItem" && (
 
         <div className="form-card" id="AddItemBox">
           <h2 style={{textAlign:"center"}}>Add Item</h2>
           <div className="one-column-form">
-            <div className="field-group">
+            <div className="field-group" >
               <Label htmlFor="category">Category</Label>
               <Input
                 id="category"
@@ -1118,13 +1221,14 @@ interface Model {
 
               </div>
             
-              <div style={{width:"50%"}}>
+              {/* <div style={{width:"50%"}}>
                      <label className="font-bold">Model Name: </label>
                     <select
                       value={selectedModel}
                       onChange={(e) => setSelectedModel(e.target.value)}
                       disabled={!selectedCategory || models.length === 0}
                       className="w-full border p-2 rounded"
+                      disabled={!selectedCategory}
                     >
                       {models.length === 0 ? (
                         <option value="">No Models</option>
@@ -1139,12 +1243,12 @@ interface Model {
                         </>
                       )}
                     </select>
-              </div>
+              </div> */}
 
               
             </div>
 
-            <div className="fieldgroup flex gap-2" >
+            {/* <div className="fieldgroup flex gap-2" >
               
               <div style={{width:"50%"}}>
                   <Label htmlFor="wtRange">Weight Range</Label>
@@ -1167,10 +1271,10 @@ interface Model {
                       disabled={!isOrderSaved}
                     />
                 </div>
-            </div>
+            </div> */}
 
 
-            <div className="fieldgroup flex gap-2">
+            {/* <div className="fieldgroup flex gap-2">
               
                 <div style={{width:"50%"}}>
                   <Label htmlFor="quantity">Quantity</Label>
@@ -1198,11 +1302,11 @@ interface Model {
                   />
                 </div>
 
-            </div>
+            </div> */}
 
             <div className="field-group">
               <Label htmlFor="designImage">Design Image</Label>
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <input
                     type="file"
@@ -1245,44 +1349,62 @@ interface Model {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
+
+            <div className="modelPreview grid grid-cols-2 md:grid-cols-2 gap-4 mt-4" style={{maxHeight:"350px",overflow:"scroll"}}>
+              {models.length > 0 ? (
+                models.map((model) => (
+                  // <div key={model.Id} className="p-2 border rounded-md text-center" style={{background:"#eee"}}>
+                  //   <img
+                  //     src={model.Image_URL__c}
+                  //     alt={model.Name}
+                  //     className="w-50 h-50 object-contain mx-auto"
+                  //   />
+                  //   <p className="mt-2 text-sm font-medium">{model.Name}</p>
+                  // </div>
+
+                  <div
+                          key={model.Id}
+                            onClick={() => handleModelSelect(model.Id)}
+                          className={`p-2 border rounded-md text-center cursor-pointer transition ${
+                            selectedModels.includes(model.Id) ? "bg-blue-200 border-blue-500" : "bg-gray-100"
+                          }`}
+                        >
+                          <img
+                            src={model.Image_URL__c}
+                            alt={model.Name}
+                            className="w-50 h-50 object-contain mx-auto"
+                          />
+                          <p className="mt-2 text-sm font-medium">{model.Name}</p>
+                        </div>
+
+
+                ))
+              ) : (
+                <p className="col-span-full text-gray-500">No models available for this category</p>
+              )}
+            </div>
+
+
             </div>
           </div>
           <button 
             className="add-item-button" 
-            onClick={handleAddItem}
-            disabled={!isOrderSaved}
+            onClick={handleAddSelectedItem}
+            // disabled={!isOrderSaved}
           >
             Add Item
           </button>
         </div>
              )}
 
-                  {/* ========  design bank button ========= */}
 
-        <div className="flex flex-col gap-2 ">
-          <button
-            onClick={() => setActiveTab("addItem")}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              activeTab === "addItem"
-                ? "bg-blue-600 text-white shadow"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            Add Item
-          </button>
+</div>
+   
 
-          <button
-            onClick={() => setActiveTab("designBank")}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              activeTab === "designBank"
-                ? "bg-blue-600 text-white shadow"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            Design Bank
-          </button>
-        </div>
+      
+
+         
 
 
 
@@ -1410,10 +1532,88 @@ interface Model {
             </CardContent>
           </Card>
         )}
+
+
+        {/* for slected design  */}
+
+           {/* Order Items Table */}
+        {orderSelectedItems.length > 0 && (
+          <Card className="card">
+            <CardHeader>
+              <CardTitle>Order Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2">Design</th>
+                      <th className="px-4 py-2">Category</th>
+                      <th className="px-4 py-2">Weight Range</th>
+                      <th className="px-4 py-2">Size</th>
+                      <th className="px-4 py-2">Quantity</th>
+                      <th className="px-4 py-2">Remarks</th>
+                      <th className="px-4 py-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orderSelectedItems.map((item, index) => (
+                      <tr key={index}>
+                        <td className="px-4 py-2">
+                          {item.designImage && (
+                            <div className="relative w-20 h-20">
+                              <Image
+                                src={item.designImage}
+                                alt="Design"
+                                fill
+                                className="object-contain rounded-md"
+                              />
+                            </div>
+                          )}
+                        </td>
+
+                        <td className="px-4 py-2">{item.category}</td>
+                        <td className="px-4 py-2">{item.weightRange}</td>
+                        <td className="px-4 py-2">{item.size}</td>
+                        <td className="px-4 py-2">{item.quantity}</td>
+                        <td className="px-4 py-2">{item.remark}</td>
+                        <td className="px-4 py-2">
+                          <button
+                            type="button"
+                            className="remove-item-button"
+                            onClick={() => handleRemoveSelectedItem(index)}
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td
+                        colSpan={3}
+                        style={{ fontWeight: "bold", textAlign: "right" }}
+                      >
+                        Total:
+                      </td>
+                      <td style={{ fontWeight: "bold" }}>
+                        {orderItems.reduce(
+                          (sum, item) => sum + parseInt(item.quantity || "0", 10),
+                          0
+                        )}
+                      </td>
+                      <td colSpan={2}></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
       </div>
 
       {/* Buttons */}
-      <div className="button-group">
+      <div className="button-grou flex mt-3 gap-3">
         <button
           type="button"
           onClick={handleSubmitOrder}

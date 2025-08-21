@@ -69,6 +69,9 @@ const FilingDetailsPage = () => {
   const searchParams = useSearchParams();
   const filingId = searchParams.get('filingId');
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!filingId) {
@@ -80,7 +83,7 @@ const FilingDetailsPage = () => {
       try {
         const [prefix, date, month, year, number,subnumber] = filingId.split('/');
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/filing-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
+          `${apiBaseUrl}/api/filing-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );
         const result = await response.json();
         

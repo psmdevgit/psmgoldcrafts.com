@@ -65,6 +65,9 @@ const GrindingDetailsPage = () => {
   const searchParams = useSearchParams();
   const grindingId = searchParams.get('grindingId');
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!grindingId) {
@@ -76,7 +79,7 @@ const GrindingDetailsPage = () => {
       try {
         const [prefix, date, month, year, number] = grindingId.split('/');
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}`
         );
         const result = await response.json();
         

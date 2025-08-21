@@ -13,8 +13,10 @@ import CastingTable from "@/components/casting/castingtable";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://erp-server-r9wh.onrender.com";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://erp-server-r9wh.onrender.com";
+
+
+const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
+const apiUrl = "https://erp-server-r9wh.onrender.com";
 // Define the interfaces for inventory items and orders
 
 interface InventoryItem {
@@ -503,7 +505,7 @@ const CastingForm = () => {
       console.log("Making casting API call with data:", castingData);
       
       // Create casting record
-      const castingResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/casting`, {
+      const castingResponse = await fetch(`${apiUrl}/api/casting`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -518,7 +520,7 @@ const CastingForm = () => {
       }
 
       // Now update inventory weights
-      const inventoryUpdateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/update-inventoryweights`, {
+      const inventoryUpdateResponse = await fetch(`${apiUrl}/api/update-inventoryweights`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

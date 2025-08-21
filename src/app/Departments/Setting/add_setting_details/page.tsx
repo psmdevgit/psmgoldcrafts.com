@@ -36,6 +36,9 @@ export default function AddSettingDetails() {
   const [orderId, setOrderId] = useState<string>('');
   const router = useRouter();
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const initializeSetting = async () => {
       if (!filingId && !grindingId) {
@@ -49,10 +52,10 @@ export default function AddSettingDetails() {
 
         if (filingId) {
           [prefix, date, month, year, number, subnumber  ] = filingId.split('/');
-          apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/grinding/GRIND/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+          apiEndpoint = `${apiBaseUrl}/api/grinding/GRIND/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
         } else if (grindingId) {
           [prefix, date, month, year, number, subnumber] = grindingId.split('/');
-          apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/grinding/${grindingId}/pouches`;
+          apiEndpoint = `${apiBaseUrl}/api/grinding/${grindingId}/pouches`;
         }
 
         console.log('[AddSetting] ID parts:', { prefix, date, month, year, number, subnumber });
@@ -146,7 +149,7 @@ export default function AddSettingDetails() {
 
       console.log('[AddSetting] Submitting data:', settingData);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/setting/create`, {
+      const response = await fetch(`${apiBaseUrl}/api/setting/create`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json'

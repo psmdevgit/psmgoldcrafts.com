@@ -41,6 +41,9 @@ export default function TaggingDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  
+  const API_BASE_URL = "https://erp-server-r9wh.onrender.com" ;
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!taggingId) {
@@ -52,7 +55,7 @@ export default function TaggingDetailsPage() {
         setLoading(true);
         console.log('🔍 Fetching details for taggingId:', taggingId);
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tagging-details/${taggingId}`);
+        const response = await fetch(`${API_BASE_URL}/api/tagging-details/${taggingId}`);
         console.log('📡 API Response Status:', response.status);
         
         if (!response.ok) {

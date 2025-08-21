@@ -65,6 +65,9 @@ const PolishingDetailsPage = () => {
   const searchParams = useSearchParams();
   const polishingId = searchParams.get('polishingId');
 
+  
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!polishingId) {
@@ -78,11 +81,11 @@ const PolishingDetailsPage = () => {
         const [prefix, date, month, year, number] = polishingId.split('/');
         console.log('[Show Polishing] Fetching details for:', {
           prefix, date, month, year, number,
-          url: `${process.env.NEXT_PUBLIC_API_URL}/api/polishing-details/${prefix}/${date}/${month}/${year}/${number}`
+          url: `${apiBaseUrl}/api/polishing-details/${prefix}/${date}/${month}/${year}/${number}`
         });
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/polishing-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/polishing-details/${prefix}/${date}/${month}/${year}/${number}`
         );
         const result = await response.json();
         
