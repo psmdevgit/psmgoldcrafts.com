@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+
+
+
 import { degrees, PDFDocument, PDFImage, PDFPage, rgb,StandardFonts } from "pdf-lib";
 import {
   Dialog,
@@ -25,7 +28,10 @@ import { Trash2 } from "lucide-react";
 
 import COMPANY_LOGO from "@/assets/needhagoldlogo.png"
 import "./add-order.css"; // Ensure this import is present
-import router from "next/router";
+// import router from "next/router";
+
+import { useRouter } from "next/navigation";
+
 
 interface OrderFormModalProps {
   open: boolean;
@@ -78,17 +84,25 @@ interface OrderItem {
   designImage?: string;
 }
 
+  
 interface OrderSelectedItem {
   category: string;
-  weightRange: string;
   size: string;
-  quantity: string;
-  remark: string;
-  designImage?: string;
+  quantity : string;
+  grossWeight: string;
+  netWeight: string;  
+  stoneWeight: string;
+  designImage?: string;  
+  modelName: string;
+  remarks : string;
 }
 
 
 const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
+
+  
+      const router = useRouter();
+
   /* ---------------------- STATE ---------------------- */
   const [orderInfo, setOrderInfo] = useState<OrderInfo | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -99,7 +113,12 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   const [isOrderSaved, setIsOrderSaved] = useState(false);
   const [designImage, setDesignImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
+   const [orderForm, setOrderForm] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  
+  const [showForm, setShowForm] = useState(true); // controls form-card visibility
 
   /* ---------------------- FORM DATA ---------------------- */
   const [formData, setFormData] = useState<FormData>({
@@ -121,7 +140,10 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   });
 
   /* ---------------------- API ---------------------- */
-  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
+  // const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
+
+  
+  const apiBaseUrl = "http://localhost:5001" ;
 
 
   interface Category {
@@ -133,6 +155,11 @@ interface Model {
   Id: string;
   Name: string;
   Image_URL__c?: string;
+  Category__c : string;
+  Size__c : string;
+  Gross_Weight__c : string;
+  Net_Weight__c : string;
+  Stone_Weight__c : string;
 }
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -140,6 +167,8 @@ interface Model {
   const [selectedCategory, setSelectedCategory] = useState("");
   
 const [selectedModels, setSelectedModels] = useState([]);
+
+const [orderNumber, setOrderNumber] = useState("");
 
 
   const [imageUrl, setImageUrl] = useState("");
@@ -183,22 +212,6 @@ const handleModelSelect = (modelId) => {
       .then((data) => setModels(data))
       .catch((err) => console.error(err));
   }, [selectedCategory]);
-  
-  
-  //   useEffect(() => {
-  //   if (!selectedModel) {
-  //     setImagePreview("");
-  //     return;
-  //   }
-
-  //   const model = models.find((m) => m.Id === selectedModel);
-  //   if (model && model.Image_URL__c) {
-  //     setImagePreview(model.Image_URL__c);
-  //   } else {
-  //     setImagePreview("");
-  //   }
-  // }, [selectedModel, models]);
-
 
    const [activeTab, setActiveTab] = useState<"addItem" | "designBank">("addItem");
 
@@ -287,6 +300,8 @@ const handleModelSelect = (modelId) => {
       const orderNo = await getNextOrderNumber(formData.partyLedger);
       console.log('Generated Order Number:', orderNo);
 
+      setOrderNumber(orderNo);
+
       const newOrderInfo: OrderInfo = {
         partyCode: formData.partyLedger,
         partyName: formData.subname,
@@ -323,6 +338,7 @@ const handleModelSelect = (modelId) => {
       setOrderInfo(newOrderInfo);
       setIsOrderSaved(true);
       console.log('=== Save Order Completed Successfully ===');
+       setShowForm(false);
     } catch (error: any) {
       console.error('Save Order Error:', {
         message: error.message,
@@ -367,29 +383,34 @@ const handleModelSelect = (modelId) => {
   };
 
   const handleAddSelectedItem = () => {
-      // if (!isOrderSaved) {
-    //   // toast.error("Please save the order first");
-    //   alert("Please save the order first");
-    //   return;
-    // }
+      if (!isOrderSaved) {
+      // toast.error("Please save the order first");
+      alert("Please save the order first");
+      return;
+    }
   if (selectedModels.length === 0) {
     alert("Please select at least one model");
     return;
   }
 
-  const newItems = selectedModels.map((modelId) => {
-    const model = models.find((m) => m.Id === modelId);
+const newItems = selectedModels.map((modelId) => {
+  const model = models.find((m) => m.Id === modelId);
 
-    return {
-      category: formData.category,
-      weightRange: formData.wtRange,
-      size: formData.size,
-      quantity: formData.quantity,
-      remark: formData.itemRemark,
-      designImage: model?.Image_URL__c || null,
-      modelName: model?.Name || ""
-    };
-  });
+  console.log(model);
+
+  return {
+    category: model?.Category__c || "",
+    size: model?.Size__c || "0",
+    grossWeight: model?.Gross_Weight__c || "0",
+    netWeight: model?.Net_Weight__c || "0",
+    stoneWeight: model?.Stone_Weight__c || "0",
+    designImage: model?.Image_URL__c || "",
+    modelName: model?.Name || "",
+    quantity: 1, // 👈 default quantity
+    itemRemark: "" // 👈 default remarks
+  };
+});
+
 
   setOrderSelectedItems([...orderSelectedItems, ...newItems]);
 
@@ -404,6 +425,8 @@ const handleModelSelect = (modelId) => {
     itemRemark: ""
   });
   setSelectedModels([]);
+setSelectedCategory("");
+
 };
 
 
@@ -448,7 +471,79 @@ const handleRemoveSelectedItem = (index: number) => {
   };
 
   const handleSubmitOrder = async () => {
-    console.log('=== Submit Order Started ===');
+
+React.useEffect(() => {
+    if (activeTab === "designBank") {
+      setOrderForm(false);
+    } else {
+      setOrderForm(true);
+    }
+  }, [activeTab]);
+
+    // design bank upload =================================================================================================
+
+  if (activeTab == "designBank") {
+  if (!orderInfo || orderSelectedItems.length === 0) {
+    alert("Please save order info and add at least one item.");
+    return;
+  }
+
+  // Create FormData for file + JSON together
+  const formData = new FormData();
+
+  // Build JSON part (without pdf)
+  const jsonPayload = {
+    orderNo: orderNumber,
+    orderInfo: orderInfo, // saved from form
+    items: orderSelectedItems.map((item) => ({
+      modelName: item.modelName,
+      category: item.category,
+      quantity: item.quantity,
+      size: item.size,
+      grossWeight: item.grossWeight,
+      netWeight: item.netWeight,
+      stoneWeight: item.stoneWeight,
+      itemRemark: item.remarks,
+      designImage: item.designImage,
+    })),
+  };
+
+  // Append JSON as a string
+  formData.append("data", JSON.stringify(jsonPayload));
+
+  // Append PDF file (if present)
+  if (orderInfo.pdfBlob) {
+    console.log("Adding PDF to form data");
+    formData.append(
+      "pdfFile",
+      orderInfo.pdfBlob,
+      `Order_${orderInfo.orderNo}.pdf`
+    );
+  }
+
+  try {
+    const res = await fetch(`${apiBaseUrl}/api/orderItems`, {
+      method: "POST",
+      body: formData, // ✅ don't set Content-Type manually, browser will handle it
+    });
+
+    if (!res.ok) throw new Error("Failed to submit order");
+
+    const data = await res.json();
+    alert(`Order submitted successfully! Order ID: ${data.orderId}`);
+
+    // Reset
+    setOrderSelectedItems([]);
+    setOrderInfo(null);
+    router.push(`/Orders`);
+  } catch (err) {
+    console.error(err);
+    alert("Error submitting order. Check server logs.");
+  }
+}
+
+    else{
+   console.log('=== Submit Order Started ===');
     try {
       if (!orderInfo || orderItems.length === 0) {
         console.log('Validation Failed:', {
@@ -510,7 +605,7 @@ const handleRemoveSelectedItem = (index: number) => {
 
       console.log('=== Submit Order Completed Successfully ===');
       alert("Order submitted successfully!");
-      router.push('/Orders');
+      router.push(`/Orders`);
     } catch (error: any) {
       console.error('Submit Order Error:', {
         message: error.message,
@@ -519,6 +614,10 @@ const handleRemoveSelectedItem = (index: number) => {
       });
       alert(error.message);
     }
+    }
+
+    // design bank upload =================================================================================================
+
   };
 
   const generatePDF = async () => {
@@ -893,15 +992,26 @@ const handleRemoveSelectedItem = (index: number) => {
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: "application/pdf" });
   }
+
   /* ---------------------- RENDER ---------------------- */
   return (
     <div className="container ">
       <h1 className="page-title">Create Order</h1>
       
       {/* Both forms wrapped in a single container */}
-      <div className="forms-containe grid grid-cols-1 md:grid-cols-[50%_50%] gap-4 w-full">
+       {isOrderSaved && (
+        <button
+          onClick={() => setShowForm((prev) => !prev)}
+          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          {showForm ? "Hide Order Form" : "Show Order Form"}
+        </button>
+      )}
+
+      <div className={`forms-containe grid grid-cols-1 md:grid-cols-[50%_50%] gap-4 w-full ${showForm ? "md:grid-cols-[50%_50%]" : "md:grid-cols-1"}`}>
         {/* First Form */}
-        <div className="form-card ">
+          {showForm && (
+        <div className="form-card " >
           <h2 style={{textAlign:"center"}}>Order Information</h2>
           <div className="two-column-form">
             {/* Party Ledger */}
@@ -1036,7 +1146,8 @@ const handleRemoveSelectedItem = (index: number) => {
           <button className="save-button" onClick={handleSaveOrder}>Save Order</button>
         </div>
 
-
+  )
+}
 
 
 <div>
@@ -1055,7 +1166,13 @@ const handleRemoveSelectedItem = (index: number) => {
           </button>
 
           <button
-            onClick={() => setActiveTab("designBank")}
+            onClick={() => {
+      setActiveTab("designBank");
+      setModels([]);               // ✅ reset models
+      setSelectedCategory(""); 
+      setOrderForm(false);
+    // ✅ reset category
+    }}
             className={`px-4 py-2 rounded-lg font-medium ${
               activeTab === "designBank"
                 ? "bg-blue-600 text-white shadow"
@@ -1203,13 +1320,13 @@ const handleRemoveSelectedItem = (index: number) => {
           <div className="one-column-form">
             <div className="fieldgroup flex gap-2">
 
-              <div style={{width:"50%"}}> 
+              <div style={{width:"100%"}}> 
                   <Label htmlFor="category" className="font-bold">Category</Label>
                   <select
                       value={selectedCategory}
-                      onChange={(e) =>  {handleInputChange("category", e.target.value); setSelectedCategory(e.target.value);}}
+                      onChange={(e) =>  setSelectedCategory(e.target.value)}
                                 className="w-full border p-2 rounded"
-                                // disabled={!isOrderSaved}
+                                disabled={!isOrderSaved}
                     >
                       <option value="">-- Select Category --</option>
                       {categories.map((cat) => (
@@ -1220,148 +1337,17 @@ const handleRemoveSelectedItem = (index: number) => {
                     </select>
 
               </div>
-            
-              {/* <div style={{width:"50%"}}>
-                     <label className="font-bold">Model Name: </label>
-                    <select
-                      value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
-                      disabled={!selectedCategory || models.length === 0}
-                      className="w-full border p-2 rounded"
-                      disabled={!selectedCategory}
-                    >
-                      {models.length === 0 ? (
-                        <option value="">No Models</option>
-                      ) : (
-                        <>
-                          <option value="">-- Select Model --</option>
-                          {models.map((model) => (
-                            <option key={model.Id} value={model.Id}>
-                              {model.Name}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </select>
-              </div> */}
-
               
             </div>
 
-            {/* <div className="fieldgroup flex gap-2" >
-              
-              <div style={{width:"50%"}}>
-                  <Label htmlFor="wtRange">Weight Range</Label>
-                    <Input
-                      id="wtRange"
-                      value={formData.wtRange}
-                      onChange={(e) => handleInputChange("wtRange", e.target.value)}
-                      placeholder="e.g., 10-15g"
-                      disabled={!isOrderSaved}
-                    />
-              </div>
-            
-                <div style={{width:"50%"}}>
-                   <Label htmlFor="size">Size</Label>
-                    <Input
-                      id="size"
-                      value={formData.size}
-                      onChange={(e) => handleInputChange("size", e.target.value)}
-                      placeholder="Size"
-                      disabled={!isOrderSaved}
-                    />
-                </div>
-            </div> */}
-
-
-            {/* <div className="fieldgroup flex gap-2">
-              
-                <div style={{width:"50%"}}>
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    min="1"
-                    value={formData.quantity}
-                    onChange={(e) => handleInputChange("quantity", e.target.value)}
-                    placeholder="Quantity"
-                    disabled={!isOrderSaved}
-                  />
-                </div>
-                
-                <div style={{width:"50%"}}>
-                  <Label htmlFor="itemRemark">Item Remark</Label>
-                  <Input
-                    id="itemRemark"
-                    value={formData.itemRemark}
-                    onChange={(e) =>
-                      handleInputChange("itemRemark", e.target.value)
-                    }
-                    placeholder="Any special instructions"
-                    disabled={!isOrderSaved}
-                  />
-                </div>
-
-            </div> */}
 
             <div className="field-group">
               <Label htmlFor="designImage">Design Image</Label>
-              {/* <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    id="designImage"
-                  />
-                  {!imagePreview ? (
-                    <Label
-                      className="w-full"
-                    >
-                      Select category and model.
-                    </Label>
-                  ) : (
-                    <div className="flex items-center gap-4 p-3 border rounded-md bg-white">
-                      <div className="relative w-80 h-80 flex-shrink-0">
-                        <Image
-                          src={imagePreview}
-                          alt="Design preview"
-                          fill
-                          className="object-contain rounded-md w-40"
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => {
-                          setDesignImage(null);
-                          setImagePreview(null);
-                          if (fileInputRef.current) {
-                            fileInputRef.current.value = '';
-                          }
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div> */}
-
-            <div className="modelPreview grid grid-cols-2 md:grid-cols-2 gap-4 mt-4" style={{maxHeight:"350px",overflow:"scroll"}}>
+             
+            {/* <div className="modelPreview grid grid-cols-2 md:grid-cols-2 gap-4 mt-4" style={{maxHeight:"350px",overflow:"scroll"}}>
               {models.length > 0 ? (
                 models.map((model) => (
-                  // <div key={model.Id} className="p-2 border rounded-md text-center" style={{background:"#eee"}}>
-                  //   <img
-                  //     src={model.Image_URL__c}
-                  //     alt={model.Name}
-                  //     className="w-50 h-50 object-contain mx-auto"
-                  //   />
-                  //   <p className="mt-2 text-sm font-medium">{model.Name}</p>
-                  // </div>
+              
 
                   <div
                           key={model.Id}
@@ -1383,7 +1369,39 @@ const handleRemoveSelectedItem = (index: number) => {
               ) : (
                 <p className="col-span-full text-gray-500">No models available for this category</p>
               )}
-            </div>
+            </div> */}
+
+
+<div
+  className={`modelPreview grid gap-4 mt-4 overflow-scroll 
+    ${showForm ? "grid-cols-2" : "grid-cols-4"}`}
+  style={{ maxHeight: "350px" }}
+>
+  {models.length > 0 ? (
+    models.map((model) => (
+      <div
+        key={model.Id}
+        onClick={() => handleModelSelect(model.Id)}
+        className={`p-2 border rounded-md text-center cursor-pointer transition ${
+          selectedModels.includes(model.Id)
+            ? "bg-blue-200 border-blue-500"
+            : "bg-gray-100"
+        }`}
+      >
+        <img
+          src={model.Image_URL__c}
+          alt={model.Name}
+          className="w-50 h-50 object-contain mx-auto"
+        />
+        <p className="mt-2 text-sm font-medium">{model.Name}</p>
+      </div>
+    ))
+  ) : (
+    <p className="col-span-full text-gray-500">
+      No models available for this category
+    </p>
+  )}
+</div>
 
 
             </div>
@@ -1548,10 +1566,13 @@ const handleRemoveSelectedItem = (index: number) => {
                   <thead>
                     <tr>
                       <th className="px-4 py-2">Design</th>
+                      <th className="px-4 py-2">Name</th>
                       <th className="px-4 py-2">Category</th>
-                      <th className="px-4 py-2">Weight Range</th>
-                      <th className="px-4 py-2">Size</th>
                       <th className="px-4 py-2">Quantity</th>
+                      <th className="px-4 py-2">Size</th>
+                      <th className="px-4 py-2">Gross Weight</th>
+                      <th className="px-4 py-2">Net Weight</th>
+                      <th className="px-4 py-2">Stone Weight</th>
                       <th className="px-4 py-2">Remarks</th>
                       <th className="px-4 py-2">Actions</th>
                     </tr>
@@ -1572,11 +1593,90 @@ const handleRemoveSelectedItem = (index: number) => {
                           )}
                         </td>
 
-                        <td className="px-4 py-2">{item.category}</td>
-                        <td className="px-4 py-2">{item.weightRange}</td>
-                        <td className="px-4 py-2">{item.size}</td>
-                        <td className="px-4 py-2">{item.quantity}</td>
-                        <td className="px-4 py-2">{item.remark}</td>
+                        <td className="px-4 py-2">{item.modelName}</td>
+                        <td className="px-4 py-2">{item.category}</td>                        
+         <td className="px-4 py-2">
+  <input
+    type="number"
+    value={item.quantity}
+    min="1"
+    onChange={(e) => {
+      const updated = [...orderSelectedItems];
+      updated[index].quantity = parseInt(e.target.value, 10) || 0;
+      setOrderSelectedItems(updated);
+    }}
+    className="w-20 border rounded p-1"
+  />
+</td>
+
+<td className="px-4 py-2">
+  <input
+    type="number"
+    step="0.5"
+    value={item.size}
+    onChange={(e) => {
+      const updated = [...orderSelectedItems];
+      updated[index].size = e.target.value;
+      setOrderSelectedItems(updated);
+    }}
+    className="w-24 border rounded p-1"
+  />
+</td>
+
+<td className="px-4 py-2">
+  <input
+    type="number"
+    step="0.01"
+    value={item.grossWeight}
+    onChange={(e) => {
+      const updated = [...orderSelectedItems];
+      updated[index].grossWeight = e.target.value;
+      setOrderSelectedItems(updated);
+    }}
+    className="w-28 border rounded p-1"
+  />
+</td>
+
+<td className="px-4 py-2">
+  <input
+    type="number"
+    step="0.01"
+    value={item.netWeight}
+    onChange={(e) => {
+      const updated = [...orderSelectedItems];
+      updated[index].netWeight = e.target.value;
+      setOrderSelectedItems(updated);
+    }}
+    className="w-28 border rounded p-1"
+  />
+</td>
+
+<td className="px-4 py-2">
+  <input
+    type="number"
+    step="0.01"
+    value={item.stoneWeight}
+    onChange={(e) => {
+      const updated = [...orderSelectedItems];
+      updated[index].stoneWeight = e.target.value;
+      setOrderSelectedItems(updated);
+    }}
+    className="w-28 border rounded p-1"
+  />
+</td>
+
+           <td className="px-4 py-2">
+  <input
+    type="text"
+    value={item.itemRemark}
+    onChange={(e) => {
+      const updated = [...orderSelectedItems];
+      updated[index].itemRemark = e.target.value;
+      setOrderSelectedItems(updated);
+    }}
+    className="w-full border rounded p-1"
+  />
+</td>
                         <td className="px-4 py-2">
                           <button
                             type="button"
@@ -1588,21 +1688,19 @@ const handleRemoveSelectedItem = (index: number) => {
                         </td>
                       </tr>
                     ))}
-                    <tr>
-                      <td
-                        colSpan={3}
-                        style={{ fontWeight: "bold", textAlign: "right" }}
-                      >
-                        Total:
-                      </td>
-                      <td style={{ fontWeight: "bold" }}>
-                        {orderItems.reduce(
-                          (sum, item) => sum + parseInt(item.quantity || "0", 10),
-                          0
-                        )}
-                      </td>
-                      <td colSpan={2}></td>
-                    </tr>
+                 <tr>
+  <td colSpan={3} style={{ fontWeight: "bold", textAlign: "right" }}>
+    Total:
+  </td>
+  <td style={{ fontWeight: "bold" }}>
+    {orderSelectedItems.reduce(
+      (sum, item) => sum + parseInt(item.quantity || "0", 10),
+      0
+    )}
+  </td>
+  <td colSpan={6}></td>
+</tr>
+
                   </tbody>
                 </table>
               </div>
@@ -1617,7 +1715,7 @@ const handleRemoveSelectedItem = (index: number) => {
         <button
           type="button"
           onClick={handleSubmitOrder}
-          disabled={!isOrderSaved || orderItems.length === 0}
+          disabled={!isOrderSaved || (orderItems.length === 0 && orderSelectedItems.length === 0 )}
         >
           Submit Order
         </button>
