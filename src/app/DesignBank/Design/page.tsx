@@ -93,7 +93,7 @@ const Designs: React.FC = () => {
               models.map((model) => (
                 <div
                   key={model.Id}
-                  className=" p-2 border rounded-md text-center cursor-pointer transition"  style={{background:"#FBF0DC",display:"flex", flexDirection:"column",justifyContent:"space-between"}}              >
+                  className=" p-2 border rounded-md text-center cursor-pointer transition"  style={{background:"#FCF5E7",display:"flex", flexDirection:"column",justifyContent:"space-between"}}              >
                   <img
                     src={model.Image_URL__c}
                     alt={model.Name}
@@ -115,3 +115,4 @@ const Designs: React.FC = () => {
 };
 
 export default Designs;
+
