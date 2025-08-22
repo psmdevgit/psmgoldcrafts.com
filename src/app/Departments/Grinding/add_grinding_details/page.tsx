@@ -35,6 +35,8 @@ export default function AddGrindingDetails() {
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+// const apiBaseUrl = "http://localhost:5001"; 
+
   useEffect(() => {
     const initializeGrinding = async () => {
       if (!filingId) {
@@ -46,7 +48,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number,subnumber] = filingId.split('/');
         console.log('[AddGrinding] Filing ID parts:', { prefix, date, month, year, number,subnumber });
 
-        const generatedGrindingId = `GRIND/${date}/${month}/${year}/${number}/${subnumber}`;
+      const newsubNumber = parseInt(subnumber, 10) + 1;
+
+        const generatedGrindingId = `GRIND/${date}/${month}/${year}/${number}/${newsubNumber}`;
         setFormattedId(generatedGrindingId);
 
         const pouchResponse = await fetch(
@@ -137,7 +141,7 @@ const pouchData = pouches.map(pouch => ({
         quantity: pouchQuantities[pouches[0].Id] || 0,
         orderId: orderId
       };
-
+     
       console.log('[AddGrinding] Submitting data:', grindingData);
 
       const response = await fetch(`${apiBaseUrl}/api/grinding/create`, {
@@ -157,7 +161,7 @@ const pouchData = pouches.map(pouch => ({
           setOrderId(result.data.orderId);
           console.log('[AddGrinding] Order ID received:', result.data.orderId);
         }
-        
+      alert('Grinding details saved successfully');
         toast.success('Grinding details saved successfully');
         // Optionally redirect to a success page or grinding list
       } else {
@@ -189,7 +193,10 @@ const pouchData = pouches.map(pouch => ({
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-sm font-medium">
-                Grinding ID: <span className="text-blue-600 font-bold">
+                Grinding ID:
+                
+             
+                 <span className="text-blue-600 font-bold">
                   {formattedId || 'Generating...'}
                 </span>
               </div>
