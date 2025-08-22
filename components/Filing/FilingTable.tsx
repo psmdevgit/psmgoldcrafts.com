@@ -492,7 +492,6 @@ console.log("Deals State:", deals);
                                     </button>
                                   </Link>
 
-                                  {deal.status?.toLowerCase() !== 'finished' ? (
                                     <Link href={`/Departments/Filing/filing_received_details?filingId=${deal.id}`} passHref>
                                       <button
                                         type="button"
@@ -512,27 +511,7 @@ console.log("Deals State:", deals);
                                         <i className="fa-sharp fa-light fa-pen"></i>
                                       </button>
                                     </Link>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      className="table__icon edit"
-                                      style={{
-                                        display: 'inline-block',
-                                        backgroundColor: 'gray',
-                                        color: 'white',
-                                        borderRadius: '4px',
-                                        padding: '5px',
-                                        textDecoration: 'none',
-                                        border: 'none',
-                                        cursor: 'not-allowed',
-                                        opacity: 0.6,
-                                      }}
-                                      disabled
-                                      title="Cannot edit finished items"
-                                    >
-                                      <i className="fa-sharp fa-light fa-pen"></i>
-                                    </button>
-                                  )}
+                                 
 
                                   <button
                                     type="button"
