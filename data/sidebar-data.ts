@@ -62,8 +62,16 @@ const sidebarData: SidebarCategory[] = [
           { label: "Models", link: "/Models/add-models" }
         ],
       },
+       {
+        id : 4,
+        label:"Design Bank",
+        icon: "fa-regular fa-gem",
+        subItems:[        
+          { label: "Designs", link: " /DesignBank/Design" }
+        ]
+      },
       {
-        id: 4,
+        id: 5,
         label: "Orders",
         icon: "icon-crm",
         subItems: [
@@ -73,7 +81,7 @@ const sidebarData: SidebarCategory[] = [
         ],
       },
       {
-        id: 5,
+        id: 6,
         label: "Making Progress",
         icon: "fa-solid fa-arrow-progress",
         subItems: [
@@ -91,7 +99,7 @@ const sidebarData: SidebarCategory[] = [
         ],
       },
      {
-        id: 6,
+        id: 7,
         label:"Billing",
         icon: "fa-sharp fa-light fa-wallet",
         subItems: [
