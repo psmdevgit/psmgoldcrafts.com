@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 
-// const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
-const apiBaseUrl = "http://localhost:5001";
+// const apiBaseUrl = "http://localhost:5001";
 
 interface Category {
   Id: string;
@@ -175,3 +175,4 @@ const fetchCategories = async () => {
 };
 
 export default Designs;
+
