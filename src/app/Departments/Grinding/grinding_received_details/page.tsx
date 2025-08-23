@@ -6,7 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 
-const apiBaseUrl = "http://localhost:5001";
+
+const apiBaseUrl = ""https://erp-server-r9wh.onrender.com"";
+
+// const apiBaseUrl = "http://localhost:5001";
 
 interface Details {
   Id: string;
