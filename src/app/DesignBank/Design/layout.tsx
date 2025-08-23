@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         .main {
           height: 100vh;
           padding-top: 80px;
-          width: 87%;
+          width: 82%;
           margin-left: auto;
           margin-right: 0;
         }
@@ -43,5 +43,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
+
 
 export default Layout;
