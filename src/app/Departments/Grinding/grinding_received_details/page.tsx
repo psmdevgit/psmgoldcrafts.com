@@ -229,20 +229,18 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         receivedWeight: pouchReceivedWeights[pouch.Id] || 0,
         receivedDate: currentDateTime
       }));
-
-      const formData = {
-        grindingId: data.grinding.Id,
-        sourceDepartment: data.grinding.Source_Department__c,
-        issuedWeight: data.grinding.Issued_Weight__c,
-        receivedWeight: totalWeight,
-        receivedDate: currentDateTime,
-        scrapWeight: scrapReceivedWeight || 0,
-        dustWeight: dustReceivedWeight || 0,
-        status: 'Completed',
-        grindingLoss: data.grinding.Issued_Weight__c - totalWeight,
-        pouches: pouchData
-      };
-
+    const formData = {
+  grindingId: data.grinding.Id,
+  sourceDepartment: data.grinding.Source_Department__c,
+  issuedWeight: data.grinding.Issued_Weight__c,
+  receivedWeight: totalWeight,
+  receivedDate: currentDateTime,
+  scrapReceivedWeight: scrapReceivedWeight || 0,   // ✅ fixed name
+  dustReceivedWeight: dustReceivedWeight || 0,     // ✅ fixed name
+  status: 'Completed',
+  grindingLoss: data.grinding.Issued_Weight__c - totalWeight,
+  pouches: pouchData
+};
       console.log('Submitting data:', formData);
       alert('Submitting grinding details...');
       console.log('[GrindingReceived] Submitting data:', formData);
