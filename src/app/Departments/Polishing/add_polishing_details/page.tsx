@@ -71,8 +71,11 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           fullId: sourceId
         });
 
+        const newPolid = Math.floor(Math.random() * 99) + 1;
+
+        
         // Generate polishing ID
-        const generatedPolishingId = `POLISH/${date}/${month}/${year}/${number}/${subnumber}`;
+        const generatedPolishingId = `POLISH/${date}/${month}/${year}/${number}/${newPolid}`;
         setFormattedId(generatedPolishingId);
 
         // Construct the endpoint based on the API structure
