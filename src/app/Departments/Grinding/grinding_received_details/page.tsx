@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 
+const apiBaseUrl = "http://localhost:5001";
 
 interface Details {
   Id: string;
@@ -65,6 +66,9 @@ const GrindingDetailsPage = () => {
   });
   const router = useRouter();
 
+    const [newissuedWeight, setNewIssuedWeight] = useState<number>(0);
+
+
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
     setPouchReceivedWeights(prev => {
@@ -74,14 +78,10 @@ const GrindingDetailsPage = () => {
       const newTotalReceived = newTotal + scrapReceivedWeight + dustReceivedWeight;
       setTotalReceivedWeight(newTotalReceived);
       setReceivedWeight(newTotalReceived);
-      setGrindingLoss(data?.grinding.Issued_Weight__c ? data.grinding.Issued_Weight__c - newTotalReceived : 0);
+      setGrindingLoss(data?.grinding.Issued_Weight__c ? newissuedWeight - newTotalReceived : 0);
       return newWeights;
     });
   };
-
-  
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-
 
   // Update total weight calculation
   useEffect(() => {
@@ -92,6 +92,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       const issuedWeight = data.grinding.Issued_Weight__c;
       const loss = issuedWeight - totalWeight;
       setGrindingLoss(loss);
+      setNewIssuedWeight(data.grinding.Issued_Weight__c);
     }
   }, [ornamentWeight, scrapReceivedWeight, dustReceivedWeight, data]);
 
@@ -225,22 +226,24 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       // Prepare pouch data with weights
       const pouchData = data.pouches.map(pouch => ({
         pouchId: pouch.Id,
-        issuedWeight: pouch.Issued_Weight__c,
+        issuedWeight: newissuedWeight,
         receivedWeight: pouchReceivedWeights[pouch.Id] || 0,
         receivedDate: currentDateTime
       }));
-    const formData = {
-  grindingId: data.grinding.Id,
-  sourceDepartment: data.grinding.Source_Department__c,
-  issuedWeight: data.grinding.Issued_Weight__c,
-  receivedWeight: totalWeight,
-  receivedDate: currentDateTime,
-  scrapReceivedWeight: scrapReceivedWeight || 0,   // ✅ fixed name
-  dustReceivedWeight: dustReceivedWeight || 0,     // ✅ fixed name
-  status: 'Completed',
-  grindingLoss: data.grinding.Issued_Weight__c - totalWeight,
-  pouches: pouchData
-};
+
+      const formData = {
+        grindingId: data.grinding.Id,
+        sourceDepartment: data.grinding.Source_Department__c,
+        issuedWeight: newissuedWeight,
+        receivedWeight: totalWeight,
+        receivedDate: currentDateTime,
+        scrapWeight: scrapReceivedWeight || 0,
+        dustWeight: dustReceivedWeight || 0,
+        status: 'Completed',
+        grindingLoss: newissuedWeight - totalWeight,
+        pouches: pouchData
+      };
+
       console.log('Submitting data:', formData);
       alert('Submitting grinding details...');
       console.log('[GrindingReceived] Submitting data:', formData);
@@ -292,6 +295,13 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     );
   }
 
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+    }
+  };
+
+
   return (
     <div className="p-6">
       <div className="w-4/5 mt-10 ml-[250px] mr-auto">
@@ -315,8 +325,15 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600">Issued Weight</label>
-                <p className="font-medium">{data.grinding.Issued_Weight__c}g</p>
+                <label className="text-sm text-gray-600">Issued Weight</label>  
+              <input
+                  type="number"
+                  step="0.0001"
+                  min="0"
+                  value={newissuedWeight}
+                  onChange={(e) => setNewIssuedWeight(parseFloat(e.target.value) || 0)}
+                  className="border rounded px-3 py-2 text-gray-800"
+                />
               </div>
             </div>
           </div>
@@ -352,14 +369,14 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                     <tr key={pouch.Id}>
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Name}</td>
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Order_Id__c}</td>
-                      <td className="px-4 py-3 whitespace-nowrap">{pouch.Issued_Weight__c}g</td>
+                      <td className="px-4 py-3 whitespace-nowrap">{newissuedWeight}g</td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <Input
                           type="number"
                           step="0.0001"
                           min="0"
                           value={pouchReceivedWeights[pouch.Id] || ''}
-                          onChange={(e) => handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0)}
+                          onChange={(e) => handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0)}    onKeyDown={handleKeyDown}
                           className="w-32 h-8"
                           placeholder="Enter weight"
                           disabled={data.grinding.Status__c === 'Completed'}
@@ -367,7 +384,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-red-600">
                         {pouchReceivedWeights[pouch.Id] 
-                          ? (pouch.Issued_Weight__c - pouchReceivedWeights[pouch.Id]).toFixed(4)
+                          ? (newissuedWeight - pouchReceivedWeights[pouch.Id]).toFixed(4)
                           : '-'}g
                       </td>
                     </tr>
@@ -377,13 +394,13 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                   <tr>
                     <td colSpan={2} className="px-4 py-3 text-sm font-medium">Totals:</td>
                     <td className="px-4 py-3 text-sm font-medium">
-                      {data?.grinding?.Issued_Weight__c || 0}g
+                      {newissuedWeight || 0 }g
                     </td>
                     <td className="px-4 py-3 text-sm font-medium">
                       {totalReceivedWeight.toFixed(4)}g
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-red-600">
-                      {((data?.grinding?.Issued_Weight__c || 0) - totalReceivedWeight).toFixed(4)}g
+                      {((newissuedWeight || 0) - totalReceivedWeight).toFixed(4)}g
                     </td>
                   </tr>
                 </tfoot>
@@ -501,7 +518,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg">
             <div>
               <label className="text-sm text-gray-600">Total Issued Weight</label>
-              <p className="font-medium">{data?.grinding.Issued_Weight__c.toFixed(4)}g</p>
+              <p className="font-medium">{newissuedWeight.toFixed(4)}g</p>
             </div>
             <div>
               <label className="text-sm text-gray-600">Total Received Weight</label>
@@ -514,7 +531,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
             <div>
               <label className="text-sm text-gray-600">Total Loss</label>
               <p className="font-medium text-red-600">
-                {(data?.grinding.Issued_Weight__c - 
+                {(newissuedWeight - 
                   (Object.values(pouchReceivedWeights).reduce((sum, weight) => sum + (weight || 0), 0) + 
                   (scrapReceivedWeight || 0) + 
                   (dustReceivedWeight || 0))).toFixed(4)}g
