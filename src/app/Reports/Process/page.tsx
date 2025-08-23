@@ -117,19 +117,19 @@ export default function SummaryPage() {
         <h1 className="text-xl font-bold mb-4">Overall Total</h1>
          <table
             className="border border-collapse w-full bg-white"
-            style={{ width: "100%", backgroundColor: "#fff" }}
+            style={{ width: "75%", backgroundColor: "#fff" }}
           >
           <thead className="bg-[#1A7A75] text-white">
             <tr>
               <th className="px-4 py-2 text-sm font-semibold text-left">
                 Process Total Wt (gm)
-              </th>
-               <th className="px-4 py-2 text-sm font-semibold text-left">
-                Purity Gold Wt (gm)
-              </th>
+              </th> 
               <th className="px-4 py-2 text-sm font-semibold text-left">
                 Inventory Avl Wt (gm)
               </th>
+               <th className="px-4 py-2 text-sm font-semibold text-left">
+                Purity Gold Wt (gm)
+              </th>           
               <th className="px-4 py-2 text-sm font-semibold text-left">
                 Inventory Purity Gold Wt (gm)
               </th>
@@ -138,11 +138,21 @@ export default function SummaryPage() {
           <tbody>
             <tr className="bg-gray-50 font-medium ">
               <td className="px-4 py-2">{processTotal.toFixed(4)}</td>
-              <td className="px-4 py-2">{processTotalPurity.toFixed(4)}</td>
               <td className="px-4 py-2">{inventoryTotalAvl.toFixed(4)}</td>
+              <td className="px-4 py-2">{processTotalPurity.toFixed(4)}</td>
               <td className="px-4 py-2">{inventoryTotalGold.toFixed(4)}</td>
             </tr>
           </tbody>
+            <tfoot className="bg-gray-200 font-bold" style={{backgroundColor: "#EDB652"}}>
+      <tr>
+        <td colSpan={2} className="px-4 py-2 text-left">
+         Total : {(processTotal + inventoryTotalAvl).toFixed(4)}
+        </td>
+        <td colSpan={2} className="px-4 py-2 text-left">
+          Total of Purity : {(processTotalPurity + inventoryTotalGold).toFixed(4)}
+        </td>
+      </tr>
+    </tfoot>
         </table>
       </div>
 
