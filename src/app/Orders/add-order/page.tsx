@@ -140,10 +140,10 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   });
 
   /* ---------------------- API ---------------------- */
-  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
+  // const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
   
-  // const apiBaseUrl = "http://localhost:5001" ;
+  const apiBaseUrl = "http://localhost:5001" ;
 
 
   interface Category {
@@ -470,15 +470,18 @@ const handleRemoveSelectedItem = (index: number) => {
     }
   };
 
-  const handleSubmitOrder = async () => {
-
-React.useEffect(() => {
+  React.useEffect(() => {
     if (activeTab === "designBank") {
       setOrderForm(false);
     } else {
       setOrderForm(true);
     }
   }, [activeTab]);
+  
+
+  const handleSubmitOrder = async () => {
+
+
 
     // design bank upload =================================================================================================
 
@@ -520,6 +523,8 @@ React.useEffect(() => {
       `Order_${orderInfo.orderNo}.pdf`
     );
   }
+
+  console.log(formData);
 
   try {
     const res = await fetch(`${apiBaseUrl}/api/orderItems`, {
@@ -1343,33 +1348,7 @@ React.useEffect(() => {
 
             <div className="field-group">
               <Label htmlFor="designImage">Design Image</Label>
-             
-            {/* <div className="modelPreview grid grid-cols-2 md:grid-cols-2 gap-4 mt-4" style={{maxHeight:"350px",overflow:"scroll"}}>
-              {models.length > 0 ? (
-                models.map((model) => (
-              
-
-                  <div
-                          key={model.Id}
-                            onClick={() => handleModelSelect(model.Id)}
-                          className={`p-2 border rounded-md text-center cursor-pointer transition ${
-                            selectedModels.includes(model.Id) ? "bg-blue-200 border-blue-500" : "bg-gray-100"
-                          }`}
-                        >
-                          <img
-                            src={model.Image_URL__c}
-                            alt={model.Name}
-                            className="w-50 h-50 object-contain mx-auto"
-                          />
-                          <p className="mt-2 text-sm font-medium">{model.Name}</p>
-                        </div>
-
-
-                ))
-              ) : (
-                <p className="col-span-full text-gray-500">No models available for this category</p>
-              )}
-            </div> */}
+    
 
 
 <div
