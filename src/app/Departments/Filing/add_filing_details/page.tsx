@@ -117,7 +117,7 @@ export default function AddGrindingDetails() {
   // Add a formatted ID that includes GRIND
   
   // Add a formatted ID that includes GRIND
-  // const formattedId = castingId ? `Filing/${castingId}` : '';
+   const formattedId = castingId ? `Filing/${castingId}` : '';
 
   // Fetch casting details and related orders
   useEffect(() => {
