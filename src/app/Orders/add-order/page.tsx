@@ -1000,7 +1000,7 @@ const handleRemoveSelectedItem = (index: number) => {
 
   /* ---------------------- RENDER ---------------------- */
   return (
-    <div className="container ">
+    <div className="containe main ">
       <h1 className="page-title">Create Order</h1>
       
       {/* Both forms wrapped in a single container */}
