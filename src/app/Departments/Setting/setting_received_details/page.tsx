@@ -362,6 +362,7 @@ const SettingDetailsPage = () => {
             <div>
               <Label>Issued Weight</Label>
               <div className="mt-1">{setting.Issued_Weight__c}g</div>
+              
             </div>
             <div>
               <Label>Status</Label>

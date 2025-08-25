@@ -26,7 +26,7 @@ import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { Trash2 } from "lucide-react";
 
-import COMPANY_LOGO from "@/assets/needhagoldlogo.png"
+import COMPANY_LOGO from "@/assets/PothysLogo.png"
 import "./add-order.css"; // Ensure this import is present
 // import router from "next/router";
 
@@ -84,18 +84,31 @@ interface OrderItem {
   designImage?: string;
 }
 
-  
 interface OrderSelectedItem {
   category: string;
   size: string;
-  quantity : string;
+  quantity: number;
   grossWeight: string;
-  netWeight: string;  
+  netWeight: string;
   stoneWeight: string;
-  designImage?: string;  
+  designImage?: string;
   modelName: string;
-  remarks : string;
+  itemRemark: string; // ✅ match UI
 }
+
+
+  
+// interface OrderSelectedItem {
+//   category: string;
+//   size: string;
+//   quantity : string;
+//   grossWeight: string;
+//   netWeight: string;  
+//   stoneWeight: string;
+//   designImage?: string;  
+//   modelName: string;
+//   remarks : string;
+// }
 
 
 const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
@@ -186,18 +199,45 @@ const handleModelSelect = (modelId) => {
     }, []);
 
       // Fetch categories on page load
+  // const fetchCategories = async () => {
+  //   try {
+  //     const response = await fetch(`${apiBaseUrl}/category-groups`);
+  //     const result = await response.json();
+  //     if (result.success) {
+  //       setCategories(result.data);
+  //       console.log("cat"+result.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching categories:", error);
+  //   }
+  // };
+
   const fetchCategories = async () => {
-    try {
-      const response = await fetch(`${apiBaseUrl}/category-groups`);
-      const result = await response.json();
-      if (result.success) {
-        setCategories(result.data);
-        console.log("cat"+result.data);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+  try {
+    const response = await fetch(`${apiBaseUrl}/category-groups`);
+    const result = await response.json();
+
+    if (result.success) {
+      // Run all checks in parallel
+      const checks = result.data.map(async (cat: Category) => {
+        const res = await fetch(
+          `${apiBaseUrl}/api/previewModels?categoryId=${cat.Name}` // 👈 use Id, not Name
+        );
+        const models = await res.json();
+        return models.length > 0 ? cat : null;
+      });
+
+      // Wait for all to finish
+      const categoriesWithModels = (await Promise.all(checks)).filter(Boolean) as Category[];
+
+      setCategories(categoriesWithModels);
+      console.log("Categories with data:", categoriesWithModels);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
+};
+
 
     // Fetch models when category changes
   useEffect(() => {
@@ -396,9 +436,20 @@ const handleModelSelect = (modelId) => {
 const newItems = selectedModels.map((modelId) => {
   const model = models.find((m) => m.Id === modelId);
 
-  console.log(model);
+  console.log("select Models : " , model);
 
-  return {
+  // return {
+  //   category: model?.Category__c || "",
+  //   size: model?.Size__c || "0",
+  //   grossWeight: model?.Gross_Weight__c || "0",
+  //   netWeight: model?.Net_Weight__c || "0",
+  //   stoneWeight: model?.Stone_Weight__c || "0",
+  //   designImage: model?.Image_URL__c || "",
+  //   modelName: model?.Name || "",
+  //   quantity: 1, // 👈 default quantity
+  //   itemRemark: "" // 👈 default remarks
+  // };
+    return {
     category: model?.Category__c || "",
     size: model?.Size__c || "0",
     grossWeight: model?.Gross_Weight__c || "0",
@@ -406,8 +457,8 @@ const newItems = selectedModels.map((modelId) => {
     stoneWeight: model?.Stone_Weight__c || "0",
     designImage: model?.Image_URL__c || "",
     modelName: model?.Name || "",
-    quantity: 1, // 👈 default quantity
-    itemRemark: "" // 👈 default remarks
+    quantity: 1,
+    itemRemark: ""
   };
 });
 
@@ -535,7 +586,7 @@ const handleRemoveSelectedItem = (index: number) => {
     if (!res.ok) throw new Error("Failed to submit order");
 
     const data = await res.json();
-    alert(`Order submitted successfully! Order ID: ${data.orderId}`);
+    alert(`Order submitted successfully!`);
 
     // Reset
     setOrderSelectedItems([]);
@@ -625,26 +676,438 @@ const handleRemoveSelectedItem = (index: number) => {
 
   };
 
-  const generatePDF = async () => {
-    if (!orderInfo || orderItems.length === 0) {
-      alert("Please complete the order info and items before generating PDF.");
-      return;
+const generatePDF = async () => {
+  if (!orderInfo || (orderItems.length === 0 && orderSelectedItems.length === 0)) {
+    alert("Please complete the order info and items before generating PDF.");
+    return;
+  }
+
+  try {
+    let pdfBlob; // ✅ Declare outside so it's accessible later
+
+    if (activeTab === "designBank") {        
+      pdfBlob = await createOrderWithItemPDF(orderInfo, orderSelectedItems);
+    } else {
+      pdfBlob = await createOrderPDF(orderInfo, orderItems);
+    }
+
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url, "_blank");
+
+    setOrderInfo(prevInfo => 
+      prevInfo 
+        ? { ...prevInfo, pdfBlob } 
+        : null
+    );
+
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    alert("Failed to generate PDF. Please try again.");
+  }
+};
+
+  async function createOrderWithItemPDF(orderInfo: OrderInfo, orderSelectedItems: OrderSelectedItem[]) {
+    // Calculate totals
+    let totalQuantity = 0;
+    let totalWeight = 0;
+    orderSelectedItems.forEach((item) => {
+      const quantity = parseInt(item.quantity) || 0;
+      totalQuantity += quantity;
+  
+      // const weightRange = item.weightRange || "0";
+      // let avgWeight = 0;
+      // if (weightRange.includes("-")) {
+      //   const [min, max] = weightRange.split("-").map((w) => parseFloat(w) || 0);
+      //   avgWeight = (min + max) / 2;
+      // } else {
+      //   avgWeight = parseFloat(weightRange) || 0;
+      // }
+      // totalWeight += avgWeight * quantity;
+    });
+  
+    // Initialize PDF document and fonts
+    const pdfDoc = await PDFDocument.create();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  
+    // Constants
+    const margin = 35;
+    const lineHeight = 20;
+    const cellPadding = 5;
+  
+    // Function to wrap text
+    function getWrappedTextAndHeight(text: string, maxWidth: number, fontSize: number) {
+      const words = text.split(" ");
+      const lines = [];
+      let currentLine = words[0];
+  
+      for (let i = 1; i < words.length; i++) {
+        const width = font.widthOfTextAtSize(currentLine + " " + words[i], fontSize);
+        if (width < maxWidth - cellPadding * 2) {
+          currentLine += " " + words[i];
+        } else {
+          lines.push(currentLine);
+          currentLine = words[i];
+        }
+      }
+      lines.push(currentLine);
+      return {
+        lines,
+        height: Math.max(lineHeight, lines.length * (fontSize + 2) + cellPadding * 2),
+      };
     }
   
-    try {
-      const pdfBlob = await createOrderPDF(orderInfo, orderItems);
-      const url = URL.createObjectURL(pdfBlob);
-      window.open(url, '_blank');
-      
-      setOrderInfo(prevInfo => prevInfo ? {
-        ...prevInfo,
-        pdfBlob
-      } : null);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Failed to generate PDF. Please try again.");
+    // Function to draw wrapped text
+    function drawWrappedText(
+      text: string,
+      x: number,
+      y: number,
+      maxWidth: number, 
+      fontSize: number,
+      page: PDFPage,
+      isHeader = false,
+      isTotal = false
+    ) {
+      const { lines } = getWrappedTextAndHeight(text, maxWidth, fontSize);
+      let currentY = y - cellPadding;
+      lines.forEach((line) => {
+        page.drawText(line, {
+          x: x + cellPadding,
+          y: currentY - fontSize,
+          size: fontSize,
+          font: isHeader || isTotal ? boldFont : font,
+        });
+        currentY -= fontSize + 2;
+      });
     }
-  };
+  
+    // Function to draw table cell
+    function drawTableCell(
+      x: number, 
+      y: number,
+      width: number,
+      height: number, 
+      text: string,
+      page: PDFPage,
+      isHeader = false,
+      isTotal = false
+    ) {
+      page.drawRectangle({
+        x,
+        y: y - height,
+        width,
+        height,
+        borderWidth: 1,
+        borderColor: rgb(0, 0, 0),
+        color: isHeader ? rgb(0.95, 0.95, 0.95) : isTotal ? rgb(0.9, 0.9, 1) : rgb(1, 1, 1),
+      });
+  
+      if (text) {
+        drawWrappedText(text, x, y, width, 10, page, isHeader, isTotal);
+      }
+    }
+  
+    // Function to draw watermark
+    function drawWatermark(page: PDFPage, logo?: PDFImage) {
+      const { width, height } = page.getSize();
+  
+      // Draw text watermark
+      const watermarkText = "PSM GOLD CRAFTS";
+      const watermarkFontSize = 60;
+  
+      page.drawText(watermarkText, {
+        x: width / 2 - 150,
+        y: height / 2,
+        size: watermarkFontSize,
+        font: boldFont,
+        opacity: 0.07,
+        rotate: degrees(-45),
+      });
+  
+      // Draw logo watermark
+      if (logo) {
+        const watermarkWidth = width * 0.7;
+        const watermarkHeight = (watermarkWidth * logo.height) / logo.width;
+        page.drawImage(logo, {
+          x: (width - watermarkWidth) / 2,
+          y: (height - watermarkHeight) / 2,
+          width: watermarkWidth,
+          height: watermarkHeight,
+          opacity: 0.05,
+        });
+      }
+    }
+
+  
+    // Load and embed logo
+    const logoImageBytes = await fetch(COMPANY_LOGO.src).then((res) => res.arrayBuffer());
+    const logoImage = await pdfDoc.embedPng(logoImageBytes);
+  
+    // Create first page and add watermark
+    let page = pdfDoc.addPage([595.28, 841.89]); // A4 size
+    drawWatermark(page, logoImage);
+  
+    // Initial position and logo dimensions  
+    let y = 800;
+    const logoWidth = 60;
+    const logoHeight = (logoWidth * logoImage.height) / logoImage.width;
+  
+    // Draw header with logo
+    page.drawImage(logoImage, {
+      x: margin,
+      y: y - logoHeight + 16,
+      width: logoWidth,
+      height: logoHeight,
+    });
+  
+    page.drawText("PSM Gold Crafts Order Invoice", {
+      x: margin + logoWidth + 10,
+      y,
+      size: 16,
+      font: boldFont,
+    });
+  
+    y -= Math.max(logoHeight, 25);
+  
+    // Order details table
+    const detailsColumnWidths = [150, 350];
+    const orderDetailsTable = [
+      ["Order No:", orderInfo.orderNo || "0000"],
+      ["Customer:", orderInfo.partyName || "Unknown"],
+      ["Party Ledger:", orderInfo.partyCode || "N/A"],  
+      ["Product:", orderInfo.category || "N/A"],
+      ["Metal Purity:", orderInfo.purity || "N/A"],
+      ["Advance Metal:", orderInfo.advanceMetal || "N/A"],
+      ["Advance Metal Purity:", orderInfo.advanceMetalPurity || "N/A"],
+      ["Priority:", orderInfo.priority || "N/A"],
+      ["Delivery Date:", orderInfo.deliveryDate || "N/A"],
+      ["Created By:", orderInfo.createdBy || "N/A"],
+      ["Date:", new Date().toLocaleDateString()],
+    ];
+  
+    orderDetailsTable.forEach(([label, value]) => {
+      const height = Math.max(
+        getWrappedTextAndHeight(label, detailsColumnWidths[0], 10).height,
+        getWrappedTextAndHeight(value, detailsColumnWidths[1], 10).height
+      );
+      drawTableCell(margin, y, detailsColumnWidths[0], height, label, page, true);
+      drawTableCell(margin + detailsColumnWidths[0], y, detailsColumnWidths[1], height, value, page);
+      y -= height;
+    });
+  
+    y -= lineHeight * 2;
+  
+    // Order Items section  
+    page.drawText("Order Items", {
+      x: margin,
+      y,
+      size: 14,
+      font: boldFont,
+    });
+    y -= lineHeight * 1.5;
+  
+    // Update headers and column widths
+    const headers = ["Design", "Category", "Qty", "Size", "Grs Wt", "Net Wt", "Stone Wt", "Remarks"];
+    const columnWidths = [80,  100, 40, 50, 50, 50, 50, 100];
+
+    const totalTableWidth = columnWidths.reduce((sum, width) => sum + width, 0);
+      
+    // Draw table headers
+    let currentX = margin;
+    headers.forEach((header, index) => {
+      drawTableCell(currentX, y, columnWidths[index], lineHeight, header, page, true);
+      currentX += columnWidths[index];
+    });
+    y -= lineHeight;
+  
+    // Draw items
+    for (const item of orderSelectedItems) {
+      const quantity = parseInt(item.quantity) || 0;
+      const grsWt = item.grossWeight || "0";
+      
+      // if (weightRange.includes("-")) {
+      //   const [min, max] = weightRange.split("-").map((w) => parseFloat(w) || 0);
+      //   itemTotalWeight = ((min + max) / 2) * quantity;
+      // } else {
+      //   itemTotalWeight = (parseFloat(weightRange) || 0) * quantity;
+      // }
+
+      const rowHeight = 60;
+      currentX = margin;
+      
+      // Draw the design cell border
+      drawTableCell(currentX, y, columnWidths[0], rowHeight, "", page);
+      
+      // Handle design image
+      // if (item.designImage) {
+      //   try {
+      //     // Get image data
+      //     const imageData = item.designImage;
+      //     console.log('Processing image data:', imageData.substring(0, 100));
+
+      //     // Extract the base64 data and mime type
+      //     const matches = imageData.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+          
+      //     if (!matches || matches.length !== 3) {
+      //       console.error('Invalid image data format');
+      //       continue;
+      //     }
+
+      //     const [, mimeType, base64Data] = matches;
+      //     console.log('Image mime type:', mimeType);
+
+      //     try {
+      //       // Convert base64 to bytes
+      //       const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      //       console.log('Converted to bytes:', imageBytes.length);
+
+      //       // Embed the image based on mime type
+      //       let pdfImage;
+      //       if (mimeType === 'image/png') {
+      //         pdfImage = await pdfDoc.embedPng(imageBytes);
+      //       } else if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+      //         pdfImage = await pdfDoc.embedJpg(imageBytes);
+      //       } else {
+      //         console.error('Unsupported image type:', mimeType);
+      //         continue;
+      //       }
+
+      //       if (pdfImage) {
+      //         // Calculate dimensions
+      //         const maxWidth = columnWidths[0] - 10;
+      //         const maxHeight = rowHeight - 10;
+              
+      //         const scale = Math.min(
+      //           maxWidth / pdfImage.width,
+      //           maxHeight / pdfImage.height
+      //         );
+              
+      //         const width = pdfImage.width * scale;
+      //         const height = pdfImage.height * scale;
+
+      //         // Center image in cell
+      //         const xOffset = margin + (columnWidths[0] - width) / 2;
+      //         const yOffset = y - rowHeight + (rowHeight - height) / 2;
+
+      //         // Draw image
+      //         page.drawImage(pdfImage, {
+      //           x: xOffset,
+      //           y: yOffset,
+      //           width,
+      //           height,
+      //         });
+
+      //         console.log('Image embedded successfully', {
+      //           dimensions: { width, height },
+      //           position: { x: xOffset, y: yOffset }
+      //         });
+      //       }
+      //     } catch (error) {
+      //       console.error('Error embedding image:', error);
+      //     }
+      //   } catch (error) {
+      //     console.error('Error processing image:', error);
+      //   }
+      // }
+
+      if (item.designImage) {
+          try {
+            console.log("Processing image URL:", item.designImage);
+
+            // Fetch image bytes from URL
+            const response = await fetch(item.designImage);
+            if (!response.ok) throw new Error("Image fetch failed");
+
+            const imageBytes = await response.arrayBuffer();
+            const uint8Array = new Uint8Array(imageBytes);
+            console.log("Fetched image bytes:", uint8Array.length);
+
+            // Try to embed as PNG first, fallback to JPG
+            let pdfImage;
+            try {
+              pdfImage = await pdfDoc.embedPng(uint8Array);
+            } catch {
+              pdfImage = await pdfDoc.embedJpg(uint8Array);
+            }
+
+            if (pdfImage) {
+              // Calculate dimensions
+              const maxWidth = columnWidths[0] - 10;
+              const maxHeight = rowHeight - 10;
+              const scale = Math.min(maxWidth / pdfImage.width, maxHeight / pdfImage.height);
+              const width = pdfImage.width * scale;
+              const height = pdfImage.height * scale;
+
+              // Center image in cell
+              const xOffset = margin + (columnWidths[0] - width) / 2;
+              const yOffset = y - rowHeight + (rowHeight - height) / 2;
+
+              page.drawImage(pdfImage, {
+                x: xOffset,
+                y: yOffset,
+                width,
+                height,
+              });
+
+              console.log("Image embedded successfully:", { width, height });
+            }
+          } catch (error) {
+            console.error("Error processing image URL:", error);
+          }
+        }
+
+
+      // Draw other cells
+      currentX += columnWidths[0];
+      
+const values = [
+  item.modelName || "N/A",
+  item.category || "N/A",
+  quantity.toString(),
+  item.size || "N/A",
+  item.grossWeight || "N/A",
+  item.netWeight || "N/A",
+  item.stoneWeight || "N/A",
+  item.itemRemark || "N/A"
+];
+
+
+      values.forEach((value, index) => {
+        drawTableCell(currentX, y, columnWidths[index + 1], rowHeight, value, page);
+        currentX += columnWidths[index + 1];
+      });
+
+      y -= rowHeight;
+
+      // Page break check
+      if (y < 100) {
+        page = pdfDoc.addPage([595.28, 841.89]);
+        drawWatermark(page, logoImage);
+        y = 800;
+        
+        currentX = margin;
+        headers.forEach((header, index) => {
+          drawTableCell(currentX, y, columnWidths[index], lineHeight, header, page, true);
+          currentX += columnWidths[index];
+        });
+        y -= lineHeight;
+      }
+    }
+  
+    // Draw totals row
+    currentX = margin;
+    const totalRow = ["", "TOTAL", "", "", totalQuantity.toString(), totalWeight.toFixed(2), ""];
+      
+    totalRow.forEach((value, index) => {
+      drawTableCell(currentX, y, columnWidths[index], lineHeight, value, page, false, true);
+      currentX += columnWidths[index];
+    });
+  
+    // Generate PDF bytes
+    const pdfBytes = await pdfDoc.save();
+    return new Blob([pdfBytes], { type: "application/pdf" });
+  }
+
   
   async function createOrderPDF(orderInfo: OrderInfo, orderItems: OrderItem[]) {
     // Calculate totals
@@ -1004,14 +1467,48 @@ const handleRemoveSelectedItem = (index: number) => {
       <h1 className="page-title">Create Order</h1>
       
       {/* Both forms wrapped in a single container */}
+      
+
+         {/* ========  design bank button ========= */}
+     <div className="flex flex gap-2 justify-center my-3" >
        {isOrderSaved && (
         <button
           onClick={() => setShowForm((prev) => !prev)}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+          className= {showForm ? " px-4 py-2 bg-red-500 text-white rounded" : " px-4 py-2 bg-yellow-400 text-black rounded"} 
         >
           {showForm ? "Hide Order Form" : "Show Order Form"}
         </button>
       )}
+
+          <button
+            onClick={() => setActiveTab("addItem")}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              activeTab === "addItem"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Add Item
+          </button>
+
+          <button
+            onClick={() => {
+      setActiveTab("designBank");
+      setModels([]);               // ✅ reset models
+      setSelectedCategory(""); 
+      setOrderForm(false);
+    // ✅ reset category
+    }}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              activeTab === "designBank"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            Design Bank
+          </button>
+        </div>
+
 
 {/*       <div className={`forms-containe grid grid-cols-1 md:grid-cols-[50%_50%] gap-4 w-full ${showForm ? "md:grid-cols-[50%_50%]" : "md:grid-cols-1"}`}> */}
 
@@ -1160,36 +1657,7 @@ const handleRemoveSelectedItem = (index: number) => {
 
 <div>
   
-         {/* ========  design bank button ========= */}
-     <div className="flex flex gap-2 justify-center my-3">
-          <button
-            onClick={() => setActiveTab("addItem")}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              activeTab === "addItem"
-                ? "bg-blue-600 text-white shadow"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            Add Item
-          </button>
 
-          <button
-            onClick={() => {
-      setActiveTab("designBank");
-      setModels([]);               // ✅ reset models
-      setSelectedCategory(""); 
-      setOrderForm(false);
-    // ✅ reset category
-    }}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              activeTab === "designBank"
-                ? "bg-blue-600 text-white shadow"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            Design Bank
-          </button>
-        </div>
 
 
   {/* Second Form */}
@@ -1197,7 +1665,7 @@ const handleRemoveSelectedItem = (index: number) => {
   {activeTab === "addItem" && (
 
         <div className="form-card" id="AddItemBox">
-          <h2 style={{textAlign:"center"}}>Add Item</h2>
+          {/* <h2 style={{textAlign:"center"}}>Add Item</h2>   */}
           <div className="one-column-form">
             <div className="field-group" >
               <Label htmlFor="category">Category</Label>
@@ -1324,7 +1792,7 @@ const handleRemoveSelectedItem = (index: number) => {
 
       {activeTab === "designBank" && (
          <div className="form-card" id="AddItemBox">
-          <h2 style={{textAlign:"center"}}>Design Bank</h2>
+          {/* <h2 style={{textAlign:"center"}}>Design Bank</h2> */}
           <div className="one-column-form">
             <div className="fieldgroup flex gap-2">
 
@@ -1356,8 +1824,8 @@ const handleRemoveSelectedItem = (index: number) => {
 
 <div
   className={`modelPreview grid gap-4 mt-4 overflow-scroll 
-    ${showForm ? "grid-cols-2" : "grid-cols-4"}`}
-  style={{ maxHeight: "350px" }}
+    ${showForm ? "grid-cols-2" : "grid-cols-7"}`}
+  style={{ maxHeight: "550px" }}
 >
   {models.length > 0 ? (
     models.map((model) => (
@@ -1513,7 +1981,7 @@ const handleRemoveSelectedItem = (index: number) => {
                     ))}
                     <tr>
                       <td
-                        colSpan={3}
+                        colSpan={4}
                         style={{ fontWeight: "bold", textAlign: "right" }}
                       >
                         Total:
@@ -1697,14 +2165,26 @@ const handleRemoveSelectedItem = (index: number) => {
         <button
           type="button"
           onClick={handleSubmitOrder}
-          disabled={!isOrderSaved || (orderItems.length === 0 && orderSelectedItems.length === 0 )}
+                className={
+            isOrderSaved && (orderItems.length > 0 || orderSelectedItems.length > 0)
+              ? "bg-yellow-400 font-bold"
+              : "bg-gray-400 font-bold"
+          }
+
+
+          disabled={!isOrderSaved && (orderItems.length === 0 || orderSelectedItems.length === 0 )}
         >
           Submit Order
         </button>
         <button
           type="button"
+            className={
+              isOrderSaved && (orderItems.length > 0 || orderSelectedItems.length > 0)
+                ?  "bg-blue-500 font-bold text-white"
+                 : "bg-gray-400 font-bold"
+            }
           onClick={generatePDF}
-          disabled={!isOrderSaved || orderItems.length === 0}
+          disabled={!isOrderSaved && (orderItems.length === 0 || orderSelectedItems.length === 0 )}
         >
           Generate PDF
         </button>
