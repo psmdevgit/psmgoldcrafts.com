@@ -626,13 +626,13 @@ const handleRemoveSelectedItem = (index: number) => {
   };
 
   const generatePDF = async () => {
-    if (!orderInfo || orderItems.length === 0) {
+    if (!orderInfo || (orderItems.length === 0 || orderSelectedItems.length === 0 )) {
       alert("Please complete the order info and items before generating PDF.");
       return;
     }
   
     try {
-      const pdfBlob = await createOrderPDF(orderInfo, orderItems);
+      const pdfBlob = await createOrderPDF(orderInfo, orderItems,);
       const url = URL.createObjectURL(pdfBlob);
       window.open(url, '_blank');
       
@@ -1704,7 +1704,7 @@ const handleRemoveSelectedItem = (index: number) => {
         <button
           type="button"
           onClick={generatePDF}
-          disabled={!isOrderSaved || orderItems.length === 0}
+          disabled={!isOrderSaved ||(orderItems.length === 0 && orderSelectedItems.length === 0 )}
         >
           Generate PDF
         </button>
