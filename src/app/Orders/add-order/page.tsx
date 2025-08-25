@@ -1712,6 +1712,13 @@ const handleRemoveSelectedItem = (index: number) => {
 
       
       <style jsx>{`
+
+.main{
+  width: 85%;
+          margin-left: auto;
+          margin-right: 0;
+}
+
   .forms-container {
     display: grid;
     grid-template-columns: 1fr;
