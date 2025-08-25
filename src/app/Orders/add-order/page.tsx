@@ -1013,7 +1013,10 @@ const handleRemoveSelectedItem = (index: number) => {
         </button>
       )}
 
-      <div className={`forms-containe grid grid-cols-1 md:grid-cols-[50%_50%] gap-4 w-full ${showForm ? "md:grid-cols-[50%_50%]" : "md:grid-cols-1"}`}>
+{/*       <div className={`forms-containe grid grid-cols-1 md:grid-cols-[50%_50%] gap-4 w-full ${showForm ? "md:grid-cols-[50%_50%]" : "md:grid-cols-1"}`}> */}
+
+            <div className={`forms-container ${showForm ? "show-form" : "hide-form"}`}>
+              
         {/* First Form */}
           {showForm && (
         <div className="form-card " >
@@ -1706,6 +1709,33 @@ const handleRemoveSelectedItem = (index: number) => {
           Generate PDF
         </button>
       </div>
+
+      
+      <style jsx>{`
+  .forms-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  /* When showForm is true */
+  .forms-container.show-form {
+    grid-template-columns: 50% 50%;
+  }
+
+  /* Medium screen responsiveness */
+  @media (min-width: 768px) {
+    .forms-container.hide-form {
+      grid-template-columns: 1fr;
+    }
+
+    .forms-container.show-form {
+      grid-template-columns: 50% 50%;
+    }
+  }
+`}</style>
+      
     </div>
   );
 };
