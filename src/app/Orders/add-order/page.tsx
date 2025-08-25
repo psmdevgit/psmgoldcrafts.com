@@ -84,31 +84,18 @@ interface OrderItem {
   designImage?: string;
 }
 
+  
 interface OrderSelectedItem {
   category: string;
   size: string;
-  quantity: number;
+  quantity : string;
   grossWeight: string;
-  netWeight: string;
+  netWeight: string;  
   stoneWeight: string;
-  designImage?: string;
+  designImage?: string;  
   modelName: string;
-  itemRemark: string; // ✅ match UI
+  remarks : string;
 }
-
-
-  
-// interface OrderSelectedItem {
-//   category: string;
-//   size: string;
-//   quantity : string;
-//   grossWeight: string;
-//   netWeight: string;  
-//   stoneWeight: string;
-//   designImage?: string;  
-//   modelName: string;
-//   remarks : string;
-// }
 
 
 const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
@@ -153,10 +140,10 @@ const OrderFormModal = ({ open, setOpen }: OrderFormModalProps) => {
   });
 
   /* ---------------------- API ---------------------- */
-  const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
+  // const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
   
-  // const apiBaseUrl = "http://localhost:5001" ;
+  const apiBaseUrl = "http://localhost:5001" ;
 
 
   interface Category {
@@ -438,18 +425,7 @@ const newItems = selectedModels.map((modelId) => {
 
   console.log("select Models : " , model);
 
-  // return {
-  //   category: model?.Category__c || "",
-  //   size: model?.Size__c || "0",
-  //   grossWeight: model?.Gross_Weight__c || "0",
-  //   netWeight: model?.Net_Weight__c || "0",
-  //   stoneWeight: model?.Stone_Weight__c || "0",
-  //   designImage: model?.Image_URL__c || "",
-  //   modelName: model?.Name || "",
-  //   quantity: 1, // 👈 default quantity
-  //   itemRemark: "" // 👈 default remarks
-  // };
-    return {
+  return {
     category: model?.Category__c || "",
     size: model?.Size__c || "0",
     grossWeight: model?.Gross_Weight__c || "0",
@@ -457,8 +433,8 @@ const newItems = selectedModels.map((modelId) => {
     stoneWeight: model?.Stone_Weight__c || "0",
     designImage: model?.Image_URL__c || "",
     modelName: model?.Name || "",
-    quantity: 1,
-    itemRemark: ""
+    quantity: 1, // 👈 default quantity
+    itemRemark: "" // 👈 default remarks
   };
 });
 
@@ -707,406 +683,264 @@ const generatePDF = async () => {
 };
 
   async function createOrderWithItemPDF(orderInfo: OrderInfo, orderSelectedItems: OrderSelectedItem[]) {
-    // Calculate totals
-    let totalQuantity = 0;
-    let totalWeight = 0;
-    orderSelectedItems.forEach((item) => {
-      const quantity = parseInt(item.quantity) || 0;
-      totalQuantity += quantity;
-  
-      // const weightRange = item.weightRange || "0";
-      // let avgWeight = 0;
-      // if (weightRange.includes("-")) {
-      //   const [min, max] = weightRange.split("-").map((w) => parseFloat(w) || 0);
-      //   avgWeight = (min + max) / 2;
-      // } else {
-      //   avgWeight = parseFloat(weightRange) || 0;
-      // }
-      // totalWeight += avgWeight * quantity;
-    });
-  
-    // Initialize PDF document and fonts
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  
-    // Constants
-    const margin = 35;
-    const lineHeight = 20;
-    const cellPadding = 5;
-  
-    // Function to wrap text
-    function getWrappedTextAndHeight(text: string, maxWidth: number, fontSize: number) {
-      const words = text.split(" ");
-      const lines = [];
-      let currentLine = words[0];
-  
-      for (let i = 1; i < words.length; i++) {
-        const width = font.widthOfTextAtSize(currentLine + " " + words[i], fontSize);
-        if (width < maxWidth - cellPadding * 2) {
-          currentLine += " " + words[i];
-        } else {
-          lines.push(currentLine);
-          currentLine = words[i];
-        }
-      }
+  // Calculate totals (not used anymore, but you can remove if unnecessary)
+  let totalQuantity = 0;
+  let totalWeight = 0;
+  orderSelectedItems.forEach((item) => {
+    const quantity = parseInt(item.quantity) || 0;
+    totalQuantity += quantity;
+  });
+
+  // Initialize PDF document and fonts
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  // Constants
+  const margin = 35;
+  const lineHeight = 20;
+  const cellPadding = 5;
+
+  // Wrap text helper
+function getWrappedTextAndHeight(input: any, maxWidth: number, fontSize: number) {
+  const text = (input ?? "").toString(); // 🔹 Always string
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = words[0] || "";
+
+  for (let i = 1; i < words.length; i++) {
+    const width = font.widthOfTextAtSize(currentLine + " " + words[i], fontSize);
+    if (width < maxWidth - cellPadding * 2) {
+      currentLine += " " + words[i];
+    } else {
       lines.push(currentLine);
-      return {
-        lines,
-        height: Math.max(lineHeight, lines.length * (fontSize + 2) + cellPadding * 2),
-      };
+      currentLine = words[i];
     }
-  
-    // Function to draw wrapped text
-    function drawWrappedText(
-      text: string,
-      x: number,
-      y: number,
-      maxWidth: number, 
-      fontSize: number,
-      page: PDFPage,
-      isHeader = false,
-      isTotal = false
-    ) {
-      const { lines } = getWrappedTextAndHeight(text, maxWidth, fontSize);
-      let currentY = y - cellPadding;
-      lines.forEach((line) => {
-        page.drawText(line, {
-          x: x + cellPadding,
-          y: currentY - fontSize,
-          size: fontSize,
-          font: isHeader || isTotal ? boldFont : font,
-        });
-        currentY -= fontSize + 2;
-      });
-    }
-  
-    // Function to draw table cell
-    function drawTableCell(
-      x: number, 
-      y: number,
-      width: number,
-      height: number, 
-      text: string,
-      page: PDFPage,
-      isHeader = false,
-      isTotal = false
-    ) {
-      page.drawRectangle({
-        x,
-        y: y - height,
-        width,
-        height,
-        borderWidth: 1,
-        borderColor: rgb(0, 0, 0),
-        color: isHeader ? rgb(0.95, 0.95, 0.95) : isTotal ? rgb(0.9, 0.9, 1) : rgb(1, 1, 1),
-      });
-  
-      if (text) {
-        drawWrappedText(text, x, y, width, 10, page, isHeader, isTotal);
-      }
-    }
-  
-    // Function to draw watermark
-    function drawWatermark(page: PDFPage, logo?: PDFImage) {
-      const { width, height } = page.getSize();
-  
-      // Draw text watermark
-      const watermarkText = "PSM GOLD CRAFTS";
-      const watermarkFontSize = 60;
-  
-      page.drawText(watermarkText, {
-        x: width / 2 - 150,
-        y: height / 2,
-        size: watermarkFontSize,
-        font: boldFont,
-        opacity: 0.07,
-        rotate: degrees(-45),
-      });
-  
-      // Draw logo watermark
-      if (logo) {
-        const watermarkWidth = width * 0.7;
-        const watermarkHeight = (watermarkWidth * logo.height) / logo.width;
-        page.drawImage(logo, {
-          x: (width - watermarkWidth) / 2,
-          y: (height - watermarkHeight) / 2,
-          width: watermarkWidth,
-          height: watermarkHeight,
-          opacity: 0.05,
-        });
-      }
-    }
+  }
+  lines.push(currentLine);
+  return {
+    lines,
+    height: Math.max(lineHeight, lines.length * (fontSize + 2) + cellPadding * 2),
+  };
+}
 
-  
-    // Load and embed logo
-    const logoImageBytes = await fetch(COMPANY_LOGO.src).then((res) => res.arrayBuffer());
-    const logoImage = await pdfDoc.embedPng(logoImageBytes);
-  
-    // Create first page and add watermark
-    let page = pdfDoc.addPage([595.28, 841.89]); // A4 size
-    drawWatermark(page, logoImage);
-  
-    // Initial position and logo dimensions  
-    let y = 800;
-    const logoWidth = 60;
-    const logoHeight = (logoWidth * logoImage.height) / logoImage.width;
-  
-    // Draw header with logo
-    page.drawImage(logoImage, {
-      x: margin,
-      y: y - logoHeight + 16,
-      width: logoWidth,
-      height: logoHeight,
+function drawWrappedText(
+  input: any,
+  x: number,
+  y: number,
+  maxWidth: number,
+  fontSize: number,
+  page: PDFPage,
+  isHeader = false
+) {
+  const text = (input ?? "").toString(); // 🔹 Convert to string
+  const { lines } = getWrappedTextAndHeight(text, maxWidth, fontSize);
+  let currentY = y - cellPadding;
+  lines.forEach((line) => {
+    page.drawText(line, {
+      x: x + cellPadding,
+      y: currentY - fontSize,
+      size: fontSize,
+      font: isHeader ? boldFont : font,
     });
-  
-    page.drawText("PSM Gold Crafts Order Invoice", {
-      x: margin + logoWidth + 10,
-      y,
-      size: 16,
+    currentY -= fontSize + 2;
+  });
+}
+
+
+  // Draw table cell
+  function drawTableCell(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    text: string,
+    page: PDFPage,
+    isHeader = false
+  ) {
+    page.drawRectangle({
+      x,
+      y: y - height,
+      width,
+      height,
+      borderWidth: 1,
+      borderColor: rgb(0, 0, 0),
+      color: isHeader ? rgb(0.95, 0.95, 0.95) : rgb(1, 1, 1),
+    });
+
+    if (text) {
+      drawWrappedText(text, x, y, width, 10, page, isHeader);
+    }
+  }
+
+  // Watermark
+  function drawWatermark(page: PDFPage, logo?: PDFImage) {
+    const { width, height } = page.getSize();
+    const watermarkText = "PSM GOLD CRAFTS";
+    const watermarkFontSize = 60;
+
+    page.drawText(watermarkText, {
+      x: width / 2 - 150,
+      y: height / 2,
+      size: watermarkFontSize,
       font: boldFont,
+      opacity: 0.07,
+      rotate: degrees(-45),
     });
-  
-    y -= Math.max(logoHeight, 25);
-  
-    // Order details table
-    const detailsColumnWidths = [150, 350];
-    const orderDetailsTable = [
-      ["Order No:", orderInfo.orderNo || "0000"],
-      ["Customer:", orderInfo.partyName || "Unknown"],
-      ["Party Ledger:", orderInfo.partyCode || "N/A"],  
-      ["Product:", orderInfo.category || "N/A"],
-      ["Metal Purity:", orderInfo.purity || "N/A"],
-      ["Advance Metal:", orderInfo.advanceMetal || "N/A"],
-      ["Advance Metal Purity:", orderInfo.advanceMetalPurity || "N/A"],
-      ["Priority:", orderInfo.priority || "N/A"],
-      ["Delivery Date:", orderInfo.deliveryDate || "N/A"],
-      ["Created By:", orderInfo.createdBy || "N/A"],
-      ["Date:", new Date().toLocaleDateString()],
-    ];
-  
-    orderDetailsTable.forEach(([label, value]) => {
-      const height = Math.max(
-        getWrappedTextAndHeight(label, detailsColumnWidths[0], 10).height,
-        getWrappedTextAndHeight(value, detailsColumnWidths[1], 10).height
-      );
-      drawTableCell(margin, y, detailsColumnWidths[0], height, label, page, true);
-      drawTableCell(margin + detailsColumnWidths[0], y, detailsColumnWidths[1], height, value, page);
-      y -= height;
-    });
-  
-    y -= lineHeight * 2;
-  
-    // Order Items section  
-    page.drawText("Order Items", {
-      x: margin,
-      y,
-      size: 14,
-      font: boldFont,
-    });
-    y -= lineHeight * 1.5;
-  
-    // Update headers and column widths
-    const headers = ["Design", "Category", "Qty", "Size", "Grs Wt", "Net Wt", "Stone Wt", "Remarks"];
-    const columnWidths = [80,  100, 40, 50, 50, 50, 50, 100];
 
-    const totalTableWidth = columnWidths.reduce((sum, width) => sum + width, 0);
-      
-    // Draw table headers
-    let currentX = margin;
-    headers.forEach((header, index) => {
-      drawTableCell(currentX, y, columnWidths[index], lineHeight, header, page, true);
-      currentX += columnWidths[index];
-    });
-    y -= lineHeight;
-  
-    // Draw items
-    for (const item of orderSelectedItems) {
-      const quantity = parseInt(item.quantity) || 0;
-      const grsWt = item.grossWeight || "0";
-      
-      // if (weightRange.includes("-")) {
-      //   const [min, max] = weightRange.split("-").map((w) => parseFloat(w) || 0);
-      //   itemTotalWeight = ((min + max) / 2) * quantity;
-      // } else {
-      //   itemTotalWeight = (parseFloat(weightRange) || 0) * quantity;
-      // }
+    if (logo) {
+      const watermarkWidth = width * 0.7;
+      const watermarkHeight = (watermarkWidth * logo.height) / logo.width;
+      page.drawImage(logo, {
+        x: (width - watermarkWidth) / 2,
+        y: (height - watermarkHeight) / 2,
+        width: watermarkWidth,
+        height: watermarkHeight,
+        opacity: 0.05,
+      });
+    }
+  }
 
-      const rowHeight = 60;
-      currentX = margin;
-      
-      // Draw the design cell border
-      drawTableCell(currentX, y, columnWidths[0], rowHeight, "", page);
-      
-      // Handle design image
-      // if (item.designImage) {
-      //   try {
-      //     // Get image data
-      //     const imageData = item.designImage;
-      //     console.log('Processing image data:', imageData.substring(0, 100));
+  // Load logo
+  const logoImageBytes = await fetch(COMPANY_LOGO.src).then((res) => res.arrayBuffer());
+  const logoImage = await pdfDoc.embedPng(logoImageBytes);
 
-      //     // Extract the base64 data and mime type
-      //     const matches = imageData.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
-          
-      //     if (!matches || matches.length !== 3) {
-      //       console.error('Invalid image data format');
-      //       continue;
-      //     }
+  // First page
+  let page = pdfDoc.addPage([595.28, 841.89]);
+  drawWatermark(page, logoImage);
 
-      //     const [, mimeType, base64Data] = matches;
-      //     console.log('Image mime type:', mimeType);
+  let y = 800;
+  const logoWidth = 60;
+  const logoHeight = (logoWidth * logoImage.height) / logoImage.width;
 
-      //     try {
-      //       // Convert base64 to bytes
-      //       const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-      //       console.log('Converted to bytes:', imageBytes.length);
+  // Header
+  page.drawImage(logoImage, {
+    x: margin,
+    y: y - logoHeight + 16,
+    width: logoWidth,
+    height: logoHeight,
+  });
+  page.drawText("PSM Gold Crafts Order Invoice", {
+    x: margin + logoWidth + 10,
+    y,
+    size: 16,
+    font: boldFont,
+  });
+  y -= Math.max(logoHeight, 25);
 
-      //       // Embed the image based on mime type
-      //       let pdfImage;
-      //       if (mimeType === 'image/png') {
-      //         pdfImage = await pdfDoc.embedPng(imageBytes);
-      //       } else if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
-      //         pdfImage = await pdfDoc.embedJpg(imageBytes);
-      //       } else {
-      //         console.error('Unsupported image type:', mimeType);
-      //         continue;
-      //       }
+  // Order details
+  const detailsColumnWidths = [150, 350];
+  const orderDetailsTable = [
+    ["Order No:", orderInfo.orderNo || "0000"],
+    ["Customer:", orderInfo.partyName || "Unknown"],
+    ["Party Ledger:", orderInfo.partyCode || "N/A"],
+    ["Product:", orderInfo.category || "N/A"],
+    ["Metal Purity:", orderInfo.purity || "N/A"],
+    ["Advance Metal:", orderInfo.advanceMetal || "N/A"],
+    ["Advance Metal Purity:", orderInfo.advanceMetalPurity || "N/A"],
+    ["Priority:", orderInfo.priority || "N/A"],
+    ["Delivery Date:", orderInfo.deliveryDate || "N/A"],
+    ["Created By:", orderInfo.createdBy || "N/A"],
+    ["Date:", new Date().toLocaleDateString()],
+  ];
 
-      //       if (pdfImage) {
-      //         // Calculate dimensions
-      //         const maxWidth = columnWidths[0] - 10;
-      //         const maxHeight = rowHeight - 10;
-              
-      //         const scale = Math.min(
-      //           maxWidth / pdfImage.width,
-      //           maxHeight / pdfImage.height
-      //         );
-              
-      //         const width = pdfImage.width * scale;
-      //         const height = pdfImage.height * scale;
+  orderDetailsTable.forEach(([label, value]) => {
+    const height = Math.max(
+      getWrappedTextAndHeight(label, detailsColumnWidths[0], 10).height,
+      getWrappedTextAndHeight(value, detailsColumnWidths[1], 10).height
+    );
+    drawTableCell(margin, y, detailsColumnWidths[0], height, label, page, true);
+    drawTableCell(margin + detailsColumnWidths[0], y, detailsColumnWidths[1], height, value, page);
+    y -= height;
+  });
 
-      //         // Center image in cell
-      //         const xOffset = margin + (columnWidths[0] - width) / 2;
-      //         const yOffset = y - rowHeight + (rowHeight - height) / 2;
+  y -= lineHeight * 2;
 
-      //         // Draw image
-      //         page.drawImage(pdfImage, {
-      //           x: xOffset,
-      //           y: yOffset,
-      //           width,
-      //           height,
-      //         });
+  // Items header
+  page.drawText("Order Items", { x: margin, y, size: 14, font: boldFont });
+  y -= lineHeight * 1.5;
 
-      //         console.log('Image embedded successfully', {
-      //           dimensions: { width, height },
-      //           position: { x: xOffset, y: yOffset }
-      //         });
-      //       }
-      //     } catch (error) {
-      //       console.error('Error embedding image:', error);
-      //     }
-      //   } catch (error) {
-      //     console.error('Error processing image:', error);
-      //   }
-      // }
+  const headers = ["Design", "Category", "Size", "Grs Wt", "Net Wt", "Stone Wt", "Qty", "Remarks"];
+  const columnWidths = [80, 80, 60, 60, 60, 60, 50, 80];
 
-      if (item.designImage) {
-          try {
-            console.log("Processing image URL:", item.designImage);
+  let currentX = margin;
+  headers.forEach((header, index) => {
+    drawTableCell(currentX, y, columnWidths[index], lineHeight, header, page, true);
+    currentX += columnWidths[index];
+  });
+  y -= lineHeight;
 
-            // Fetch image bytes from URL
-            const response = await fetch(item.designImage);
-            if (!response.ok) throw new Error("Image fetch failed");
+  // Items
+  for (const item of orderSelectedItems) {
+    const rowHeight = 60;
+    currentX = margin;
 
-            const imageBytes = await response.arrayBuffer();
-            const uint8Array = new Uint8Array(imageBytes);
-            console.log("Fetched image bytes:", uint8Array.length);
+    // Design cell (always empty background)
+    drawTableCell(currentX, y, columnWidths[0], rowHeight, "", page);
 
-            // Try to embed as PNG first, fallback to JPG
-            let pdfImage;
-            try {
-              pdfImage = await pdfDoc.embedPng(uint8Array);
-            } catch {
-              pdfImage = await pdfDoc.embedJpg(uint8Array);
-            }
+    // Only embed image if exists
+    if (item.designImage) {
+      try {
+        const matches = item.designImage.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+        if (matches?.length === 3) {
+          const [, mimeType, base64Data] = matches;
+          const imageBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
+          const pdfImage =
+            mimeType === "image/png"
+              ? await pdfDoc.embedPng(imageBytes)
+              : await pdfDoc.embedJpg(imageBytes);
 
-            if (pdfImage) {
-              // Calculate dimensions
-              const maxWidth = columnWidths[0] - 10;
-              const maxHeight = rowHeight - 10;
-              const scale = Math.min(maxWidth / pdfImage.width, maxHeight / pdfImage.height);
-              const width = pdfImage.width * scale;
-              const height = pdfImage.height * scale;
-
-              // Center image in cell
-              const xOffset = margin + (columnWidths[0] - width) / 2;
-              const yOffset = y - rowHeight + (rowHeight - height) / 2;
-
-              page.drawImage(pdfImage, {
-                x: xOffset,
-                y: yOffset,
-                width,
-                height,
-              });
-
-              console.log("Image embedded successfully:", { width, height });
-            }
-          } catch (error) {
-            console.error("Error processing image URL:", error);
+          if (pdfImage) {
+            const maxWidth = columnWidths[0] - 10;
+            const maxHeight = rowHeight - 10;
+            const scale = Math.min(maxWidth / pdfImage.width, maxHeight / pdfImage.height);
+            const width = pdfImage.width * scale;
+            const height = pdfImage.height * scale;
+            const xOffset = margin + (columnWidths[0] - width) / 2;
+            const yOffset = y - rowHeight + (rowHeight - height) / 2;
+            page.drawImage(pdfImage, { x: xOffset, y: yOffset, width, height });
           }
         }
-
-
-      // Draw other cells
-      currentX += columnWidths[0];
-      
-const values = [
-  item.modelName || "N/A",
-  item.category || "N/A",
-  quantity.toString(),
-  item.size || "N/A",
-  item.grossWeight || "N/A",
-  item.netWeight || "N/A",
-  item.stoneWeight || "N/A",
-  item.itemRemark || "N/A"
-];
-
-
-      values.forEach((value, index) => {
-        drawTableCell(currentX, y, columnWidths[index + 1], rowHeight, value, page);
-        currentX += columnWidths[index + 1];
-      });
-
-      y -= rowHeight;
-
-      // Page break check
-      if (y < 100) {
-        page = pdfDoc.addPage([595.28, 841.89]);
-        drawWatermark(page, logoImage);
-        y = 800;
-        
-        currentX = margin;
-        headers.forEach((header, index) => {
-          drawTableCell(currentX, y, columnWidths[index], lineHeight, header, page, true);
-          currentX += columnWidths[index];
-        });
-        y -= lineHeight;
-      }
+      } catch {}
     }
-  
-    // Draw totals row
-    currentX = margin;
-    const totalRow = ["", "TOTAL", "", "", totalQuantity.toString(), totalWeight.toFixed(2), ""];
-      
-    totalRow.forEach((value, index) => {
-      drawTableCell(currentX, y, columnWidths[index], lineHeight, value, page, false, true);
-      currentX += columnWidths[index];
+
+    currentX += columnWidths[0];
+    const values = [
+      item.category || "N/A",
+      item.size || "N/A",
+      item.grossWeight || "N/A",
+      item.netWeight || "N/A",
+      item.stoneWeight || "N/A",
+      (parseInt(item.quantity) || 0).toString(),
+      item.remarks || "N/A",
+    ];
+
+    values.forEach((value, index) => {
+      drawTableCell(currentX, y, columnWidths[index + 1], rowHeight, value, page);
+      currentX += columnWidths[index + 1];
     });
-  
-    // Generate PDF bytes
-    const pdfBytes = await pdfDoc.save();
-    return new Blob([pdfBytes], { type: "application/pdf" });
+
+    y -= rowHeight;
+
+    if (y < 100) {
+      page = pdfDoc.addPage([595.28, 841.89]);
+      drawWatermark(page, logoImage);
+      y = 800;
+      currentX = margin;
+      headers.forEach((header, index) => {
+        drawTableCell(currentX, y, columnWidths[index], lineHeight, header, page, true);
+        currentX += columnWidths[index];
+      });
+      y -= lineHeight;
+    }
   }
+
+  // No TOTALS row anymore
+
+  const pdfBytes = await pdfDoc.save();
+  return new Blob([pdfBytes], { type: "application/pdf" });
+}
+
 
   
   async function createOrderPDF(orderInfo: OrderInfo, orderItems: OrderItem[]) {

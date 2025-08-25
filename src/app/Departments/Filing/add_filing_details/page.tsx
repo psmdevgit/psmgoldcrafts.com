@@ -97,26 +97,26 @@ export default function AddGrindingDetails() {
   });
   const [filingIssuedWeight, setFilingIssuedWeight] = useState<number>(0);
 
-    const [formattedId, setFormattedId] = useState<string>("");
+    //const [formattedId, setFormattedId] = useState<string>("");
   
-  useEffect(() => {
-    if (castingId) {
-      // Generate random number between 1 and 999 (3 digits, padded)
-      const newFid = (Math.floor(Math.random() * 999) + 1)
-        .toString()
-        .padStart(3, "0");
+  // useEffect(() => {
+  //   if (castingId) {
+  //     // Generate random number between 1 and 999 (3 digits, padded)
+  //     const newFid = (Math.floor(Math.random() * 999) + 1)
+  //       .toString()
+  //       .padStart(3, "0");
 
-      // Split ID parts safely
-      const parts = castingId.split("/");
-      if (parts.length >= 4) {
-        const [date, month, year, number] = parts;
-        setFormattedId(`Filing/${date}/${month}/${year}/${number}/${newFid}`);
-      }
-    }
-  }, [castingId]); // Run when castingId changes
+  //     // Split ID parts safely
+  //     const parts = castingId.split("/");
+  //     if (parts.length >= 4) {
+  //       const [date, month, year, number] = parts;
+  //       setFormattedId(`Filing/${date}/${month}/${year}/${number}/${newFid}`);
+  //     }
+  //   }
+  // }, [castingId]); // Run when castingId changes
   
   // Add a formatted ID that includes GRIND
-  // const formattedId = castingId ? `Filing/${castingId}` : '';
+  const formattedId = castingId ? `Filing/${castingId}` : '';
 
   // Fetch casting details and related orders
   useEffect(() => {

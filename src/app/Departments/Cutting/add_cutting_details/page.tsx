@@ -51,9 +51,9 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number, subnumber] = platingId.split('/');
         console.log('[Add Cutting] Plating ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newCid = Math.floor(Math.random() * 99) + 1;
+        //const newCid = Math.floor(Math.random() * 99) + 1;
         
-        const generatedCuttingId = `CUT/${date}/${month}/${year}/${number}/${newCid}`;
+        const generatedCuttingId = `CUT/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedCuttingId);
 
         console.log('[Add Cutting] Fetching pouches from:', {
