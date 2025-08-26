@@ -51,9 +51,16 @@ const InventoryItemSummary: React.FC = () => {
   }, []);
 
   // ✅ filter here so we can reuse
-  const filteredReports = reports.filter(
-    (report) => Number(report.availableWeight) > 0
-  );
+  // const filteredReports = reports.filter(
+  //   (report) => Number(report.availableWeight) > 0
+  // );
+
+  // ✅ filter here so we can reuse
+const filteredReports = reports.filter(
+  (report) =>
+    Number(report.availableWeight) > 0 && report.name.toLowerCase() !== "alloy"
+);
+
 
   return (
     <div className="w-full mt-20" style={{ height: "100vh" }}>
