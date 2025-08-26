@@ -54,9 +54,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number, subnumber] = sourceId.split('/');
         console.log(`[Add Dull] ${sourceType} ID parts:`, { prefix, date, month, year, number, subnumber });
 
-const newDid = Math.floor(Math.random() * 999) + 1;
+// const newDid = Math.floor(Math.random() * 999) + 1;
 
-        const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${newDid}`;
+        const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${subnumber}`;
         // const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedDullId);
 
