@@ -397,10 +397,16 @@ export default function SummaryPage() {
 
     {!isLoading && !error && reports.length > 0 && (
       <div className="overflow-x-auto">
-        {(() => {
+{/*         {(() => {
           const filteredReports = reports.filter(
             (r) => Number(r.availableWeight) > 0
-          );
+          ); */}
+
+                {(() => {
+       
+          const filteredReports = reports.filter(
+  (r) => Number(r.availableWeight) > 0 && r.name.toLowerCase() !== "alloy"
+);
 
           const totalAvlWeight = filteredReports.reduce(
             (sum, r) => sum + (Number(r.availableWeight) || 0),
