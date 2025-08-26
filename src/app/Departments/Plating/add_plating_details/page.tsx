@@ -51,10 +51,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number, subnumber] = dullId.split('/');
         console.log('[Add Plating] Dull ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newPid = Math.floor(Math.random() * 99) + 1;
+        // const newPid = Math.floor(Math.random() * 99) + 1;
 
         
-        const generatedPlatingId = `PLAT/${date}/${month}/${year}/${number}/${newPid}`;
+        const generatedPlatingId = `PLAT/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedPlatingId);
 
         console.log('[Add Plating] Fetching pouches from:', {
