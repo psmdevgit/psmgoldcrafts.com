@@ -60,10 +60,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
         console.log('[AddSetting] ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newSid = Math.floor(Math.random() * 99) + 1;
+        // const newSid = Math.floor(Math.random() * 99) + 1;
 
         
-        const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${newSid}`;
+        const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedSettingId);
 
         const pouchResponse = await fetch(apiEndpoint);
