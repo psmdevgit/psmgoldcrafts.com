@@ -29,7 +29,6 @@ export default function SummaryPage() {
 
   const API_URL = "https://erp-server-r9wh.onrender.com";
   
-  // const API_URL = "http://localhost:5001";
 
 
   const fetchData = async () => {
@@ -97,11 +96,11 @@ export default function SummaryPage() {
   );
 
   const inventoryTotalAvl = reports
-    .filter((r) => Number(r.availableWeight) > 0)
-    .reduce((sum, r) => sum + (Number(r.availableWeight) || 0), 0);
+    .filter((r) => Number(r.availableWeight) > 0 && r.name.toLowerCase() !== "alloy")
+    .reduce((sum, r) => sum + (Number(r.availableWeight) || 0 ), 0);
 
   const inventoryTotalGold = reports
-    .filter((r) => Number(r.availableWeight) > 0)
+    .filter((r) => Number(r.availableWeight) > 0 && r.name.toLowerCase() !== "alloy")
     .reduce((sum, r) => {
       const purityString = String(r.purity).trim().toLowerCase();
       let purityValue = purityString.includes("22k")
@@ -258,133 +257,6 @@ export default function SummaryPage() {
             )}
           </div>
         </div>
-
-        {/* Right Column */}
-        {/* <div>
-          <h1 className="text-xl font-bold mb-4">Inventory Items</h1>
-          <div className="mt-5 overflow-x-auto">
-            {isLoading && <p className="text-gray-500">Loading...</p>}
-            {error && <p className="text-red-500">Error: {error}</p>}
-            {!isLoading && !error && reports.length === 0 && (
-              <p className="text-gray-500">No reports found.</p>
-            )}
-
-            {!isLoading && !error && reports.length > 0 && (
-              <div className="overflow-x-auto">
-                 <table
-                    className="border border-collapse w-full bg-white"
-                    style={{ width: "100%", backgroundColor: "#fff" }}
-                  >
-                  <thead className="bg-[#1A7A75] text-white">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-sm font-semibold">
-                        Item
-                      </th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold">
-                        Purity
-                      </th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold">
-                        Avl Weight (gm)
-                      </th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold">
-                        Purity Gold Wt (gm)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {reports
-                      .filter((report) => Number(report.availableWeight) > 0)
-                      .map((report, index) => {
-                        const purityString = String(report.purity)
-                          .trim()
-                          .toLowerCase();
-                        let purityValue: number =
-                          purityString.includes("22k")
-                            ? 91.7
-                            : parseFloat(purityString) || 0;
-
-                        const availableWeightValue =
-                          Number(report.availableWeight) || 0;
-
-                        const purityGoldWeight = (
-                          (purityValue * availableWeightValue) /
-                          100
-                        ).toFixed(4);
-
-                        return (
-                          <tr
-                            key={`${report.name}-${index}`}
-                            className="hover:bg-gray-50"
-                          >
-                            <td className="px-4 py-2 text-sm text-gray-800">
-                              {report.name}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-gray-800">
-                              {report.purity}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-gray-800">
-                              {availableWeightValue.toFixed(4)}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-gray-800">
-                              {purityGoldWeight}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                  <tfoot>
-                    <tr
-                      className="bg-gray-50 font-semibold"
-                      style={{
-                        backgroundColor: "#EDB652",
-                        color: "#000",
-                        fontWeight: "500",
-                      }}
-                    >
-                      <td colSpan={2} className="px-4 py-2 ">
-                        Total:
-                      </td>
-                      <td className="px-4 py-2 text-sm ">
-                        {reports
-                          .filter(
-                            (report) => Number(report.availableWeight) > 0
-                          )
-                          .reduce(
-                            (sum, report) =>
-                              sum + (Number(report.availableWeight) || 0),
-                            0
-                          )
-                          .toFixed(4)}
-                      </td>
-                      <td className="px-4 py-2 text-sm ">
-                        {reports
-                          .filter(
-                            (report) => Number(report.availableWeight) > 0
-                          )
-                          .reduce((sum, report) => {
-                            const purityString = String(report.purity)
-                              .trim()
-                              .toLowerCase();
-                            let purityValue: number =
-                              purityString.includes("22k")
-                                ? 91.7
-                                : parseFloat(purityString) || 0;
-                            const availableWeightValue =
-                              Number(report.availableWeight) || 0;
-                            return (
-                              sum +
-                              (purityValue * availableWeightValue) / 100
-                            );
-                          }, 0)
-                          .toFixed(4)}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            )}
-          </div>
-        </div> */}
 
 <div>
   <h1 className="text-xl font-bold mb-4">Inventory Items</h1>
