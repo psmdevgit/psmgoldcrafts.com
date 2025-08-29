@@ -484,7 +484,7 @@ export default function CastingTable() {
                             size="small"
                           />
                         </TableCell>
-                        <TableCell>Casting Id</TableCell>
+                        <TableCell>ID</TableCell>
                         <TableCell>Issued Weight</TableCell>
                         <TableCell>Received Weight</TableCell>
                         <TableCell>Issued Date</TableCell>
