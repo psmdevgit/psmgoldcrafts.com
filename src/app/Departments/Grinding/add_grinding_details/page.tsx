@@ -48,7 +48,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number,subnumber] = filingId.split('/');
         console.log('[AddGrinding] Filing ID parts:', { prefix, date, month, year, number,subnumber });
 
-        const newGid = Math.floor(Math.random() * 999) + 1;
+
 
         const generatedGrindingId = `GRIND/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedGrindingId);

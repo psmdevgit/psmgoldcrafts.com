@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         .main {
           height: 100vh;
           padding-top: 80px;
-          width: 84%;
+          width: 85%;
           margin-left: auto;
           margin-right: 0;
         }

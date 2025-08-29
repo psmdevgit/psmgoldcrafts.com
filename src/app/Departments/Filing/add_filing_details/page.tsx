@@ -97,7 +97,6 @@ export default function AddGrindingDetails() {
   });
   const [filingIssuedWeight, setFilingIssuedWeight] = useState<number>(0);
 
-    //const [formattedId, setFormattedId] = useState<string>("");
   
   // useEffect(() => {
   //   if (castingId) {
@@ -114,9 +113,12 @@ export default function AddGrindingDetails() {
   //     }
   //   }
   // }, [castingId]); // Run when castingId changes
+
+  
   
   // Add a formatted ID that includes GRIND
-  const formattedId = castingId ? `Filing/${castingId}` : '';
+   const formattedId = castingId ? `Filing/${castingId}` : '';
+
 
   // Fetch casting details and related orders
   useEffect(() => {
