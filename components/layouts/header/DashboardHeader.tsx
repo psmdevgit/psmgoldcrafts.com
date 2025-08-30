@@ -82,7 +82,7 @@ const DashboardHeader = () => {
               </button>
             </div>
             <h2 className="header__title text-white">
-              PSM GOLD CRAFTS{" "}
+              KALASH JEWELLERS GOLD CRAFTS{" "}
               <span>
          
           
