@@ -1044,7 +1044,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Required Pure Metal</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Pure Metal</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Required Alloy</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Alloy</th>
+                           {/* <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Alloy</th> */}
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Weight Issued</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Issued Date</th>
                       </tr>
@@ -1058,7 +1058,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().pureGold.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{remainingPureMetalRequired.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().alloy.toFixed(2)}</td>
-                        <td className="px-3 py-2 text-sm">{remainingAlloyRequired.toFixed(2)}</td>
+                        {/* <td className="px-3 py-2 text-sm">{remainingAlloyRequired.toFixed(2)}</td>// */}
                         <td className="px-3 py-2 text-sm">
                           {inventoryItems.reduce((total, item) => total + item.issueWeight, 0).toFixed(2)}
                         </td>
