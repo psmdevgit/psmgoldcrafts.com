@@ -40,7 +40,7 @@ export default function Login() {
 
       if (response.ok && data.success) {
         console.log("✅ Login successful!", data);
-        localStorage.setItem("userId", data.userId); // Store user ID if needed
+        localStorage.setItem("username", username); // Store user ID if needed
         router.push("/Orders"); // Redirect user to dashboard
       } else {
         setError(data.error || "Invalid login credentials.");
