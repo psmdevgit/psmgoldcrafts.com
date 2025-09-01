@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { AlertCircle } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { AlertDescription } from "@/components/ui/alertdescription";
+
+import { useRouter } from "next/navigation";
+
 import {
   Select,
   SelectContent,
@@ -18,14 +21,25 @@ import "../Orders/add-order/add-order.css";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com" ;
 
+
+// const apiBaseUrl = "http://localhost:5001" ;
+
 interface InventoryItem {
   name: string;
   availableWeight: number;
   purity: string;
 }
 
+interface PartyLedger {
+  Id: string;
+  Party_Code__c: string;
+}
+
 const InventoryUpdateForm = () => {
+  
+      const router = useRouter();
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
+    const [partyLedgers, setPartyLedgers] = useState<PartyLedger[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCustomItem, setIsCustomItem] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string>('');
@@ -34,7 +48,8 @@ const InventoryUpdateForm = () => {
     itemName: '',
     purity: '',
     availableWeight: '',
-    unitOfMeasure: 'grams'
+    unitOfMeasure: 'grams',
+    partyLedger: ''
   });
 
   const [error, setError] = useState('');
@@ -58,7 +73,25 @@ const InventoryUpdateForm = () => {
       }
     };
 
-    fetchInventory();
+     const fetchPartyLedgers = async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/customer-groups`);
+        const result = await response.json();
+
+        if (result.success) {
+          console.log(result.data);
+          setPartyLedgers(result.data);
+        } else {
+          setError('Failed to fetch party ledgers');
+        }
+      } catch (err) {
+        setError('Error fetching party ledgers');
+        console.error(err);
+      }
+    };
+
+    fetchInventory();    
+    fetchPartyLedgers();
   }, []);
 
   const handleItemSelect = (value: string) => {
@@ -68,7 +101,8 @@ const InventoryUpdateForm = () => {
         itemName: '',
         purity: '',
         availableWeight: '',
-        unitOfMeasure: 'grams'
+        unitOfMeasure: 'grams',     
+        partyLedger: ''
       });
     } else {
       setIsCustomItem(false);
@@ -78,7 +112,8 @@ const InventoryUpdateForm = () => {
           itemName: item.name,
           purity: item.purity,
           availableWeight: item.availableWeight.toString(),
-          unitOfMeasure: 'grams'
+          unitOfMeasure: 'grams',
+          partyLedger: ''
         });
       }
     }
@@ -113,6 +148,7 @@ const InventoryUpdateForm = () => {
     if (!formData.purity) missingFields.push('Purity');
     if (!formData.availableWeight) missingFields.push('Available Weight');
     if (!formData.unitOfMeasure) missingFields.push('Unit of Measure');
+     if (!formData.partyLedger) missingFields.push('Party Ledger');
 
     if (missingFields.length > 0) {
       const errorMessage = `Missing required fields: ${missingFields.join(', ')}`;
@@ -129,6 +165,7 @@ const InventoryUpdateForm = () => {
         purity: formData.purity,
         availableWeight: parseFloat(formData.availableWeight),
         unitOfMeasure: formData.unitOfMeasure,
+         partyLedger: formData.partyLedger,
         isCustomItem: isCustomItem,
         originalItem: isCustomItem ? null : selectedItem
       };
@@ -151,17 +188,22 @@ const InventoryUpdateForm = () => {
 
       setSuccess('Inventory updated successfully');
       
+    router.push(`/Inventory`);
+      
       // Reset form for custom items, or refresh the inventory list
       if (isCustomItem) {
         setFormData({
           itemName: '',
           purity: '',
           availableWeight: '',
-          unitOfMeasure: 'grams'
+          unitOfMeasure: 'grams',
+          partyLedger: ''
         });
         setSelectedItem('');
       } else {
         // Refresh inventory list
+        
+    router.push(`/Inventory`);
         const refreshResponse = await fetch(`${apiBaseUrl}/get-inventory`);
         const refreshData = await refreshResponse.json();
         if (refreshData.success) {
@@ -266,6 +308,28 @@ const InventoryUpdateForm = () => {
                 </SelectContent>
               </Select>
             </div>
+
+
+            {/* Party Ledger */}
+            <div className="space-y-2">
+              <Label>Party Ledger</Label>
+              <Select
+                value={formData.partyLedger}
+                onValueChange={(value) => handleChange({ target: { name: 'partyLedger', value } })}
+              >
+                <SelectTrigger className="w-full bg-white border border-gray-200">
+                  <SelectValue placeholder="Select party ledger" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-gray-200">
+                  {partyLedgers.map((ledger) => (
+                    <SelectItem key={ledger.Id} value={ledger.Party_Code__c}>
+                      {ledger.Party_Code__c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
 
             {/* Error Alert */}
             {error && (
