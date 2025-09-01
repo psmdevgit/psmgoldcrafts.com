@@ -186,30 +186,35 @@ const InventoryUpdateForm = () => {
         throw new Error(data.message || 'Failed to update inventory');
       }
 
-      setSuccess('Inventory updated successfully');
-      
-    router.push(`/Inventory`);
-      
+      alert("Inventory updated successfully!")
+     // ✅ Stay on the page and show success message
+    setSuccess('Inventory updated successfully!');
+    setTimeout(() => {
+      window.location.href = '/Inventory'; // Full refresh
+    }, 1000);
+
+
+            
       // Reset form for custom items, or refresh the inventory list
-      if (isCustomItem) {
-        setFormData({
-          itemName: '',
-          purity: '',
-          availableWeight: '',
-          unitOfMeasure: 'grams',
-          partyLedger: ''
-        });
-        setSelectedItem('');
-      } else {
-        // Refresh inventory list
+    //   if (isCustomItem) {
+    //     setFormData({
+    //       itemName: '',
+    //       purity: '',
+    //       availableWeight: '',
+    //       unitOfMeasure: 'grams',
+    //       partyLedger: ''
+    //     });
+    //     setSelectedItem('');
+    //   } else {
+    //     // Refresh inventory list
         
-    router.push(`/Inventory`);
-        const refreshResponse = await fetch(`${apiBaseUrl}/get-inventory`);
-        const refreshData = await refreshResponse.json();
-        if (refreshData.success) {
-          setInventoryItems(refreshData.data);
-        }
-      }
+    // router.push(`/Inventory`);
+    //     const refreshResponse = await fetch(`${apiBaseUrl}/get-inventory`);
+    //     const refreshData = await refreshResponse.json();
+    //     if (refreshData.success) {
+    //       setInventoryItems(refreshData.data);
+    //     }
+    //   }
 
     } catch (err) {
       console.error('Error updating inventory:', err);
