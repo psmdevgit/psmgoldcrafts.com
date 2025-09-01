@@ -29,7 +29,6 @@ export default function SummaryPage() {
 
   const API_URL = "https://erp-server-r9wh.onrender.com";
   
-  // const API_URL = "http://localhost:5001";
 
 
   const fetchData = async () => {
