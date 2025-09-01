@@ -113,6 +113,7 @@ const CuttingDetailsPage = () => {
     const fetchCuttingDetails = async () => {
       if (!cuttingId) {
         toast.error('No cutting ID provided');
+        alert('No cutting ID provided');
         setLoading(false);
         return;
       }
@@ -163,6 +164,7 @@ const CuttingDetailsPage = () => {
       } catch (error) {
         console.error('[Cutting Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch cutting details');
+        alert(error.message || 'Failed to fetch cutting details');
       } finally {
         setLoading(false);
       }
@@ -238,6 +240,7 @@ const CuttingDetailsPage = () => {
       if (result.success) {
         alert('Cutting details updated successfully');
         toast.success('Cutting details updated successfully');
+        alert('Cutting details updated successfully');
         window.location.reload();
       } else {
         throw new Error(result.message || 'Failed to update cutting details');
@@ -245,6 +248,7 @@ const CuttingDetailsPage = () => {
     } catch (error) {
       console.error('[CuttingReceived] Error:', error);
       toast.error(error.message || 'Failed to update cutting details');
+      alert(error.message || 'Failed to update cutting details');
     } finally {
       setIsSubmitting(false);
     }

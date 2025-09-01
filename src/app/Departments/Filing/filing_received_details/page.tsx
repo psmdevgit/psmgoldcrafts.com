@@ -73,6 +73,7 @@ const FilingDetailsPage = () => {
     const fetchDetails = async () => {
       if (!filingId) {
         toast.error('No filing ID provided');
+        alert('No filing ID provided');
         setLoading(false);
         return;
       }
@@ -85,10 +86,12 @@ const FilingDetailsPage = () => {
           setData(result.data);
         } else {
           toast.error(result.message || 'Failed to fetch grinding details');
+          alert(result.message || 'Failed to fetch grinding details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching grinding details');
+        alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }
@@ -183,10 +186,12 @@ const FilingDetailsPage = () => {
       if (result.success) {
         setData(result.data);
         toast.success('Data refreshed successfully');
+        alert('Data refreshed successfully');
       }
     } catch (error) {
       console.error('Error refreshing data:', error);
       toast.error('Failed to refresh data');
+      alert('Failed to refresh data');
     }
   };
 
@@ -240,6 +245,7 @@ const FilingDetailsPage = () => {
         console.log('[FilingReceived] Update successful');
           alert('Filing details updated successfully');
         toast.success('Filing details updated successfully');
+        alert('Filing details updated successfully');
 
         await refreshData();
         
@@ -255,6 +261,7 @@ const FilingDetailsPage = () => {
       console.error('[FilingReceived] Error in submission:', error);
        alert('Failed to update filing details');
       toast.error(error.message || 'Failed to update filing details');
+      alert(error.message || 'Failed to update filing details');
     } finally {
       console.log('[FilingReceived] Submission completed');
       setIsSubmitting(false);

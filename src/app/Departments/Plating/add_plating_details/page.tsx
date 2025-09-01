@@ -43,6 +43,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       if (!dullId) {
         console.log('[Add Plating] No dull ID provided');
         toast.error('No dull ID provided');
+        alert('No dull ID provided');
         setLoading(false);
         return;
       }
@@ -109,6 +110,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         console.error('[Add Plating] Error:', error);
         console.error('[Add Plating] Full error details:', JSON.stringify(error, null, 2));
         toast.error(error.message || 'Failed to initialize plating');
+        alert(error.message || 'Failed to initialize plating');
       } finally {
         console.log('[Add Plating] Setting loading to false');
         setLoading(false);
@@ -197,6 +199,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         });
         
         toast.success('Plating details saved successfully');
+        alert('Plating details saved successfully');
         
         // Reset form
         setPouches([]);

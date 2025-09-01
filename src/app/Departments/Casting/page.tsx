@@ -453,7 +453,8 @@ const CastingForm = () => {
 
       // Basic validation for required fields
       if (!selectedOrders.length || !purity || !waxTreeWeight || inventoryItems.length === 0 || !castingLastNumber) {
-        toast.error('Please fill all required fields including casting number');
+        // toast.error('Please fill all required fields including casting number');
+        alert('Please fill all required fields including casting number');
         return;
       }
 
@@ -543,7 +544,8 @@ console.log("taking update inventory weights:", inventoryItems)
         throw new Error(inventoryResult.message || 'Failed to update inventory');
       }
 
-      toast.success('Casting created successfully');
+      // toast.success('Casting created successfully');
+      alert('Casting created successfully')
       
       // Reset form
       const today = new Date();
@@ -577,6 +579,7 @@ console.log("taking update inventory weights:", inventoryItems)
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       toast.error(error.message || 'Failed to process casting');
+      alert('Failed to process casting');
     } finally {
       setLoading(false);
     }

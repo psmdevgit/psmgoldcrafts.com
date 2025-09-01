@@ -43,6 +43,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const initializeSetting = async () => {
       if (!filingId && !grindingId) {
         toast.error('No ID provided');
+        alert('No ID provided');
         return;
       }
 
@@ -164,7 +165,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       if (result.success) {
         toast.success('Setting details saved successfully');
-        
+        alert('Setting details saved successfully');
         // Reset form
         setPouches([]);
         setPouchWeights({});
@@ -186,6 +187,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     } catch (error) {
       console.error('[AddSetting] Error:', error);
       toast.error(error.message || 'Failed to save setting details');
+      alert(error.message || 'Failed to save setting details');
     } finally {
       setIsSubmitting(false);
     }

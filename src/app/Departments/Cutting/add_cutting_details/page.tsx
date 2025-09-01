@@ -42,6 +42,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
     const initializeCutting = async () => {
       if (!platingId) {
         console.log('[Add Cutting] No filing ID provided');
+        alert('No filing ID provided');
         toast.error('No filing ID provided');
         setLoading(false);
         return;
@@ -105,6 +106,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
       } catch (error) {
         console.error('[Add Cutting] Error:', error);
         console.error('[Add Cutting] Full error details:', JSON.stringify(error, null, 2));
+        alert(error.message || 'Failed to initialize cutting');
         toast.error(error.message || 'Failed to initialize cutting');
       } finally {
         console.log('[Add Cutting] Setting loading to false');
@@ -194,6 +196,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
         });
         
         toast.success('Cutting details saved successfully');
+        alert('Cutting details saved successfully');
         
         // Reset form
         setPouches([]);
@@ -213,6 +216,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
       console.error('[Add Cutting] Error:', error);
       console.error('[Add Cutting] Full error details:', JSON.stringify(error, null, 2));
       toast.error(error.message || 'Failed to save cutting details');
+      alert(error.message || 'Failed to save cutting details');
     } finally {
       setIsSubmitting(false);
     }

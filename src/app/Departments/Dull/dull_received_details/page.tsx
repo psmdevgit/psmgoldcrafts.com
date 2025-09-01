@@ -116,6 +116,7 @@ const DullDetailsPage = () => {
     const fetchDullDetails = async () => {
       if (!dullId) {
         toast.error('No dull ID provided');
+        alert('No dull ID provided');
         setLoading(false);
         return;
       }
@@ -155,6 +156,7 @@ const DullDetailsPage = () => {
       } catch (error) {
         console.error('[Dull Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch dull details');
+        alert(error.message || 'Failed to fetch dull details');
       } finally {
         setLoading(false);
       }
@@ -219,6 +221,7 @@ const DullDetailsPage = () => {
 
       if (result.success) {
         toast.success('Dull details updated successfully');
+        alert('Dull details updated successfully');
         // Add a slight delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           router.push('/Departments/Dull/Dull_Table');
@@ -229,6 +232,7 @@ const DullDetailsPage = () => {
     } catch (error) {
       console.error('[DullReceived] Error:', error);
       toast.error(error.message || 'Failed to update dull details');
+      alert(error.message || 'Failed to update dull details');
     } finally {
       setIsSubmitting(false);
     }

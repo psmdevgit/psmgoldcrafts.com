@@ -72,6 +72,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const fetchDetails = async () => {
       if (!grindingId) {
         toast.error('No grinding ID provided');
+        alert('No grinding ID provided');
         setLoading(false);
         return;
       }
@@ -92,10 +93,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           });
         } else {
           toast.error(result.message || 'Grinding record not found');
+          alert(result.message || 'Grinding record not found');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching grinding details');
+        alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }

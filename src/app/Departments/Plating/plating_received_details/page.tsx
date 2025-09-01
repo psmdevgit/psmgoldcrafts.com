@@ -99,6 +99,7 @@ const PlatingDetailsPage = () => {
     const fetchPlatingDetails = async () => {
       if (!platingId) {
         toast.error('No plating ID provided');
+        alert('No plating ID provided');
         setLoading(false);
         return;
       }
@@ -142,6 +143,7 @@ const PlatingDetailsPage = () => {
       } catch (error) {
         console.error('[Plating Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch plating details');
+        alert(error.message || 'Failed to fetch plating details');
       } finally {
         setLoading(false);
       }
@@ -205,6 +207,7 @@ const PlatingDetailsPage = () => {
 
       if (result.success) {
         toast.success('Plating details updated successfully');
+        alert('Plating details updated successfully');
         // Redirect to plating list page after successful update
         alert('Plating details updated successfully');
         window.location.href = '/Departments/Plating/Plating_Table';
@@ -215,6 +218,7 @@ const PlatingDetailsPage = () => {
       console.error('[PlatingReceived] Error:', error);
       alert('Failed to update plating details');
       toast.error(error.message || 'Failed to update plating details');
+      alert(error.message || 'Failed to update plating details');
     } finally {
       setIsSubmitting(false);
     }

@@ -105,6 +105,7 @@ const GrindingDetailsPage = () => {
     const fetchDetails = async () => {
       if (!grindingId) {
         toast.error('No grinding ID provided');
+        alert('No grinding ID provided');
         setLoading(false);
         return;
       }
@@ -172,10 +173,12 @@ const GrindingDetailsPage = () => {
           }
         } else {
           toast.error(result.message || 'Grinding record not found');
+          alert(result.message || 'Grinding record not found');
         }
       } catch (error) {
         console.error('Error:', error);
         toast.error('Error fetching grinding details');
+        alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }
@@ -278,6 +281,7 @@ const GrindingDetailsPage = () => {
       console.error('[GrindingReceived] Error:', error);
       alert('Failed to update grinding details');
       toast.error(error.message || 'Failed to update grinding details');
+      alert(error.message || 'Failed to update grinding details');
     } finally {
       setIsSubmitting(false);
     }
