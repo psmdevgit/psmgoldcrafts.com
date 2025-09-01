@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-   background-image: url('../assets/back.jpg'); /* Add your image in public folder */
+   background-image: url('../assets/back.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

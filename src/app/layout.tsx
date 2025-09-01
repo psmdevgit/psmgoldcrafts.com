@@ -6,8 +6,8 @@ import "../../styles/index.scss";
 
 
 export const metadata: Metadata = {
-  title: "PSM Gold Crafts",
-  description: "Generated PSM PVT LTD",
+  title: "KALASH JEWELLERS GOLD CRAFTS",
+  description: "KALASH JEWELLERS GOLD CRAFTS PVT LTD",
 };
 
 export default function RootLayout({
