@@ -52,9 +52,10 @@ export default function Login() {
     }
   };
 
+  
   return (
   
-    <div className="container bods ">
+    <div className="container bods " >
       <div className="form">
         <div className="sign-in-section">
 <div className="flex justify-center items-center flex-col">
