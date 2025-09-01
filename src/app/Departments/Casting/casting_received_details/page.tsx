@@ -71,6 +71,7 @@ const CastingDetailsPage = () => {
     const fetchDetails = async () => {
       if (!castingId) {
         toast.error('No casting ID provided');
+        alert('No casting ID provided');
         setLoading(false);
         return;
       }
@@ -83,10 +84,12 @@ const CastingDetailsPage = () => {
           setData(result.data);
         } else {
           toast.error(result.message || 'Failed to fetch casting details');
+          alert('Failed to fetch casting details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching casting details');
+        alert('Error fetching casting details');
       } finally {
         setLoading(false);
       }
@@ -172,10 +175,12 @@ const CastingDetailsPage = () => {
       if (result.success) {
         setData(result.data);
         toast.success('Data refreshed successfully');
+        alert('Data refreshed successfully');
       }
     } catch (error) {
       console.error('Error refreshing data:', error);
       toast.error('Failed to refresh data');
+      alert('Failed to refresh data');
     }
   };
 
@@ -199,6 +204,7 @@ const CastingDetailsPage = () => {
       // Validate form
       if (!validateForm(formData)) {
         toast.error('Please correct the form errors');
+        alert('Please correct the form errors');
         return;
       }
 
@@ -211,6 +217,7 @@ const CastingDetailsPage = () => {
       
       if (result.success) {
         // Show success alert
+        alert('Success!');
         toast.success('Success!', {
           id: 'updateCasting',
           description: `Casting ${castingId} has been updated successfully.`,
@@ -229,6 +236,7 @@ const CastingDetailsPage = () => {
           router.push('/Departments/Casting/casting_table');
         }, 1500);
       } else {
+        alert('Update Failed');
         toast.error('Update Failed', {
           id: 'updateCasting',
           description: result.message || 'Failed to update received details',

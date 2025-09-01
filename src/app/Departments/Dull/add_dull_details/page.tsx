@@ -46,6 +46,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       if (!sourceId) {
         console.log('[Add Dull] No source ID provided');
         toast.error('No source ID provided');
+        alert('No source ID provided');
         setLoading(false);
         return;
       }
@@ -133,6 +134,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         console.error('[Add Dull] Error:', error);
         console.error('[Add Dull] Full error details:', JSON.stringify(error, null, 2));
         toast.error(error.message || 'Failed to initialize dull');
+        alert(error.message || 'Failed to initialize dull');
       } finally {
         console.log('[Add Dull] Setting loading to false');
         setLoading(false);
@@ -225,6 +227,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         });
         
         toast.success('Dull details saved successfully');
+        alert('Dull details saved successfully');
         
         // Reset form
         setPouches([]);
@@ -244,6 +247,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       console.error('[Add Dull] Error:', error);
       console.error('[Add Dull] Full error details:', JSON.stringify(error, null, 2));
       toast.error(error.message || 'Failed to save dull details');
+      alert(error.message || 'Failed to save dull details');
     } finally {
       setIsSubmitting(false);
     }

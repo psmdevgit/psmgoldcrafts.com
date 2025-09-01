@@ -48,6 +48,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const initializePolishing = async () => {
       if (!filingId && !grindingId && !settingId) {
         toast.error('No ID provided');
+        alert('No ID provided');
         return;
       }
 
@@ -215,6 +216,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       if (result.success) {
         toast.success('Polishing details saved successfully');
+        alert('Polishing details saved successfully');
         // Reset form
         setPouches([]);
         setPouchWeights({});
@@ -231,6 +233,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     } catch (error) {
       console.error('[AddPolishing] Error:', error);
       toast.error(error.message || 'Failed to save polishing details');
+      alert(error.message || 'Failed to save polishing details');
     } finally {
       setIsSubmitting(false);
     }

@@ -1116,6 +1116,8 @@ const handleSubmitOrder = async () => {
     // design bank upload =================================================================================================
 
   if (activeTab == "designBank") {
+
+    alert('Submit Order Started      wait..... ');
   if (!orderInfo || orderSelectedItems.length === 0) {
     alert("Please save order info and add at least one item.");
     return;
@@ -1183,6 +1185,9 @@ formData.append("detailedPdf", detailedPdf);
 }
 
     else{
+      
+    alert('Submit Order Started      wait..... ');
+    
    console.log('=== Submit Order Started ===');
     try {
       if (!orderInfo || orderItems.length === 0) {

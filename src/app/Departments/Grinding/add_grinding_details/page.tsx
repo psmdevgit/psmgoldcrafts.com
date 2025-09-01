@@ -41,6 +41,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const initializeGrinding = async () => {
       if (!filingId) {
         toast.error('No filing ID provided');
+        alert('No filing ID provided');
         return;
       }
 
@@ -89,6 +90,7 @@ const pouchData = pouches.map(pouch => ({
       } catch (error) {
         console.error('[AddGrinding] Error:', error);
         toast.error(error.message || 'Failed to initialize grinding');
+        alert(error.message || 'Failed to initialize grinding');
       } finally {
         setLoading(false);
       }
@@ -163,6 +165,7 @@ const pouchData = pouches.map(pouch => ({
         }
       alert('Grinding details saved successfully');
         toast.success('Grinding details saved successfully');
+        alert('Grinding details saved successfully');
         // Optionally redirect to a success page or grinding list
       } else {
         throw new Error(result.message || 'Failed to save grinding details');
@@ -170,6 +173,7 @@ const pouchData = pouches.map(pouch => ({
     } catch (error) {
       console.error('[AddGrinding] Error:', error);
       toast.error(error.message || 'Failed to save grinding details');
+      alert(error.message || 'Failed to save grinding details');
     } finally {
       setIsSubmitting(false);
     }

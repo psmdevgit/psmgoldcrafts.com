@@ -181,6 +181,7 @@ export default function AddGrindingDetails() {
       } catch (error) {
         console.error('Error fetching casting details:', error);
         toast.error('Failed to fetch casting details');
+        alert('Failed to fetch casting details');
       } finally {
         setLoading(false);
       }
@@ -217,18 +218,21 @@ export default function AddGrindingDetails() {
     e.preventDefault();
     if (!selectedOrder) {
       toast.error('Please select an order for the bag');
+      alert('Please select an order for the bag');
       return;
     }
 
     // Check if categories are selected before creating a pouch
     if (selectedCategoryQuantities.length === 0) {
       toast.error('Please select at least one category before creating a pouch');
+      alert('Please select at least one category before creating a pouch');
       return;
     }
 
     const orderDetails = castingDetails.orders.find(o => o.Id === selectedOrder);
     if (!orderDetails) {
       toast.error('Order details not found');
+      alert('Order details not found');
       return;
     }
 
@@ -282,6 +286,7 @@ export default function AddGrindingDetails() {
     });
 
     toast.success(`Added pouch ${newBagName} with ${selectedCategoryQuantities.length} categories for order ${orderDetails.Id__c}`);
+    alert(`Added pouch ${newBagName} with ${selectedCategoryQuantities.length} categories for order ${orderDetails.Id__c}`);
     
     // Set this as the current editing pouch
     setCurrentEditingPouch(newBagName);
@@ -393,6 +398,7 @@ export default function AddGrindingDetails() {
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast.error('Failed to fetch categories');
+      alert('Failed to fetch categories');
     }
   };
 
@@ -469,6 +475,7 @@ export default function AddGrindingDetails() {
     
     if (!selectedOrder || selectedCategoryQuantities.length === 0 || bags.length === 0) {
       toast.error('Please select an order, categories, and add at least one pouch');
+      // alert();
       return;
     }
     
@@ -612,6 +619,7 @@ export default function AddGrindingDetails() {
           if (pouchCategoriesData.length === 0) {
             console.error(`[AddFiling] No categories found for ${bag.bagName}. Please add categories before submitting.`);
             toast.error(`Please add categories to ${bag.bagName} before submitting.`);
+            alert(`Please add categories to ${bag.bagName} before submitting.`);
             throw new Error(`No categories found for ${bag.bagName}. Please add categories before submitting.`);
           }
         }
@@ -697,6 +705,7 @@ export default function AddGrindingDetails() {
       if (allSuccessful) {
         console.log('[AddFiling] All submissions successful:', submissionResults);
         toast.success(`Successfully created ${bags.length} filing records`);
+        alert(`Successfully created ${bags.length} filing records`);
         
         // Reset form
         setBags([]);
@@ -714,10 +723,12 @@ export default function AddGrindingDetails() {
         
         console.error('[AddFiling] Some submissions failed:', submissionResults);
         toast.error(`${successCount} filings created, ${failCount} failed. Check console for details.`);
+        
       }
     } catch (error: any) {
       console.error('[AddFiling] Error in handleSubmit:', error);
       toast.error(error.message || 'Failed to submit filing details');
+      alert(error.message || 'Failed to submit filing details');
     }
   };
 
