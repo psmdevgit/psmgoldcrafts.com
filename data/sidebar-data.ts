@@ -85,16 +85,16 @@ const sidebarData: SidebarCategory[] = [
         label: "Making Progress",
         icon: "fa-solid fa-arrow-progress",
         subItems: [
-          { label: "Casting", link: "/Departments/Casting/casting_table" },
-          { label: "Pouch Creation", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
-          { label: "Grinding", link: "/Departments/Grinding/Grinding_Table" },
-          { label: "Media", link: "/Departments/Media/Media_Table" },
-          { label: "Setting", link: "/Departments/Setting/Setting_Table" },
-          { label: "Polishing", link: "/Departments/Polishing/Polishing_Table" },
-          { label: "Dull", link: "/Departments/Dull/Dull_Table" },
-          {label: "Plating", link: "/Departments/Plating/Plating_Table"},
-          {label: "Cutting", link: "/Departments/Cutting/Cutting_Table"},
-          { label: "Refinery", link: "/Refinery" },
+          { label: "Casting", link: "/Departments/Casting/casting_table", key:"casting" },
+          { label: "Pouch Creation", link: "/Departments/Filing/add_filing_details/Grinding_Table" ,key:"pouch"},
+          { label: "Grinding", link: "/Departments/Grinding/Grinding_Table",key:"grinding" },
+          // { label: "Media", link: "/Departments/Media/Media_Table",key:"media" },
+          { label: "Setting", link: "/Departments/Setting/Setting_Table",key:"setting" },
+          { label: "Polishing", link: "/Departments/Polishing/Polishing_Table",key:"polishing" },
+          { label: "Dull", link: "/Departments/Dull/Dull_Table" ,key:"dull"},
+          {label: "Plating", link: "/Departments/Plating/Plating_Table",key:"plating"},
+          {label: "Cutting", link: "/Departments/Cutting/Cutting_Table",key:"cutting"},
+          { label: "Refinery", link: "/Refinery",key:"refinery" },
           
           
         ],
@@ -471,5 +471,31 @@ const sidebarData: SidebarCategory[] = [
     ],
   },*/
 ];
+
+// Function to filter ONLY "Making Progress" based on username
+export const getSidebarData = (): SidebarCategory[] => {
+  const username = localStorage.getItem("username")?.toLowerCase();
+
+  if (!username) return sidebarData; // If no username, return all menus
+
+  return sidebarData.map((category) => {
+    const filteredItems = category.items.map((item) => {
+      if (item.label === "Making Progress") {
+        // Only filter this section
+        const filteredSubItems = item.subItems?.filter(
+          (sub) => sub.key === username
+        );
+
+        return filteredSubItems?.length
+          ? { ...item, subItems: filteredSubItems }
+          : { ...item, subItems: [] }; // Keep section but empty
+      }
+      return item; // Other sections stay untouched
+    });
+
+    return { ...category, items: filteredItems };
+  });
+};
+
 
 export default sidebarData;
