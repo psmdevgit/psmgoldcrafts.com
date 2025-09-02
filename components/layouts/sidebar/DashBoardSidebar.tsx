@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 //import sidebarMainLogo from "../../../assets/needhagoldlogo.png";
 // import sidebarMainLogo from "../../../assets/PothysLogo.png";
 import sidebarMainLogo from "@/assets/appLogo.png";
@@ -21,6 +21,41 @@ const DashBoardSidebar = () => {
   const [linkIdThree, setlinkIdThree] = useState<number | null>(null);
   const [linkIdFour, setlinkIdFour] = useState<number | null>(null);
   const pathName = usePathname(); // Current route
+
+
+    // 🔥 Get username from localStorage
+  const username = typeof window !== "undefined" ? localStorage.getItem("username")?.toLowerCase() : null;
+
+   // 🔥 Filter sidebar data based on username
+  const filteredSidebarData = useMemo(() => {
+    if (!username) return sidebarData;
+
+    const makingProgress = sidebarData
+      .flatMap((cat) => cat.items)
+      .find((item) => item.label === "Making Progress");
+
+    const matchedSubItem = makingProgress?.subItems?.find(
+      (sub) => sub.key === username
+    );
+
+    if (matchedSubItem) {
+      return [
+        {
+          id: 1,
+          category: "Main",
+          items: [
+            {
+              ...makingProgress,
+              subItems: [matchedSubItem],
+            },
+          ],
+        },
+      ];
+    }
+
+    return sidebarData;
+  }, [username]);
+
 
   // Utility function to handle collapse behavior for screens with max-width: 1199px
   const handleCollapse = (shouldCollapse: boolean) => {
@@ -76,33 +111,72 @@ const DashBoardSidebar = () => {
   };
 
   // UseEffect to find and set the active menu based on the current path
-  useEffect(() => {
+  // useEffect(() => {
+  //   const findLayerIds = () => {
+  //     let foundFirstLayerId = null;
+  //     let foundSecondLayerId = null;
+  //     let foundThirdLayerId = null;
+
+  //     // Iterate through sidebarData to find the object that matches the pathName
+  //     sidebarData.forEach((category) => {
+  //       category.items.forEach((item) => {
+  //         // Check if the current pathName matches the link of the first level
+  //         if (item.link === pathName) {
+  //           foundFirstLayerId = item.id; // First Layer ID
+  //           foundSecondLayerId = null; // Reset second-level ID
+  //           foundThirdLayerId = null; // Reset third-level ID
+  //         } else if (item.subItems) {
+  //           // Check within subItems recursively for the second layer
+  //           item.subItems.forEach((subItem, subItemIndex) => {
+  //             if (subItem.link === pathName) {
+  //               foundFirstLayerId = item.id; // First Layer ID
+  //               foundSecondLayerId = subItemIndex; // Second Layer ID
+  //               foundThirdLayerId = null; // Reset third-level ID
+  //             } else if (subItem.subItems) {
+  //               subItem.subItems.forEach((thirdSubMenu, thirdSubIndex) => {
+  //                 if (thirdSubMenu.link === pathName) {
+  //                   foundFirstLayerId = item.id; // First Layer ID
+  //                   foundSecondLayerId = subItemIndex; // Second Layer ID
+  //                   foundThirdLayerId = thirdSubIndex; // Third Layer ID
+  //                 }
+  //               });
+  //             }
+  //           });
+  //         }
+  //       });
+  //     });
+
+  //     // Set the found ids in state
+  //     setlinkId(foundFirstLayerId);
+  //     setlinkIdTwo(foundSecondLayerId);
+  //     setlinkIdThree(foundThirdLayerId);
+  //   };
+
+  //   // Call the function to find the matching object when pathName changes
+  //   findLayerIds();
+  // }, [pathName]); // Re-run the effect whenever pathName changes
+
+    useEffect(() => {
     const findLayerIds = () => {
       let foundFirstLayerId = null;
       let foundSecondLayerId = null;
       let foundThirdLayerId = null;
 
-      // Iterate through sidebarData to find the object that matches the pathName
-      sidebarData.forEach((category) => {
+      filteredSidebarData.forEach((category) => {
         category.items.forEach((item) => {
-          // Check if the current pathName matches the link of the first level
           if (item.link === pathName) {
-            foundFirstLayerId = item.id; // First Layer ID
-            foundSecondLayerId = null; // Reset second-level ID
-            foundThirdLayerId = null; // Reset third-level ID
+            foundFirstLayerId = item.id;
           } else if (item.subItems) {
-            // Check within subItems recursively for the second layer
             item.subItems.forEach((subItem, subItemIndex) => {
               if (subItem.link === pathName) {
-                foundFirstLayerId = item.id; // First Layer ID
-                foundSecondLayerId = subItemIndex; // Second Layer ID
-                foundThirdLayerId = null; // Reset third-level ID
+                foundFirstLayerId = item.id;
+                foundSecondLayerId = subItemIndex;
               } else if (subItem.subItems) {
                 subItem.subItems.forEach((thirdSubMenu, thirdSubIndex) => {
                   if (thirdSubMenu.link === pathName) {
-                    foundFirstLayerId = item.id; // First Layer ID
-                    foundSecondLayerId = subItemIndex; // Second Layer ID
-                    foundThirdLayerId = thirdSubIndex; // Third Layer ID
+                    foundFirstLayerId = item.id;
+                    foundSecondLayerId = subItemIndex;
+                    foundThirdLayerId = thirdSubIndex;
                   }
                 });
               }
@@ -111,15 +185,14 @@ const DashBoardSidebar = () => {
         });
       });
 
-      // Set the found ids in state
       setlinkId(foundFirstLayerId);
       setlinkIdTwo(foundSecondLayerId);
       setlinkIdThree(foundThirdLayerId);
     };
 
-    // Call the function to find the matching object when pathName changes
     findLayerIds();
-  }, [pathName]); // Re-run the effect whenever pathName changes
+  }, [pathName, filteredSidebarData]);
+
 
   return (
     <>
@@ -149,7 +222,7 @@ const DashBoardSidebar = () => {
         <div className="common-scrollbar ">
           <nav className="main-menu-container nav nav-pills flex-column sub-open mt-[80px]">
             <ul className="main-menu" style={{ display: "block" }}>
-              {sidebarData.map((category) => (
+              {filteredSidebarData.map((category) => (
                 <React.Fragment key={category.id}>
                   <li className="sidebar__menu-category ">
                     <span className="category-name">{category.category}</span>
