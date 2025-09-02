@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ interface InventoryApiItem {
 }
 
 const CastingForm = () => {
+
   // Main form state
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [waxTreeWeight, setWaxTreeWeight] = useState<number>(0);
@@ -56,6 +58,8 @@ const CastingForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+
+  const router = useRouter();
   // Add state for showing/hiding dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -546,6 +550,7 @@ console.log("taking update inventory weights:", inventoryItems)
 
       // toast.success('Casting created successfully');
       alert('Casting created successfully')
+      router.push("/Casting/casting_table");
       
       // Reset form
       const today = new Date();
