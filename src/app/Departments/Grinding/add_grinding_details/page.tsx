@@ -49,7 +49,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number,subnumber] = filingId.split('/');
         console.log('[AddGrinding] Filing ID parts:', { prefix, date, month, year, number,subnumber });
 
-// const newGid = Math.floor(Math.random() * 999) + 1;
+
 
         const generatedGrindingId = `GRIND/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedGrindingId);
@@ -65,7 +65,7 @@ const pouchData = pouches.map(pouch => ({
   pouchId: pouch.Id,
   grindingWeight: pouchWeights[pouch.Id] || 0,
   quantity: pouchQuantities[pouch.Id] || 0
-
+  
 }));
         if (!pouchResult.success) {
           throw new Error(pouchResult.message || 'Failed to fetch pouches');

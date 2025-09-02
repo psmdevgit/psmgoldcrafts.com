@@ -29,6 +29,8 @@ const sidebarData: SidebarCategory[] = [
           { label: "Current Process", link: " /DashBoard/Overallprocess " },
           { label: "Inventory Items", link: "/Reports/InventoryItems" },
           { label: "Inventory Transactions", link: "/Reports/InventoryIssued" },
+        
+           { label: "Party Ledger", link: "/Reports/VendorRep/PartyLedger" },
         ]
       },
       /*{
@@ -59,7 +61,8 @@ const sidebarData: SidebarCategory[] = [
         icon: "fa-solid fa-gear",
         subItems: [
           { label: "Inventory", link: "/Inventory" },
-          { label: "Models", link: "/Models/add-models" }
+          { label: "Models", link: "/Models/add-models" },
+             { label: "Vendor", link: "/Reports/VendorRep/VendorList" },
         ],
       },
        {

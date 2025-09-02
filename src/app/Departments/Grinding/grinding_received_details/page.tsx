@@ -59,6 +59,7 @@ const GrindingDetailsPage = () => {
   const [ornamentWeight, setOrnamentWeight] = useState<number>(0);
   const [scrapReceivedWeight, setScrapReceivedWeight] = useState<number>(0);
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
   const [grindingLoss, setGrindingLoss] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
@@ -491,6 +492,19 @@ const GrindingDetailsPage = () => {
                     step="0.0001"
                     value={dustReceivedWeight || ''}
                     onChange={(e) => setDustReceivedWeight(parseFloat(e.target.value) || 0)}
+                    className="w-full h-9"
+                    disabled={data?.grinding.Status__c === 'Completed'}
+                  />
+                </div>
+                 <div>
+                  <label className="text-sm text-gray-600 block mb-1.5">
+                    Findings Weight (g)
+                  </label>
+                  <Input
+                    type="number"
+                    step="0.0001"
+                    value={findingReceived || ''}
+                    onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
                     className="w-full h-9"
                     disabled={data?.grinding.Status__c === 'Completed'}
                   />

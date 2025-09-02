@@ -96,7 +96,7 @@ export default function AddGrindingDetails() {
     return now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
   });
   const [filingIssuedWeight, setFilingIssuedWeight] = useState<number>(0);
-// const [formattedId, setFormattedId] = useState<string>("");
+
   
   // useEffect(() => {
   //   if (castingId) {
@@ -113,11 +113,12 @@ export default function AddGrindingDetails() {
   //     }
   //   }
   // }, [castingId]); // Run when castingId changes
+
   
-  // Add a formatted ID that includes GRIND
   
   // Add a formatted ID that includes GRIND
    const formattedId = castingId ? `POUCHCREATION/${castingId}` : '';
+
 
   // Fetch casting details and related orders
   useEffect(() => {
