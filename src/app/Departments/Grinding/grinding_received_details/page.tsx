@@ -280,7 +280,7 @@ const GrindingDetailsPage = () => {
       console.error('[GrindingReceived] Error:', error);
       alert('Failed to update grinding details');
       toast.error(error.message || 'Failed to update grinding details');
-      alert(error.message || 'Failed to update grinding details');
+  
     } finally {
       setIsSubmitting(false);
     }

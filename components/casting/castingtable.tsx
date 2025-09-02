@@ -108,8 +108,8 @@ const departments = [
 //     path: '/Departments/Grinding/add_grinding_details'
 //   },
   { 
-    value: 'Filing', 
-    label: 'Filing',
+    value: 'Pouch Creation', 
+    label: 'Pouch Creation',
     path: '/Departments/Filing/add_filing_details'
   },
 //  { 

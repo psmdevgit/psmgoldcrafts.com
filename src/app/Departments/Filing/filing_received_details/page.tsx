@@ -186,12 +186,12 @@ const FilingDetailsPage = () => {
       if (result.success) {
         setData(result.data);
         toast.success('Data refreshed successfully');
-        alert('Data refreshed successfully');
+       
       }
     } catch (error) {
       console.error('Error refreshing data:', error);
       toast.error('Failed to refresh data');
-      alert('Failed to refresh data');
+      
     }
   };
 
@@ -245,8 +245,7 @@ const FilingDetailsPage = () => {
         console.log('[FilingReceived] Update successful');
           alert('Filing details updated successfully');
         toast.success('Filing details updated successfully');
-        alert('Filing details updated successfully');
-
+      
         await refreshData();
         
         // Redirect back to the filing table page after successful submission
@@ -294,10 +293,10 @@ const FilingDetailsPage = () => {
         {/* Grinding Details Section */}
         <div className="bg-white shadow rounded-lg mb-6">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Filing Details</h2>
+            <h2 className="text-xl font-semibold mb-4">Pouch Creation Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-sm text-gray-600">Filing Number</label>
+                <label className="text-sm text-gray-600">Pouch Creation Number</label>
                 <p className="font-medium">{data.filing.Name}</p>
               </div>
               <div>

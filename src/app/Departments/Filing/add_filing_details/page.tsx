@@ -117,7 +117,7 @@ export default function AddGrindingDetails() {
   // Add a formatted ID that includes GRIND
   
   // Add a formatted ID that includes GRIND
-   const formattedId = castingId ? `Filing/${castingId}` : '';
+   const formattedId = castingId ? `POUCHCREATION/${castingId}` : '';
 
   // Fetch casting details and related orders
   useEffect(() => {
@@ -286,7 +286,7 @@ export default function AddGrindingDetails() {
     });
 
     toast.success(`Added pouch ${newBagName} with ${selectedCategoryQuantities.length} categories for order ${orderDetails.Id__c}`);
-    alert(`Added pouch ${newBagName} with ${selectedCategoryQuantities.length} categories for order ${orderDetails.Id__c}`);
+    //alert(`Added pouch ${newBagName} with ${selectedCategoryQuantities.length} categories for order ${orderDetails.Id__c}`);
     
     // Set this as the current editing pouch
     setCurrentEditingPouch(newBagName);
@@ -619,7 +619,7 @@ export default function AddGrindingDetails() {
           if (pouchCategoriesData.length === 0) {
             console.error(`[AddFiling] No categories found for ${bag.bagName}. Please add categories before submitting.`);
             toast.error(`Please add categories to ${bag.bagName} before submitting.`);
-            alert(`Please add categories to ${bag.bagName} before submitting.`);
+          //  alert(`Please add categories to ${bag.bagName} before submitting.`);
             throw new Error(`No categories found for ${bag.bagName}. Please add categories before submitting.`);
           }
         }
@@ -705,7 +705,7 @@ export default function AddGrindingDetails() {
       if (allSuccessful) {
         console.log('[AddFiling] All submissions successful:', submissionResults);
         toast.success(`Successfully created ${bags.length} filing records`);
-        alert(`Successfully created ${bags.length} filing records`);
+        alert(`Successfully created ${bags.length} Pouch Creation records`);
         
         // Reset form
         setBags([]);
@@ -739,7 +739,7 @@ export default function AddGrindingDetails() {
     <div className="container mx-auto py-6">
       <div className="bg-white rounded-lg shadow-md">
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Add Filing Details</h1>
+          <h1 className="text-2xl font-bold mb-6">Add Pouch Creation Details</h1>
           
           {loading ? (
             <div className="text-center py-8">
@@ -754,7 +754,7 @@ export default function AddGrindingDetails() {
                   <Input value={castingId || ''} disabled className="bg-gray-100" />
                 </div>
                 <div>
-                  <Label>Filing ID</Label>
+                  <Label>Pouch Creation ID</Label>
                   <Input value={formattedId} disabled className="bg-gray-100" />
                 </div>
                 <div>
@@ -969,7 +969,7 @@ export default function AddGrindingDetails() {
                 className="w-full bg-blue-600"
                 disabled={bags.length === 0}
               >
-                Submit Filing Details
+                Submit Pouch Details
               </Button>
             </form>
           )}
