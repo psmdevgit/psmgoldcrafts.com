@@ -117,7 +117,7 @@ export default function AddGrindingDetails() {
   
   
   // Add a formatted ID that includes GRIND
-   const formattedId = castingId ? `POUCHCREATION/${castingId}` : '';
+   const formattedId = castingId ? `PC/${castingId}` : '';
 
 
   // Fetch casting details and related orders
