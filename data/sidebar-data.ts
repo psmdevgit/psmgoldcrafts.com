@@ -86,8 +86,9 @@ const sidebarData: SidebarCategory[] = [
         icon: "fa-solid fa-arrow-progress",
         subItems: [
           { label: "Casting", link: "/Departments/Casting/casting_table" },
-          { label: "Filing", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
+          { label: "Pouch Creation", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
           { label: "Grinding", link: "/Departments/Grinding/Grinding_Table" },
+          { label: "Media", link: "/Departments/Media/Media_Table" },
           { label: "Setting", link: "/Departments/Setting/Setting_Table" },
           { label: "Polishing", link: "/Departments/Polishing/Polishing_Table" },
           { label: "Dull", link: "/Departments/Dull/Dull_Table" },
