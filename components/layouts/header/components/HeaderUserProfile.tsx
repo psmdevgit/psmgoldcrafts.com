@@ -34,6 +34,12 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
     }
   }, []);
 
+
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage
+  };
+
+
     return (
         <>
             <div className="nav-item relative">
@@ -76,7 +82,7 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
                             </Link>
                         </li>
                         <li>
-                            <Link href="/">
+                            <Link href="/" onClick={handleLogout} >
                         <LogOut/>
                                 Log Out</Link>
                         </li>

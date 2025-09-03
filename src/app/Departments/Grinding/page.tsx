@@ -81,12 +81,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           setDepartmentRecords(receivedRecords);
         } else {
           toast.error(`Failed to fetch ${selectedDepartment} records`);
-          alert(`Failed to fetch ${selectedDepartment} records`);
+          // alert(`Failed to fetch ${selectedDepartment} records`);
         }
       } catch (error) {
         console.error(`Error fetching ${selectedDepartment} records:`, error);
         toast.error('Failed to fetch records');
-        alert('Failed to fetch records');
+        // alert('Failed to fetch records');
       } finally {
         setLoading(false);
       }
@@ -121,7 +121,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           setPouchWeights(weights);
         } else {
           toast.error('Failed to fetch pouches');
-          alert('Failed to fetch pouches');
+          // alert('Failed to fetch pouches');
         }
       } catch (error) {
         console.error('Error fetching pouches:', error);
@@ -205,7 +205,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       
       if (!selectedRecordData) {
         toast.error('No record selected');
-        alert('No record selected');
+        // alert('No record selected');
         return;
       }
 

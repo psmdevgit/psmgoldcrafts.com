@@ -48,7 +48,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const initializePolishing = async () => {
       if (!filingId && !grindingId && !settingId) {
         toast.error('No ID provided');
-        alert('No ID provided');
+        // alert('No ID provided');
         return;
       }
 

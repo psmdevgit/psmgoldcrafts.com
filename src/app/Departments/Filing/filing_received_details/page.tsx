@@ -69,11 +69,28 @@ const FilingDetailsPage = () => {
   const [departmentRecords, setDepartmentRecords] = useState<any[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<string>("");
 
+  
+  const [checkIsuuedWt, setCheckIsuuedWt] = useState<number>(0);
+
+  const checkWeight = (value: number) => {
+    let recieved = value;
+    console.log(recieved);
+    console.log(checkIsuuedWt);
+    if(checkIsuuedWt < recieved){
+      alert("received weight in higher than issued Wt.");
+    }
+      // setPouchReceivedWeights((prev) => ({
+      //   ...prev,
+      //   [pouch.Id]: "" // 🔥 clear this field
+      // }))
+};
+
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!filingId) {
         toast.error('No filing ID provided');
-        alert('No filing ID provided');
+        // alert('No filing ID provided');
         setLoading(false);
         return;
       }
@@ -86,12 +103,12 @@ const FilingDetailsPage = () => {
           setData(result.data);
         } else {
           toast.error(result.message || 'Failed to fetch grinding details');
-          alert(result.message || 'Failed to fetch grinding details');
+          // alert(result.message || 'Failed to fetch grinding details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching grinding details');
-        alert('Error fetching grinding details');
+        // alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }
@@ -103,8 +120,13 @@ const FilingDetailsPage = () => {
   useEffect(() => {
     const totalWeight = ornamentWeight + scrapReceivedWeight + dustReceivedWeight;
     setTotalReceivedWeight(totalWeight);
+    
     if (data) {
+      console.log("data : ",data.filing.Issued_weight__c)
       const issuedWeight = data.filing.Issued_weight__c;
+      
+          setCheckIsuuedWt(data.filing.Issued_weight__c);
+          console.log(setCheckIsuuedWt);
       const loss = issuedWeight - totalWeight;
       setGrindingLoss(loss);
     }
@@ -260,7 +282,7 @@ const FilingDetailsPage = () => {
       console.error('[FilingReceived] Error in submission:', error);
        alert('Failed to update filing details');
       toast.error(error.message || 'Failed to update filing details');
-      alert(error.message || 'Failed to update filing details');
+      // alert(error.message || 'Failed to update filing details');
     } finally {
       console.log('[FilingReceived] Submission completed');
       setIsSubmitting(false);
@@ -332,13 +354,15 @@ const FilingDetailsPage = () => {
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Name}</td>
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Order_Id__c}</td>
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Issued_Pouch_weight__c}g</td>
+ 
+
                       <td className="px-4 py-3 whitespace-nowrap">
                         <Input
                           type="number"
                           step="0.0001"
                           min="0"
                           value={pouchReceivedWeights[pouch.Id] || ''}
-                          onChange={(e) => handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0)}
+                          onChange={(e) => {handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0); checkWeight(e.target.value);}}
                           className="w-32 h-8"
                           placeholder="Enter weight"
                           disabled={isSubmitting}

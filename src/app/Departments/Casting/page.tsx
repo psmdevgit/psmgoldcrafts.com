@@ -550,7 +550,7 @@ console.log("taking update inventory weights:", inventoryItems)
 
       // toast.success('Casting created successfully');
       alert('Casting created successfully')
-      router.push("/Casting/casting_table");
+      router.push("/Departments/Casting/casting_table");
       
       // Reset form
       const today = new Date();

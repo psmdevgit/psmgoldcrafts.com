@@ -74,7 +74,7 @@ export default function PolishingReceivedDetails() {
       if (!polishingId) {
         console.log('[Polishing Details] No polishing ID provided');
         toast.error('No polishing ID provided');
-        alert('No polishing ID provided');
+        // alert('No polishing ID provided');
         setLoading(false);
         return;
       }
@@ -130,7 +130,7 @@ export default function PolishingReceivedDetails() {
       } catch (error) {
         console.error('[Polishing Details] Error:', error);
         toast.error(error.message || 'Failed to fetch polishing details');
-        alert(error.message || 'Failed to fetch polishing details');
+        // alert(error.message || 'Failed to fetch polishing details');
       } finally {
         console.log('[Polishing Details] Setting loading to false');
         setLoading(false);
