@@ -67,6 +67,22 @@ const CastingDetailsPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
 
+
+  const[issWt,setIssWt] = useState<number>(0);
+
+
+  const checkWeight = (value:number) =>{
+
+    const enterWeight = value;
+console.log(enterWeight,issWt);
+
+    if(issWt < enterWeight){
+      alert("Received weight is greater...");
+      setReceivedWeight(0);
+    }
+  }
+
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!castingId) {
@@ -82,6 +98,8 @@ const CastingDetailsPage = () => {
         
         if (result.success) {
           setData(result.data);
+          console.log(result.data.casting.Issud_weight__c)
+   
         } else {
           toast.error(result.message || 'Failed to fetch casting details');
           // alert('Failed to fetch casting details');
@@ -101,7 +119,8 @@ const CastingDetailsPage = () => {
   useEffect(() => {
     if (data) {
       const issuedWeight = data.casting.Issud_weight__c;
-      
+             setIssWt(data.casting.Issud_weight__c);
+          console.log("issued weight",issWt)
       // Calculate total received weight (including ornaments, scrap, and dust)
       const totalReceived = (receivedWeight || 0) + (scrapReceivedWeight || 0) + (dustReceivedWeight || 0);
       setTotalReceivedWeight(totalReceived);
@@ -248,6 +267,7 @@ const CastingDetailsPage = () => {
         id: 'updateCasting',
         description: 'Failed to update casting details. Please try again.',
       });
+      alert('Failed to update casting details. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -415,7 +435,7 @@ const CastingDetailsPage = () => {
                     type="number"
                     step="0.001"
                     value={receivedWeight || ''}
-                    onChange={(e) => setReceivedWeight(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {setReceivedWeight(parseFloat(e.target.value) || 0); checkWeight(e.target.value)}}
                     className={`w-full h-9 ${formErrors.receivedWeight ? 'border-red-500' : ''}`}
                     required
                     placeholder="Enter ornament weight"
