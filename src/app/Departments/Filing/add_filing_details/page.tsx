@@ -182,7 +182,7 @@ export default function AddGrindingDetails() {
       } catch (error) {
         console.error('Error fetching casting details:', error);
         toast.error('Failed to fetch casting details');
-        alert('Failed to fetch casting details');
+        // alert('Failed to fetch casting details');
       } finally {
         setLoading(false);
       }
@@ -219,21 +219,21 @@ export default function AddGrindingDetails() {
     e.preventDefault();
     if (!selectedOrder) {
       toast.error('Please select an order for the bag');
-      alert('Please select an order for the bag');
+      // alert('Please select an order for the bag');
       return;
     }
 
     // Check if categories are selected before creating a pouch
     if (selectedCategoryQuantities.length === 0) {
       toast.error('Please select at least one category before creating a pouch');
-      alert('Please select at least one category before creating a pouch');
+      // alert('Please select at least one category before creating a pouch');
       return;
     }
 
     const orderDetails = castingDetails.orders.find(o => o.Id === selectedOrder);
     if (!orderDetails) {
       toast.error('Order details not found');
-      alert('Order details not found');
+      // alert('Order details not found');
       return;
     }
 
@@ -399,7 +399,7 @@ export default function AddGrindingDetails() {
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast.error('Failed to fetch categories');
-      alert('Failed to fetch categories');
+      // alert('Failed to fetch categories');
     }
   };
 
@@ -729,7 +729,7 @@ export default function AddGrindingDetails() {
     } catch (error: any) {
       console.error('[AddFiling] Error in handleSubmit:', error);
       toast.error(error.message || 'Failed to submit filing details');
-      alert(error.message || 'Failed to submit filing details');
+      // alert(error.message || 'Failed to submit filing details');
     }
   };
 

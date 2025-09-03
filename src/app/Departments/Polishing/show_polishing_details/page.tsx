@@ -73,7 +73,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       if (!polishingId) {
         console.log('[Show Polishing] No polishing ID provided');
         toast.error('No polishing ID provided');
-        alert('No polishing ID provided');
+        // alert('No polishing ID provided');
         setLoading(false);
         return;
       }
@@ -107,13 +107,13 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         } else {
           console.error('[Show Polishing] API returned error:', result);
           toast.error(result.message || 'Polishing record not found');
-          alert(result.message || 'Polishing record not found');
+          // alert(result.message || 'Polishing record not found');
         }   
       } catch (error) {
         console.error('[Show Polishing] Error:', error);
         console.error('[Show Polishing] Full error details:', JSON.stringify(error, null, 2));
         toast.error('Error fetching polishing details');
-        alert('Error fetching polishing details')
+        // alert('Error fetching polishing details')
       } finally {
         console.log('[Show Polishing] Setting loading to false');
         setLoading(false);

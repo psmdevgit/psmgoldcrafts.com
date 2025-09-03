@@ -169,7 +169,7 @@ const SettingDetailsPage = () => {
       if (!settingId) {
         console.log('No settingId provided');
         toast.error('Setting ID is required');
-        alert('Setting ID is required');
+        // alert('Setting ID is required');
         setLoading(false);
         return;
       }
@@ -239,7 +239,7 @@ const SettingDetailsPage = () => {
       } catch (error) {
         console.error('[Setting Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch setting details');
-        alert(error.message || 'Failed to fetch setting details');
+        // alert(error.message || 'Failed to fetch setting details');
       } finally {
         setLoading(false);
       }

@@ -76,7 +76,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const fetchDetails = async () => {
       if (!filingId) {
         toast.error('No filing ID provided');
-        alert('No filing ID provided');
+        // alert('No filing ID provided');
         setLoading(false);
         return;
       }
@@ -92,12 +92,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           setData(result.data);
         } else {
           toast.error(result.message || 'Failed to fetch filing details');
-          alert(result.message || 'Failed to fetch filing details');
+          // alert(result.message || 'Failed to fetch filing details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching filing details');
-        alert('Error fetching filing details');
+        // alert('Error fetching filing details');
       } finally {
         setLoading(false);
       }
