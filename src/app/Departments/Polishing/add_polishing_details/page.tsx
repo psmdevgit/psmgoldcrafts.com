@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
+
 
 interface Pouch {
   Id: string;
@@ -42,6 +43,8 @@ export default function AddPolishingDetails() {
   const [totalReceivedFromSetting, setTotalReceivedFromSetting] = useState(0);
 
   
+  const router = useRouter();
+
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
   useEffect(() => {
@@ -172,6 +175,28 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     try {
       setIsSubmitting(true);
 
+         // 🔹 Validation: Check entered polishing weight vs received weight
+    const invalidPouch = pouches.find((pouch) => {
+      const receivedWeight = isFromGrinding
+        ? pouch.Received_Weight_Grinding__c || 0
+        : isSetting
+        ? pouch.Received_Weight_Setting__c || 0
+        : pouch.Received_Weight_Setting__c || 0;
+
+      const enteredWeight = pouchWeights[pouch.Id] || 0;
+
+      return enteredWeight > receivedWeight; // ❌ Invalid if entered > received
+    });
+
+    if (invalidPouch) {
+      alert(
+        `Error: Entered polishing weight for pouch ${invalidPouch.Name} is greater than its received weight!`
+      );
+      setIsSubmitting(false);
+      return; // ⛔ Stop submission
+    }
+
+
       // Combine date and time for issued datetime
       const combinedDateTime = `${issuedDate}T${issuedTime}:00.000Z`;
       console.log('[AddPolishing] Combined datetime:', combinedDateTime);
@@ -227,6 +252,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setIssuedTime(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
         setFormattedId('');
         setLoading(false);
+
+         setTimeout(() => {
+          router.push('/Departments/Polishing/Polishing_Table');
+        }, 1000);
+
+
       } else {
         throw new Error(result.message || 'Failed to save polishing details');
       }

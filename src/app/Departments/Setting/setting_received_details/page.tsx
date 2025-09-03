@@ -279,6 +279,13 @@ const SettingDetailsPage = () => {
       
       if (!data) return;
 
+       if (totalReceivedWeight > data.setting.Issued_Weight__c) {
+      alert("Total received weight cannot be greater than issued weight!");
+      setIsSubmitting(false);
+      return;
+    }
+
+
       const combinedReceivedDateTime = `${receivedDate}T${receivedTime}:00.000Z`;
 
       const [prefix, date, month, year, number, subnumber] = data.setting.Name.split('/');
@@ -315,7 +322,7 @@ const SettingDetailsPage = () => {
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Setting/Setting_Table';
-        }, 1500);
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update setting details');
       }

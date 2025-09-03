@@ -253,7 +253,7 @@ console.log(enterWeight,issWt);
         // Redirect to casting table page after a short delay to allow the toast to be seen
         setTimeout(() => {
           router.push('/Departments/Casting/casting_table');
-        }, 1500);
+        }, 1000);
       } else {
         // alert('Update Failed');
         toast.error('Update Failed', {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams,useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,12 @@ export default function PolishingReceivedDetails() {
   const [polishingLoss, setPolishingLoss] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
+
+
+  
+  const router = useRouter();
+
+
 
   useEffect(() => {
     const fetchPolishingDetails = async () => {
@@ -182,6 +188,26 @@ export default function PolishingReceivedDetails() {
     try {
       setIsSubmitting(true);
 
+       // 1. Check if total received weight is greater than issued weight
+    if (polishing && totalReceivedWeight > polishing.Issued_Weight__c) {
+      alert("received weight cannot be greater than issued weight!");
+      toast.error("Total received weight cannot be greater than issued weight!");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // 2. Check if any pouch received weight is greater than its issued weight
+    // for (const pouch of pouches) {
+    //   const enteredWeight = pouchReceivedWeights[pouch.Id] || 0;
+    //   if (enteredWeight > pouch.Issued_Weight_Polishing__c) {
+    //     alert(`Received weight for pouch ${pouch.Name} cannot exceed its issued weight!`);
+    //     toast.error(`Received weight for pouch ${pouch.Name} cannot exceed its issued weight!`);
+    //     setIsSubmitting(false);
+    //     return;
+    //   }
+    // }
+
+
       const [prefix, date, month, year, number, subnumber] = polishingId!.split('/');
 
       // Combine date and time for received datetime
@@ -218,7 +244,7 @@ export default function PolishingReceivedDetails() {
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Polishing/Polishing_Table';
-        }, 1500);
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update polishing details');
       }

@@ -265,22 +265,21 @@ const FilingDetailsPage = () => {
       if (result.success) {
       
         console.log('[FilingReceived] Update successful');
-          alert('Filing details updated successfully');
-        toast.success('Filing details updated successfully');
-      
+          alert('Pouch Creation updated successfully');
+        toast.success('Pouch Creation updated successfully');      
         await refreshData();
         
         // Redirect back to the filing table page after successful submission
         setTimeout(() => {
           window.location.href = '/Departments/Filing/add_filing_details/Grinding_Table';
-        }, 1500); // Short delay to allow the user to see the success message
+        }, 1000); // Short delay to allow the user to see the success message
       } else {
         console.log('[FilingReceived] Update failed:', result.message);
         throw new Error(result.message || 'Failed to update filing details');
       }
     } catch (error) {
       console.error('[FilingReceived] Error in submission:', error);
-       alert('Failed to update filing details');
+       alert('Failed to update pouch details');
       toast.error(error.message || 'Failed to update filing details');
       // alert(error.message || 'Failed to update filing details');
     } finally {
@@ -361,7 +360,7 @@ const FilingDetailsPage = () => {
                           type="number"
                           step="0.0001"
                           min="0"
-                          value={pouchReceivedWeights[pouch.Id] || ''}
+                          value={pouchReceivedWeights[pouch.Id] || '0'}
                           onChange={(e) => {handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0); checkWeight(e.target.value);}}
                           className="w-32 h-8"
                           placeholder="Enter weight"

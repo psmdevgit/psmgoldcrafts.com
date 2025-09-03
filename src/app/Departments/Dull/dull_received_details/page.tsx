@@ -193,6 +193,14 @@ const DullDetailsPage = () => {
       
       if (!data) return;
 
+          // 🚨 Validation: Check if total received weight > issued weight
+    if (totalReceivedWeight > (data.dull.Issued_Weight__c || 0)) {
+      alert("Received Weight cannot be greater than Issued Weight!");
+      setIsSubmitting(false);
+      return;
+    }
+
+
       const [prefix, date, month, year, number, subnumber] = dullId!.split('/');
 
       const response = await fetch(
@@ -225,7 +233,7 @@ const DullDetailsPage = () => {
         // Add a slight delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           router.push('/Departments/Dull/Dull_Table');
-        }, 1500); 
+        }, 1000); 
       } else {
         throw new Error(result.message || 'Failed to update dull details');
       }

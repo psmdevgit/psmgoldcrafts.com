@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams,useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,8 @@ export default function AddGrindingDetails() {
   const searchParams = useSearchParams();
   const castingId = searchParams.get('castingId');
   
+  const router = useRouter();
+
   const [loading, setLoading] = useState(true);
   const [castingDetails, setCastingDetails] = useState<CastingDetails>({
     id: '',
@@ -708,6 +710,8 @@ export default function AddGrindingDetails() {
         toast.success(`Successfully created ${bags.length} filing records`);
         alert(`Successfully created ${bags.length} Pouch Creation records`);
         
+        
+
         // Reset form
         setBags([]);
         setPouchWeights({});
@@ -717,6 +721,12 @@ export default function AddGrindingDetails() {
         setPouchCategories({});
         setReceivedWeight(castingDetails.receivedWeight);
         setReceivedDate(castingDetails.receivedDate);
+
+         setTimeout(() => {
+          router.push('/Departments/Filing/add_filing_details/Grinding_Table');
+        }, 1000);
+
+
       } else {
         // Some submissions failed
         const successCount = submissionResults.filter(r => r.success).length;
