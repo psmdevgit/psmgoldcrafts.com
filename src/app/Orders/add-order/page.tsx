@@ -384,7 +384,7 @@ const handleModelSelect = (modelId) => {
         message: error.message,
         stack: error.stack
       });
-      alert(error.message);
+      alert("Failed to submit.");
     }
   };
 
@@ -1117,7 +1117,7 @@ const handleSubmitOrder = async () => {
 
   if (activeTab == "designBank") {
 
-    alert('Submit Order Started      wait..... ');
+    alert('order submitting  wait..... ');
   if (!orderInfo || orderSelectedItems.length === 0) {
     alert("Please save order info and add at least one item.");
     return;
@@ -1186,7 +1186,7 @@ formData.append("detailedPdf", detailedPdf);
 
     else{
       
-    alert('Submit Order Started      wait..... ');
+    alert('Order Submitting wait..... ');
     
    console.log('=== Submit Order Started ===');
     try {
@@ -1195,7 +1195,7 @@ formData.append("detailedPdf", detailedPdf);
           hasOrderInfo: !!orderInfo,
           itemsCount: orderItems.length
         });
-        alert("Please complete the order info and items before submitting.");
+        // alert("Please complete the order info and items before submitting.");
         return;
       }
 
@@ -1266,7 +1266,7 @@ formData.append("detailedPdf", detailedPdf);
   };
 const generatePDF = async () => {
   if (!orderInfo || (orderItems.length === 0 && orderSelectedItems.length === 0)) {
-    alert("Please complete the order info and items before generating PDF.");
+    // alert("Please complete the order info and items before generating PDF.");
     return;
   }
 
@@ -1290,7 +1290,7 @@ const generatePDF = async () => {
 
   } catch (error) {
     console.error("Error generating PDF:", error);
-    alert("Failed to generate PDF. Please try again.");
+    // alert("Failed to generate PDF. Please try again.");
   }
 };
 
