@@ -125,6 +125,18 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+     for (const pouch of pouches) {
+    const enteredWeight = pouchWeights[pouch.Id] || 0;
+    const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+
+    if (enteredWeight > receivedWeight) {
+      alert(
+        `Entered Setting Weight (${enteredWeight}g) cannot be greater than Received Grinding Weight (${receivedWeight}g) for pouch ${pouch.Name}`
+      );
+      return; // ❌ Stop form submission
+    }
+  }
+
     try {
       setIsSubmitting(true);
 
@@ -179,7 +191,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setLoading(false);
         
         // Optionally redirect to the setting list page
-        
+         setTimeout(() => {
+          router.push('/Departments/Setting/Setting_Table');
+        }, 1000);
         
       } else {
         throw new Error(result.message || 'Failed to save setting details');

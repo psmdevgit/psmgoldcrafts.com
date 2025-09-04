@@ -166,6 +166,22 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     try {
       setIsSubmitting(true);
 
+       // 🔹 Validation: Check if entered dull weight > received weight
+    const invalidPouch = pouches.find((pouch) => {
+      const receivedWeight = pouch.Received_Weight_Grinding__c || 0; // From polishing/grinding
+      const enteredWeight = pouchWeights[pouch.Id] || 0; // Entered dull weight
+      return enteredWeight > receivedWeight;
+    });
+
+    if (invalidPouch) {
+      alert(
+        `Error: Entered Dull weight for pouch ${invalidPouch.Name} is greater than its received weight!`
+      );
+      setIsSubmitting(false);
+      return; // ⛔ Stop submission
+    }
+
+
       // Prepare pouch data
       const pouchesWithWeights = pouches.map(pouch => ({
         pouchId: pouch.Id,
@@ -239,6 +255,11 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Dull/Dull_Table');
+        }, 1000);
+
+
       } else {
         console.error('[Add Dull] API returned error:', result);
         throw new Error(result.message || 'Failed to save dull details');

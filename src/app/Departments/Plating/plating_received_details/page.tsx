@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams , useRouter} from 'next/navigation';
 import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,9 @@ const PlatingDetailsPage = () => {
   const [scrapReceivedWeight, setScrapReceivedWeight] = useState<number>(0);
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
   const [totalReceivedWeight, setTotalReceivedWeight] = useState<number>(0);
+
+  
+  const router = useRouter();
 
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
@@ -177,7 +180,15 @@ const PlatingDetailsPage = () => {
     try {
       setIsSubmitting(true);
       
+      
       if (!data || !platingId) return;
+
+         // 🔥 Validation: Stop if total received weight is greater than issued weight
+    if (totalReceivedWeight > (data.plating.Issued_Weight__c || 0)) {
+      alert("Received Weight cannot be greater than Issued Weight!");
+      setIsSubmitting(false);
+      return; // Stop execution
+    }
 
       // Use the Salesforce ID directly for the update
       const response = await fetch(
@@ -209,8 +220,10 @@ const PlatingDetailsPage = () => {
         toast.success('Plating details updated successfully');
         alert('Plating details updated successfully');
         // Redirect to plating list page after successful update
-        // alert('Plating details updated successfully');
-        window.location.href = '/Departments/Plating/Plating_Table';
+         setTimeout(() => {
+          router.push('/Departments/Plating/Plating_Table');
+        }, 1000);
+
       } else {
         throw new Error(result.message || 'Failed to update plating details');
       }

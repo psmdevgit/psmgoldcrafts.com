@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,9 @@ const CuttingDetailsPage = () => {
   const [scrapReceivedWeight, setScrapReceivedWeight] = useState<number>(0);
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
   const [totalReceivedWeight, setTotalReceivedWeight] = useState<number>(0);
+
+  
+  const router = useRouter();
 
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
@@ -208,6 +211,14 @@ const CuttingDetailsPage = () => {
       
       if (!data) return;
 
+        // Check if total received weight > issued weight
+  if (totalReceivedWeight > data.cutting.Issued_Weight__c) {
+    alert("Received weight cannot be greater than issued weight!");
+    toast.error("Received weight cannot be greater than issued weight!");
+    return; // Stop form submission
+  }
+  
+
       const [prefix, date, month, year, number, subnumber] = cuttingId!.split('/');
 
       // Create full ISO datetime string
@@ -241,7 +252,10 @@ const CuttingDetailsPage = () => {
         alert('Cutting details updated successfully');
         toast.success('Cutting details updated successfully');
         // alert('Cutting details updated successfully');
-        window.location.reload();
+        
+ setTimeout(() => {
+          router.push('/Departments/Cutting/Cutting_Table');
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update cutting details');
       }

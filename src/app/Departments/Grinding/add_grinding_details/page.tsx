@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams,useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,12 @@ export default function AddGrindingDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string>('');
 
+    const router = useRouter();
+
+  // const [rWt, setRWt] = useState<{ [key: string]: number }>({});
+
+
+
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
@@ -61,6 +67,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const pouchResult = await pouchResponse.json();
         console.log('[AddGrinding] Pouch fetch response:', pouchResult);
 
+        console.log(pouchResult.data.pouches[0].Received_Pouch_weight__c);
+
+
+
 const pouchData = pouches.map(pouch => ({
   pouchId: pouch.Id,
   grindingWeight: pouchWeights[pouch.Id] || 0,
@@ -75,14 +85,17 @@ const pouchData = pouches.map(pouch => ({
         setPouches(pouchResult.data.pouches);
         
         const weights: { [key: string]: number } = {};
+        const received: { [key: string]: number } = {};
         const quantities: { [key: string]: number } = {};
         pouchResult.data.pouches.forEach((pouch: Pouch) => {
           weights[pouch.Id] = pouch.Issued_Pouch_weight__c || 0;
+            received[pouch.Id] = pouch.Received_Pouch_weight__c || 0;
           quantities[pouch.Id] = pouch.Quantity__c || 0;
           setOrderId(pouch.Order_Id__c || '');
         });
         setPouchWeights(weights);
         setPouchQuantities(quantities);
+        setRWt(received); 
         
         const total = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
         setTotalWeight(total);
@@ -117,9 +130,21 @@ const pouchData = pouches.map(pouch => ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+     
+      for (const pouch of pouches) {
+    const issued = pouchWeights[pouch.Id] || 0;
+    const received = pouch.Received_Pouch_weight__c || 0;
+
+    if (issued > received) {
+      alert(`Issued weight (${issued}g) cannot be greater than received weight (${received}g) for pouch ${pouch.Name}`);
+      return; // ❌ Stop submission
+    }
+  }
+
     try {
       setIsSubmitting(true);
+
+    
 
       // Combine date and time for issued datetime
       const combinedDateTime = `${issuedDate}T${issuedTime}:00.000Z`;
@@ -165,6 +190,11 @@ const pouchData = pouches.map(pouch => ({
         }
       alert('Grinding details saved successfully');
         toast.success('Grinding details saved successfully');
+
+ setTimeout(() => {
+          router.push('/Departments/Grinding/Grinding_Table');
+        }, 1000);
+
         // alert('Grinding details saved successfully');
         // Optionally redirect to a success page or grinding list
       } else {
@@ -251,7 +281,7 @@ const pouchData = pouches.map(pouch => ({
                         type="number"
                         step="0.00001"
                         value={pouchWeights[pouch.Id] || ''}
-                        onChange={(e) => handleWeightChange(pouch.Id, parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>{ handleWeightChange(pouch.Id, parseFloat(e.target.value) || 0); }}
                         className="h-10"
                       />
                     </div>

@@ -142,6 +142,18 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     try {
       setIsSubmitting(true);
 
+        // ✅ Validation check
+  for (const pouch of pouches) {
+    const platingWeight = pouchWeights[pouch.Id] || 0;
+    const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+
+    if (platingWeight > receivedWeight) {
+      alert(`Plating weight for pouch ${pouch.Name} cannot be greater than received weight (${receivedWeight.toFixed(4)}g)`);
+      return; // Stop submission
+    }
+  }
+  
+
       // Prepare pouch data
       const pouchData = pouches.map(pouch => ({
         pouchId: pouch.Id,
@@ -211,6 +223,11 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Plating/Plating_Table');
+        }, 1000);
+
+
       } else {
         console.error('[Add Plating] API returned error:', result);
         throw new Error(result.message || 'Failed to save plating details');

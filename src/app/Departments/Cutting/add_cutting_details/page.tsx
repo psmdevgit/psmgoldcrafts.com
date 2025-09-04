@@ -140,6 +140,20 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
     
     try {
       setIsSubmitting(true);
+       // Validation: Check if cutting weight exceeds received weight
+    for (const pouch of pouches) {
+      const cuttingWeight = pouchWeights[pouch.Id] || 0;
+      const receivedWeight = pouch.Received_Weight_Plating__c || 0;
+
+      if (cuttingWeight > receivedWeight) {
+        alert(
+          `Cutting weight (${cuttingWeight.toFixed(4)}g) for pouch ${pouch.Name} exceeds the received weight (${receivedWeight.toFixed(4)}g) from plating.`
+        );
+        setIsSubmitting(false);
+        return; // Stop form submission
+      }
+    }
+    
 
       // Prepare pouch data
       const pouchData = pouches.map(pouch => ({
@@ -209,6 +223,10 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Cutting/Cutting_Table');
+        }, 1000);
+
       } else {
         console.error('[Add Cutting] API returned error:', result);
         throw new Error(result.message || 'Failed to save cutting details');

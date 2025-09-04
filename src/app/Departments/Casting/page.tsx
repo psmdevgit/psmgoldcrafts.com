@@ -16,8 +16,12 @@ import { z } from "zod";
 
 
 
-const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
+// const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
 const apiUrl = "https://erp-server-r9wh.onrender.com";
+
+
+// const apiUrl = "http://localhost:5001";
+
 // Define the interfaces for inventory items and orders
 
 interface InventoryItem {
@@ -457,7 +461,7 @@ const CastingForm = () => {
 
       // Basic validation for required fields
       if (!selectedOrders.length || !purity || !waxTreeWeight || inventoryItems.length === 0 || !castingLastNumber) {
-        // toast.error('Please fill all required fields including casting number');
+    console.log('Please fill all required fields including casting number');
         // alert('Please fill all required fields including casting number');
         return;
       }

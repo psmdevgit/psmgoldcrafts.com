@@ -210,6 +210,18 @@ const GrindingDetailsPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    for (const pouch of data?.pouches || []) {
+    const issued = pouch.Issued_Weight__c || 0;
+    const received = pouchReceivedWeights[pouch.Id] || 0;
+
+    if (received > issued) {
+      alert(
+        `Received weight (${received}g) cannot be greater than issued weight (${issued}g) for pouch ${pouch.Name}`
+      );
+      return; // ❌ Stop form submission
+    }
+  }
+
     try {
       setIsSubmitting(true);
       
@@ -273,7 +285,7 @@ const GrindingDetailsPage = () => {
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Grinding/Grinding_Table';
-        }, 1500);
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update grinding details');
       }
