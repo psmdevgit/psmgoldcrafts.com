@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 import { Label } from "@/components/ui/label";
+import { parse } from "path";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
@@ -63,6 +64,11 @@ const SettingDetailsPage = () => {
   const [pouchStoneWeights, setPouchStoneWeights] = useState<{ [key: string]: number }>({});
   const [totalStoneWeight, setTotalStoneWeight] = useState<number>(0);
   const [stoneWeightAdded, setStoneWeightAdded] = useState<number>(0);
+
+  
+  const [findingReceived,setfindingReceived ] = useState<number>(0);
+
+
   const [ornamentWeight, setOrnamentWeight] = useState<number>(0);
   const [scrapReceivedWeight, setScrapReceivedWeight] = useState<number>(0);
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
@@ -304,6 +310,7 @@ const SettingDetailsPage = () => {
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
             dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
             settingLoss: parseFloat(settingLoss.toFixed(4)),
+              findingReceived: parseFloat(findingReceived.toFixed(4)),
             totalStoneWeight: parseFloat(totalStoneWeight.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
@@ -517,6 +524,20 @@ const SettingDetailsPage = () => {
                     disabled={true}
                   />
                 </div>
+
+                <div>
+                               <label className="text-sm text-gray-600 block mb-1.5">
+                                 Findings Weight (g)
+                               </label>
+                               <Input
+                                 type="number"
+                                 step="0.0001"
+                                 value={findingReceived || ''}
+                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                 className="w-full h-9"
+                               />
+                </div>
+
 
                 <div>
                   <Label>Setting Loss (g)</Label>

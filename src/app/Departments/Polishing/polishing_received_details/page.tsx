@@ -69,6 +69,9 @@ export default function PolishingReceivedDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
 
+  
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
+
 
   
   const router = useRouter();
@@ -227,6 +230,7 @@ export default function PolishingReceivedDetails() {
             ornamentWeight: parseFloat(ornamentWeight.toFixed(4)),
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
             dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
+               findingReceived: parseFloat(findingReceived.toFixed(4)),
             polishingLoss: parseFloat(polishingLoss.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
@@ -408,6 +412,20 @@ export default function PolishingReceivedDetails() {
                     disabled={true}
                   />
                 </div>
+
+                      <div>
+                                               <label className="text-sm text-gray-600 block mb-1.5">
+                                                 Findings Weight (g)
+                                               </label>
+                                               <Input
+                                                 type="number"
+                                                 step="0.0001"
+                                                 value={findingReceived || ''}
+                                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                                 className="w-full h-9"
+                                               />
+                                </div>
+                                
 
                 <div>
                   <Label>Polishing Loss (g)</Label>
