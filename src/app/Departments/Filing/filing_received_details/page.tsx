@@ -287,10 +287,10 @@ const FilingDetailsPage = () => {
         {/* Grinding Details Section */}
         <div className="bg-white shadow rounded-lg mb-6">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Filing Details</h2>
+            <h2 className="text-xl font-semibold mb-4">Water Grinding Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-sm text-gray-600">Filing Number</label>
+                <label className="text-sm text-gray-600">Water Grinding Number</label>
                 <p className="font-medium">{data.filing.Name}</p>
               </div>
               <div>
@@ -460,7 +460,7 @@ const FilingDetailsPage = () => {
                 </div>
                 <div>
                   <label className="text-sm text-gray-600 block mb-1.5">
-                    Filing Loss (g)
+                    Water Grinding Loss (g)
                   </label>
                   <Input
                     type="number"

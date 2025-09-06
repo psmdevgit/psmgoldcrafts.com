@@ -116,7 +116,7 @@ export default function AddGrindingDetails() {
   // }, [castingId]); // Run when castingId changes
   
   // Add a formatted ID that includes GRIND
-  const formattedId = castingId ? `Filing/${castingId}` : '';
+  const formattedId = castingId ? `WGRIND/${castingId}` : '';
 
   // Fetch casting details and related orders
   useEffect(() => {
@@ -727,7 +727,7 @@ export default function AddGrindingDetails() {
     <div className="container mx-auto py-6">
       <div className="bg-white rounded-lg shadow-md">
         <div className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Add Filing Details</h1>
+          <h1 className="text-2xl font-bold mb-6">Add Water Grinding Details</h1>
           
           {loading ? (
             <div className="text-center py-8">
@@ -742,7 +742,7 @@ export default function AddGrindingDetails() {
                   <Input value={castingId || ''} disabled className="bg-gray-100" />
                 </div>
                 <div>
-                  <Label>Filing ID</Label>
+                  <Label>WGRIND ID</Label>
                   <Input value={formattedId} disabled className="bg-gray-100" />
                 </div>
                 <div>
