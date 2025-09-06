@@ -29,8 +29,7 @@ const sidebarData: SidebarCategory[] = [
           { label: "Current Process", link: " /DashBoard/Overallprocess " },
           { label: "Inventory Items", link: "/Reports/InventoryItems" },
           { label: "Inventory Transactions", link: "/Reports/InventoryIssued" },
-        
-           { label: "Party Ledger", link: "/Reports/VendorRep/PartyLedger" },
+          { label: "Party Ledger", link: "/Reports/VendorRep/PartyLedger" },
         ]
       },
       /*{
@@ -89,8 +88,10 @@ const sidebarData: SidebarCategory[] = [
         icon: "fa-solid fa-arrow-progress",
         subItems: [
           { label: "Casting", link: "/Departments/Casting/casting_table" },
-          { label: "Filing", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
-          { label: "Grinding", link: "/Departments/Grinding/Grinding_Table" },
+           { label: " Filing", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
+          { label: " Grinding", link: "/Departments/Grinding/Grinding_Table" },
+          { label: "Media", link: "/Departments/Media/media_Table" },
+          { label: "Correction", link: "/Departments/Correction/correction_Table" },
           { label: "Setting", link: "/Departments/Setting/Setting_Table" },
           { label: "Polishing", link: "/Departments/Polishing/Polishing_Table" },
           { label: "Dull", link: "/Departments/Dull/Dull_Table" },
