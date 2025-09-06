@@ -21,6 +21,8 @@ export default function AddSettingDetails() {
   const searchParams = useSearchParams();
   const filingId = searchParams.get('filingId');
   const grindingId = searchParams.get('grindingId');
+   const correctionId = searchParams.get('correctionID');
+   
   const [loading, setLoading] = useState(true);
   const [formattedId, setFormattedId] = useState<string>('');
   const [pouches, setPouches] = useState<Pouch[]>([]);
@@ -37,12 +39,16 @@ export default function AddSettingDetails() {
   const router = useRouter();
 
   
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+//const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+const apiBaseUrl = "http://localhost:5001";
+
+
 
   useEffect(() => {
     const initializeSetting = async () => {
-      if (!filingId && !grindingId) {
+      if (!filingId && !grindingId && !correctionId) {
         toast.error('No ID provided');
+        console.error('No ID provided in URL', { filingId, grindingId, correctionId });
         return;
       }
 
@@ -50,20 +56,26 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         let prefix, date, month, year, number,subnumber ;
         let apiEndpoint;
 
-        if (filingId) {
-          [prefix, date, month, year, number, subnumber  ] = filingId.split('/');
-          apiEndpoint = `${apiBaseUrl}/api/grinding/GRIND/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
-        } else if (grindingId) {
-          [prefix, date, month, year, number, subnumber] = grindingId.split('/');
-          apiEndpoint = `${apiBaseUrl}/api/grinding/${grindingId}/pouches`;
-        }
+      if (filingId) {
+  [prefix, date, month, year, number, subnumber] = filingId.split('/');
+  apiEndpoint = `${apiBaseUrl}/api/grinding/GRIND/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+
+} else if (grindingId) {
+  [prefix, date, month, year, number, subnumber] = grindingId.split('/');
+  apiEndpoint = `${apiBaseUrl}/api/grinding/${grindingId}/pouches`;
+
+} else if (correctionId) {
+  [prefix, date, month, year, number, subnumber] = correctionId.split('/');
+  apiEndpoint = `${apiBaseUrl}/api/correction/${correctionId}/pouches`;
+}
+
 
         console.log('[AddSetting] ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newSid = Math.floor(Math.random() * 99) + 1;
+        
 
         
-        const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${newSid}`;
+        const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedSettingId);
 
         const pouchResponse = await fetch(apiEndpoint);
@@ -72,19 +84,21 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         if (!pouchResult.success) {
           throw new Error(pouchResult.message || 'Failed to fetch pouches');
         }
+const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => ({
+  ...pouch,
+  Name: `${prefix}/${date}/${month}/${year}/${number}/POUCH${pouch.Name.split('POUCH')[1]}`,
+  Issued_Pouch_weight__c: 0,
+  Received_Weight_Grinding__c: correctionId
+    ? pouch.Received_Weight_Correction__c || 0
+    : pouch.Received_Weight_Grinding__c || 0
+}));
 
-        const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => ({
-          ...pouch,
-          Name: `${prefix}/${date}/${month}/${year}/${number}/POUCH${pouch.Name.split('POUCH')[1]}`,
-          Issued_Pouch_weight__c: 0,
-          Received_Weight_Grinding__c: pouch.Received_Weight_Grinding__c || 0
-        }));
 
         setPouches(formattedPouches);
         
         const weights: { [key: string]: number } = {};
         const quantities: { [key: string]: number } = {};
-        formattedPouches.forEach((pouch: Pouch) => {
+        formattedPouches.forEach((pouch: Pouch) => { 
           weights[pouch.Id] = 0;
           quantities[pouch.Id] = pouch.Quantity__c;
           setOrderId(pouch.Order_Id__c || '');
