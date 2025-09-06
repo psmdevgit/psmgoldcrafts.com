@@ -109,7 +109,7 @@ const departments = [
 //   },
   { 
     value: 'Filing', 
-    label: 'Filing',
+    label: 'Water Grinding',
     path: '/Departments/Filing/add_filing_details'
   },
 //  { 
