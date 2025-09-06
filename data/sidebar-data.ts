@@ -89,7 +89,7 @@ const sidebarData: SidebarCategory[] = [
         subItems: [
 
           { label: "Casting", link: "/Departments/Casting/casting_table" },
-           { label: " Filing", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
+           { label: " Pouch Creation", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
           { label: " Grinding", link: "/Departments/Grinding/Grinding_Table" },
           { label: "Media", link: "/Departments/Media/media_Table" },
           { label: "Correction", link: "/Departments/Correction/correction_Table" },
