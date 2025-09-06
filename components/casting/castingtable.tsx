@@ -34,7 +34,19 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { Input } from "@/components/ui/input";
+
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
+// const apiBaseUrl = "http://localhost:5001"; 
 
 const downloadPDF = async (pdfUrl: string) => {
   try {
@@ -108,8 +120,8 @@ const departments = [
 //     path: '/Departments/Grinding/add_grinding_details'
 //   },
   { 
-    value: 'Filing', 
-    label: 'Filing',
+    value: 'Pouch Creation', 
+    label: 'Pouch Creation',
     path: '/Departments/Filing/add_filing_details'
   },
 //  { 
@@ -137,6 +149,68 @@ interface WeightBreakdown {
 }
 
 export default function CastingTable() {
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [castingScrap, setCastingScrap] = useState("Casting Scrap");
+  const [receivedWeight, setReceivedWeight] = useState("");
+  const [updatedBy, setUpdatedBy] = useState("");
+
+const handleScrapUpSubmit = async () => {
+
+  if (!receivedWeight || !updatedBy) {
+    alert("⚠️ Please fill in both Received Weight and Updated By.");
+    return; // Stop function here
+  }  
+  console.log({
+    castingScrap,
+    receivedWeight,
+    updatedBy,
+  });
+
+  try {
+    // Prepare the payload without weight conversion
+    const payload = {
+      itemName: castingScrap,
+      purity: "91.7%",
+      availableWeight: parseFloat(receivedWeight),
+      unitOfMeasure: "gram",
+      partyLedger: ""
+    };
+
+    console.log('Submitting payload:', payload);
+
+    const response = await fetch(`${apiBaseUrl}/update-inventory`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update inventory');
+    }
+
+    alert("Inventory updated successfully!");
+  } catch (err) {
+    console.error('Error updating inventory:', err);    
+    alert("Error updating inventory!");
+  }
+
+  // Reset modal and fields
+  setIsModalOpen(false);
+  setCastingScrap("");
+  setReceivedWeight("");
+  setUpdatedBy("");
+};
+
+
+
+
+
   const [modalOpen, setModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [editData, setEditData] = useState<IDeal | null>(null);
@@ -465,6 +539,60 @@ export default function CastingTable() {
               statusFilter={statusFilter}
               handleStatusChange={handleStatusChange}
             />
+
+
+              {/* 🔹 New Update Button */}
+       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+  <DialogTrigger asChild>
+    {/* <Button variant="default" style={{background:"#F7DEB1",color:"black"}}>Update Scrap</Button> */}
+  </DialogTrigger>
+  <DialogContent className="bg-white"> {/* Solid white background */}
+    <DialogHeader>
+      <DialogTitle>Update Casting Scrap</DialogTitle>
+    </DialogHeader>
+
+    <div className="flex flex-col gap-4 mt-4">
+      <div>
+        <label className="text-sm font-medium">Casting Scrap</label>
+        <Input
+          type="text"
+          disabled
+          value={castingScrap}
+          onChange={(e) => setCastingScrap(e.target.value)}
+          placeholder="Enter Casting Scrap"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Received Weight</label>
+        <Input
+          type="number"
+          value={receivedWeight}
+          onChange={(e) => setReceivedWeight(e.target.value)}
+          placeholder="Enter Received Weight"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-medium">Updated By</label>
+        <Input
+          type="text"
+          value={updatedBy}
+          onChange={(e) => setUpdatedBy(e.target.value)}
+          placeholder="Enter Updated By"
+        />
+      </div>
+
+      <Button onClick={handleScrapUpSubmit} className="mt-2" style={{background:"#FEC769",color:"black"}}>
+        Submit
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
+
+
+
             <Box sx={{ width: "100%" }} className="table-responsive">
               <Paper sx={{ width: "100%", mb: 2 }}>
                 <TableContainer className="table mb-[20px] hover multiple_tables w-full">
@@ -574,7 +702,7 @@ export default function CastingTable() {
                                   </Link>
 
                                   {/* Edit button - disabled when status is Finished */}
-                               
+  {deal.status?.toLowerCase() !== 'finished' ? (
                                     <Link href={`/Departments/Casting/casting_received_details?castingId=${deal.id}`} passHref>
                                       <button
                                         type="button"
@@ -594,7 +722,27 @@ export default function CastingTable() {
                                         <i className="fa-sharp fa-light fa-pen"></i>
                                       </button>
                                     </Link>
-                              
+                                ) : (
+                                      <button
+                                        type="button"
+                                        className="table__icon edit"
+                                        style={{
+                                          display: 'inline-block',
+                                          backgroundColor: 'gray',
+                                          color: 'white',
+                                          borderRadius: '4px',
+                                          padding: '5px',
+                                          textDecoration: 'none',
+                                          border: 'none',
+                                          cursor: 'not-allowed',
+                                          opacity: 0.6,
+                                        }}
+                                        disabled
+                                        title="Cannot edit finished items"
+                                      >
+                                        <i className="fa-sharp fa-light fa-pen"></i>
+                                      </button>
+                                    )}
 
                                   <button
                                     type="button"

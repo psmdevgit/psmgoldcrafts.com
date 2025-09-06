@@ -43,6 +43,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const initializeSetting = async () => {
       if (!filingId && !grindingId) {
         toast.error('No ID provided');
+        // alert('No ID provided');
         return;
       }
 
@@ -60,10 +61,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
         console.log('[AddSetting] ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newSid = Math.floor(Math.random() * 99) + 1;
+        // const newSid = Math.floor(Math.random() * 99) + 1;
 
         
-        const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${newSid}`;
+        const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedSettingId);
 
         const pouchResponse = await fetch(apiEndpoint);
@@ -124,6 +125,18 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+     for (const pouch of pouches) {
+    const enteredWeight = pouchWeights[pouch.Id] || 0;
+    const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+
+    if (enteredWeight > receivedWeight) {
+      alert(
+        `Entered Setting Weight (${enteredWeight}g) cannot be greater than Received Grinding Weight (${receivedWeight}g) for pouch ${pouch.Name}`
+      );
+      return; // ❌ Stop form submission
+    }
+  }
+
     try {
       setIsSubmitting(true);
 
@@ -164,7 +177,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       if (result.success) {
         toast.success('Setting details saved successfully');
-        
+        alert('Setting details saved successfully');
         // Reset form
         setPouches([]);
         setPouchWeights({});
@@ -178,7 +191,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setLoading(false);
         
         // Optionally redirect to the setting list page
-        
+         setTimeout(() => {
+          router.push('/Departments/Setting/Setting_Table');
+        }, 1000);
         
       } else {
         throw new Error(result.message || 'Failed to save setting details');
@@ -186,6 +201,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     } catch (error) {
       console.error('[AddSetting] Error:', error);
       toast.error(error.message || 'Failed to save setting details');
+      alert(error.message || 'Failed to save setting details');
     } finally {
       setIsSubmitting(false);
     }

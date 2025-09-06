@@ -2,7 +2,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import avatarImg from "../../../../public/assets/images/avatar/avatar.png";
+// import avatarImg from "../../../../public/assets/images/avatar/avatar.png";
+
+import avatarImg from "@/assets/userLogo.png";
 import UserIcon from '@/svg/header-svg/Profile/UserIcon';
 import ChatIcon from '@/svg/header-svg/Profile/ChatIcon';
 import EmailIcon from '@/svg/header-svg/Profile/EmailIcon';
@@ -32,6 +34,12 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
     }
   }, []);
 
+
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage
+  };
+
+
     return (
         <>
             <div className="nav-item relative">
@@ -42,7 +50,7 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
                             <Image src={avatarImg} alt="img not found" />
                         </div>
                         <div className="user__content text-white">
-                            <h5 className='text-white'>{username}</h5>
+                            <h5 className='text-white text-center'>{username}</h5>
                             <span>online</span>
                         </div>
                     </div>
@@ -74,7 +82,7 @@ const HeaderUserProfile = ({handleShowUserDrowdown, isOpenUserDropdown}:TUserPro
                             </Link>
                         </li>
                         <li>
-                            <Link href="/">
+                            <Link href="/" onClick={handleLogout} >
                         <LogOut/>
                                 Log Out</Link>
                         </li>

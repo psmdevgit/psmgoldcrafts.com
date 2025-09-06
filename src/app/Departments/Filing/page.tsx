@@ -81,10 +81,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           setDepartmentRecords(receivedRecords);
         } else {
           toast.error(`Failed to fetch ${selectedDepartment} records`);
+          // alert(`Failed to fetch ${selectedDepartment} records`);
         }
       } catch (error) {
         console.error(`Error fetching ${selectedDepartment} records:`, error);
         toast.error('Failed to fetch records');
+        // alert('Failed to fetch records');
       } finally {
         setLoading(false);
       }
@@ -119,10 +121,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           setPouchWeights(weights);
         } else {
           toast.error('Failed to fetch pouches');
+          // alert('Failed to fetch pouches');
         }
       } catch (error) {
         console.error('Error fetching pouches:', error);
         toast.error('Failed to fetch pouches');
+        // alert('Failed to fetch pouches');
       } finally {
         setLoading(false);
       }
@@ -150,7 +154,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   // Handle pouch weight change
   const handlePouchWeightChange = (pouchId: string, weight: number, maxWeight: number) => {
     if (weight > maxWeight) {
-      toast.error(`Weight cannot exceed ${maxWeight.toFixed(4)}g`);
+      toast.error(`Weight cannot exceed ${maxWeight.toFixed(4)}g`); 
       return;
     }
 
@@ -202,6 +206,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       
       if (!selectedRecordData) {
         toast.error('No record selected');
+        // alert('No record selected');
         return;
       }
 
@@ -288,6 +293,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       if (result.success) {
         toast.success('Filing record created successfully');
+        alert('Filing record created successfully');
         router.push('/Departments/Filing/add_filing_details/Grinding_Table');
       } else {
         throw new Error(result.message || 'Failed to create filing record');
@@ -295,6 +301,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     } catch (error) {
       console.error('Error creating filing:', error);
       toast.error(error.message || 'Failed to create filing record');
+      alert(error.message || 'Failed to create filing record');
     } finally {
       setLoading(false);
     }

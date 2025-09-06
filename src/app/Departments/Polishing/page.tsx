@@ -82,6 +82,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           setDepartmentRecords(receivedRecords);
         } else {
           toast.error(`Failed to fetch ${selectedDepartment} records`);
+          // alert(`Failed to fetch ${selectedDepartment} records`);
         }
       } catch (error) {
         console.error(`Error fetching ${selectedDepartment} records:`, error);
@@ -205,6 +206,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       
       if (!selectedRecordData) {
         toast.error('No record selected');
+        // alert('No record selected');
         return;
       }
 
@@ -272,6 +274,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       if (result.success) {
         toast.success('Polishing record created successfully');
+        alert('Polishing record created successfully');
         router.push('/Departments/Polishing');
       } else {
         throw new Error(result.message || 'Failed to create polishing record');
@@ -279,6 +282,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     } catch (error) {
       console.error('Error creating polishing:', error);
       toast.error(error.message || 'Failed to create polishing record');
+      alert(error.message || 'Failed to create polishing record');
     } finally {
       setLoading(false);
     }

@@ -8,6 +8,8 @@ import { z } from 'zod';
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
+
+
 interface CastingDetails {
   Name: string;
   Issued_Date__c: string;
@@ -67,10 +69,27 @@ const CastingDetailsPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
 
+
+  const[issWt,setIssWt] = useState<number>(0);
+
+
+  const checkWeight = (value:number) =>{
+
+    const enterWeight = value;
+console.log(enterWeight,issWt);
+
+    if(issWt < enterWeight){
+      alert("Received weight is greater...");
+      setReceivedWeight(0);
+    }
+  }
+
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!castingId) {
         toast.error('No casting ID provided');
+        // alert('No casting ID provided');
         setLoading(false);
         return;
       }
@@ -81,12 +100,16 @@ const CastingDetailsPage = () => {
         
         if (result.success) {
           setData(result.data);
+          console.log(result.data.casting.Issud_weight__c)
+   
         } else {
           toast.error(result.message || 'Failed to fetch casting details');
+          // alert('Failed to fetch casting details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching casting details');
+        // alert('Error fetching casting details');
       } finally {
         setLoading(false);
       }
@@ -98,7 +121,8 @@ const CastingDetailsPage = () => {
   useEffect(() => {
     if (data) {
       const issuedWeight = data.casting.Issud_weight__c;
-      
+             setIssWt(data.casting.Issud_weight__c);
+          console.log("issued weight",issWt)
       // Calculate total received weight (including ornaments, scrap, and dust)
       const totalReceived = (receivedWeight || 0) + (scrapReceivedWeight || 0) + (dustReceivedWeight || 0);
       setTotalReceivedWeight(totalReceived);
@@ -172,10 +196,12 @@ const CastingDetailsPage = () => {
       if (result.success) {
         setData(result.data);
         toast.success('Data refreshed successfully');
+        // alert('Data refreshed successfully');
       }
     } catch (error) {
       console.error('Error refreshing data:', error);
       toast.error('Failed to refresh data');
+      // alert('Failed to refresh data');
     }
   };
 
@@ -199,6 +225,7 @@ const CastingDetailsPage = () => {
       // Validate form
       if (!validateForm(formData)) {
         toast.error('Please correct the form errors');
+        // alert('Please correct the form errors');
         return;
       }
 
@@ -211,6 +238,7 @@ const CastingDetailsPage = () => {
       
       if (result.success) {
         // Show success alert
+        alert(`Casting ${castingId} has been updated successfully.`);
         toast.success('Success!', {
           id: 'updateCasting',
           description: `Casting ${castingId} has been updated successfully.`,
@@ -227,8 +255,9 @@ const CastingDetailsPage = () => {
         // Redirect to casting table page after a short delay to allow the toast to be seen
         setTimeout(() => {
           router.push('/Departments/Casting/casting_table');
-        }, 1500);
+        }, 1000);
       } else {
+        // alert('Update Failed');
         toast.error('Update Failed', {
           id: 'updateCasting',
           description: result.message || 'Failed to update received details',
@@ -240,6 +269,7 @@ const CastingDetailsPage = () => {
         id: 'updateCasting',
         description: 'Failed to update casting details. Please try again.',
       });
+      alert('Failed to update casting details. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -407,7 +437,7 @@ const CastingDetailsPage = () => {
                     type="number"
                     step="0.001"
                     value={receivedWeight || ''}
-                    onChange={(e) => setReceivedWeight(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {setReceivedWeight(parseFloat(e.target.value) || 0); checkWeight(e.target.value)}}
                     className={`w-full h-9 ${formErrors.receivedWeight ? 'border-red-500' : ''}`}
                     required
                     placeholder="Enter ornament weight"

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import COMPANY_LOGO from "@/assets/needhagoldlogo.png"
+import COMPANY_LOGO from "@/assets/appLogo.png"
 import { toast } from "sonner";
 
 interface TaggedItem {
@@ -306,7 +306,7 @@ export default function InvoiceGenerator() {
       y -= 25;
       
       // Left side - Company details (without box)
-      page.drawText('NEEDHA GOLD PRIVATE LIMITED', {
+      page.drawText('KALASH JEWELLERS GOLD CRAFT PVT. LTD', {
         x: margin + 10,
         y: y - 20,
         size: 10,
@@ -920,7 +920,7 @@ export default function InvoiceGenerator() {
         borderWidth: 1,
       });
 
-      page.drawText(`for NEEDHA GOLD PRIVATE LIMITED`, {
+      page.drawText(`for KALASH JEWELLERS GOLD CRAFT`, {
         x: width - 170,
         y: y - 30,
         size: 8,
@@ -1001,27 +1001,49 @@ export default function InvoiceGenerator() {
 
     // Company Logo placeholder (if needed)
     y -= 10;
-    try {
-        const logoResponse = await fetch(COMPANY_LOGO.src);
-        const logoArrayBuffer = await logoResponse.arrayBuffer();
-        const logoImage = await pdfDoc.embedPng(logoArrayBuffer);
-        const logoDims = logoImage.scale(0.5); // Scale logo to 50% of original size
-        page.drawImage(logoImage, {
-          x: width / 2 - logoDims.width / 2, // Center horizontally
-          y: y - logoDims.height,            // Position below GST
-          width: logoDims.width,
-          height: logoDims.height,
-        });
+    // try {
+    //     const logoResponse = await fetch(COMPANY_LOGO.src);
+    //     const logoArrayBuffer = await logoResponse.arrayBuffer();
+    //     const logoImage = await pdfDoc.embedPng(logoArrayBuffer);
+    //     const logoDims = logoImage.scale(0.1); // Scale logo to 50% of original size
+    //     page.drawImage(logoImage, {
+    //       x: width / 2 - logoDims.width / 2, // Center horizontally
+    //       y: y - logoDims.height,            // Position below GST
+    //       width: logoDims.width,
+    //       height: logoDims.height,
+    //     });
   
-        y -= (logoDims.height + 10); // Move y position down by logo height plus padding
-      } catch (error) {
-        console.error('Error loading logo:', error);
-        y -= 10; // Still move down a bit if logo fails to load
-      }
+    //     y -= (logoDims.height + 10); // Move y position down by logo height plus padding
+    //   } catch (error) {
+    //     console.error('Error loading logo:', error);
+    //     y -= 10; // Still move down a bit if logo fails to load
+    //   }
+
+    try {
+          const logoResponse = await fetch(COMPANY_LOGO.src);
+          const logoArrayBuffer = await logoResponse.arrayBuffer();
+          const logoImage = await pdfDoc.embedPng(logoArrayBuffer);
+
+          const logoWidth = 50;  // Fixed width
+          const logoHeight = 50; // Fixed height
+
+          page.drawImage(logoImage, {
+            x: (width - logoWidth) / 2, // Center horizontally
+            y: y - logoHeight,          // Position below GST
+            width: logoWidth,
+            height: logoHeight,
+          });
+
+          y -= (logoHeight + 10); // Move y position down by logo height plus padding
+        } catch (error) {
+          console.error("Error loading logo:", error);
+          y -= 10; // Still move down a bit if logo fails to load
+        }
+
 
     // Company name
-    page.drawText(`NEEDHA GOLD PRIVATE LIMITED`, {
-      x: width / 2 - 80,
+    page.drawText(`KALASH JEWELLERS GOLD CRAFT PVT. LTD`, {
+      x: width / 2 - 120,
       y: y,
       size: 11,
       font: fontBold,
@@ -1030,7 +1052,7 @@ export default function InvoiceGenerator() {
 
     // Address with smaller font
     page.drawText(`5/340A, SOWDESWARI NAGAR,OKKIYAMTURAIPAKKAM, CHENNAI - 600097`, {
-      x: width / 2 - 100,
+      x: width / 2 - 120,
       y: y,
       size: 7,
       font: fontRegular,
@@ -1199,7 +1221,7 @@ export default function InvoiceGenerator() {
     const signatureWidth = (width - 2 * margin) / 3;
     const signatureHeight = 60;
 
-    ['Seal & Signature of the Receiver', 'Checked By', 'For NEEDHA GOLD PRIVATE LIMITED'].forEach((label, i) => {
+    ['Seal & Signature of the Receiver', 'Checked By', 'For KALASH JEWELLERS GOLD CRAFT'].forEach((label, i) => {
       page.drawRectangle({
         x: margin + (i * signatureWidth),
         y: y - signatureHeight,

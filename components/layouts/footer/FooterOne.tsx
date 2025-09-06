@@ -16,7 +16,7 @@ const DashboardFooter = () => {
             <div className="card__footer flex justify-center">
               <p>
                 Copyright © {getCurrentYear()}{' '}
-                <span className="text-black dark:text-black-dark">PSM GOLD CRAFTS</span> Designed by{' '}
+                <span className="text-black dark:text-black-dark">KALASH JEWELLERS GOLD CRAFTS</span> Designed by{' '}
                 <Link href="/" target="_blank">
                   Pothys Swarnamahal Pvt Ltd
                 </Link> All rights reserved
