@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+// const apiBaseUrl = "http://localhost:5001"; 
+
 interface Setting {
   Id: string;
   Name: string;
@@ -206,6 +208,7 @@ const DullDetailsPage = () => {
     }
 
 
+
       const [prefix, date, month, year, number, subnumber] = dullId!.split('/');
 
       const response = await fetch(
@@ -398,7 +401,7 @@ const DullDetailsPage = () => {
                   
                                         <div>
                                                                  <label className="text-sm text-gray-600 block mb-1.5">
-                                                                   Findings Weight (g)
+                                                                   Finding Weight (g)
                                                                  </label>
                                                                  <Input
                                                                    type="number"

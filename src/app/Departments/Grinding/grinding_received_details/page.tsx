@@ -256,6 +256,7 @@ const GrindingDetailsPage = () => {
         issuedWeight: newissuedWeight,
         receivedWeight: totalWeight,
         receivedDate: currentDateTime,
+        findingReceived: findingReceived,
         scrapWeight: scrapReceivedWeight || 0,
         dustWeight: dustReceivedWeight || 0,
         status: 'Completed',

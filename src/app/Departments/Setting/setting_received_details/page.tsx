@@ -10,6 +10,10 @@ import { parse } from "path";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+
+// const apiBaseUrl = "http://localhost:5001"; 
+
+
 interface Setting {
   Id: string;
   Name: string;

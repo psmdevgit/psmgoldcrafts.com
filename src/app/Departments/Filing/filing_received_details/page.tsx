@@ -49,10 +49,9 @@ const FilingDetailsPage = () => {
   const [receivedDate, setReceivedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [receivedWeight, setReceivedWeight] = useState<number>(0);
   const [grindingLoss, setGrindingLoss] = useState<number>(0);
-
   
-      const [findingReceived,setfindingReceived ] = useState<number>(0);
-
+  const [findingReceived,setfindingReceived ] = useState<number>(0);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
   const [pouchReceivedWeights, setPouchReceivedWeights] = useState<{ [key: string]: number }>({});
