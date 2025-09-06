@@ -1106,7 +1106,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().pureGold.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{remainingPureMetalRequired.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().alloy.toFixed(2)}</td>
-                        {/* <td className="px-3 py-2 text-sm">{remainingAlloyRequired.toFixed(2)}</td> */}
+
                         <td className="px-3 py-2 text-sm">
                           {inventoryItems.reduce((total, item) => total + item.issueWeight, 0).toFixed(2)}
                         </td>

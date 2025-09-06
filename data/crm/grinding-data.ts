@@ -16,7 +16,7 @@ export const fetchGrindingData = async (): Promise<IFiling[]> => {
           console.log("Processing grinding record:", grinding);
 
           return {
-            id: grinding.Name,
+            id:grinding.Name,
             issuedWeight: grinding.Issued_Weight__c || 0,  // Updated to match server field
             issuedDate: grinding.Issued_Date__c || '-',    // Updated to match server field
             receivedWeight: grinding.Received_Weight__c || 0, // Updated to match server field

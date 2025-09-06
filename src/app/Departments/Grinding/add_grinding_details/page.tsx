@@ -39,7 +39,7 @@ export default function AddGrindingDetails() {
 
 
   
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+  const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
 // const apiBaseUrl = "http://localhost:5001"; 
 
@@ -55,9 +55,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number,subnumber] = filingId.split('/');
         console.log('[AddGrinding] Filing ID parts:', { prefix, date, month, year, number,subnumber });
 
-
-
-        const generatedGrindingId = `GRIND/${date}/${month}/${year}/${number}/${subnumber}`;
+        const generatedGrindingId = `MEDIA/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedGrindingId);
 
         const pouchResponse = await fetch(
@@ -218,16 +216,16 @@ const pouchData = pouches.map(pouch => ({
       <div className="h-full overflow-y-auto p-4 pt-40 mt-[-30px] bg-gray-50">
         <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold">Add Grinding Details</h2>
+            <h2 className="text-lg font-semibold">Add Media Magnet Details</h2>
             <div className="text-sm font-medium">
-              Filing ID: <span className="text-gray-600">{filingId}</span>
+              WGRIND ID: <span className="text-gray-600">{filingId}</span>
             </div>
           </div>
 
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-sm font-medium">
-                Grinding ID:
+                Media Magnet ID:
                 
              
                  <span className="text-blue-600 font-bold">

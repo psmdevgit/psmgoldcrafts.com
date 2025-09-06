@@ -119,7 +119,9 @@ export default function AddGrindingDetails() {
   
   
   // Add a formatted ID that includes GRIND
+
    const formattedId = castingId ? `PC/${castingId}` : '';
+
 
 
   // Fetch casting details and related orders
@@ -750,7 +752,9 @@ export default function AddGrindingDetails() {
     <div className="container mx-auto py-6">
       <div className="bg-white rounded-lg shadow-md">
         <div className="p-6">
+
           <h1 className="text-2xl font-bold mb-6">Add Pouch Creation Details</h1>
+
           
           {loading ? (
             <div className="text-center py-8">
@@ -765,7 +769,9 @@ export default function AddGrindingDetails() {
                   <Input value={castingId || ''} disabled className="bg-gray-100" />
                 </div>
                 <div>
+
                   <Label>Pouch Creation ID</Label>
+
                   <Input value={formattedId} disabled className="bg-gray-100" />
                 </div>
                 <div>

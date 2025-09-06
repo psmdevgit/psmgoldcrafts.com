@@ -235,7 +235,7 @@ import "react-datepicker/dist/react-datepicker.css";
     return [
       {
         iconClass: "fa-light fa-gem",
-        title: "Grinding Issued",
+        title: "Media Issued",
         value: totalGrinding.toString(),
         description: "Total grinding jobs",
         percentageChange: "",
@@ -267,7 +267,7 @@ import "react-datepicker/dist/react-datepicker.css";
       },  
       {
         iconClass: "fa-light fa-arrow-trend-down",
-        title: "Grinding Loss",
+        title: "Media Loss",
         value: totalGrindingLoss.toFixed(2) + " g",
         description: grindingLossPercentage + "% of issued",
         percentageChange: grindingLossPercentage,
