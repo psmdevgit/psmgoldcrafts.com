@@ -417,7 +417,7 @@ export default function PolishingReceivedDetails() {
 
                       <div>
                                                <label className="text-sm text-gray-600 block mb-1.5">
-                                                 Findings Weight (g)
+                                                 Finding Weight (g)
                                                </label>
                                                <Input
                                                  type="number"
