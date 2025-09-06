@@ -78,12 +78,16 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       }
 
       try {
-        const [prefix, date, month, year, number] = grindingId.split('/');
+        const [prefix, date, month, year, number,subnumber] = grindingId.split('/');
+
+        console.log(subnumber)
+
         const response = await fetch(
-          `${apiBaseUrl}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );
         const result = await response.json();
         
+
         if (result.success) {
           const { data, summary } = result;
           setData({

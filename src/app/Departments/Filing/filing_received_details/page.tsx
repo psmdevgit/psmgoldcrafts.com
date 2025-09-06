@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+// const apiBaseUrl = "http://locaLhost:5001"; 
+
 
 interface Details {
   Name: string;
@@ -47,6 +49,9 @@ const FilingDetailsPage = () => {
   const [receivedDate, setReceivedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [receivedWeight, setReceivedWeight] = useState<number>(0);
   const [grindingLoss, setGrindingLoss] = useState<number>(0);
+  
+  const [findingReceived,setfindingReceived ] = useState<number>(0);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
   const [pouchReceivedWeights, setPouchReceivedWeights] = useState<{ [key: string]: number }>({});
@@ -154,7 +159,8 @@ const FilingDetailsPage = () => {
           ornamentWeight: parseFloat(updateData.ornamentWeight.toFixed(4)),
           scrapReceivedWeight: parseFloat(updateData.scrapReceivedWeight.toFixed(4)),
           dustReceivedWeight: parseFloat(updateData.dustReceivedWeight.toFixed(4)),
-          grindingLoss: parseFloat(updateData.grindingLoss.toFixed(4))
+          grindingLoss: parseFloat(updateData.grindingLoss.toFixed(4)),
+          findingReceived: parseFloat(updateData.findingReceived.toFixed(4))
         })
       });
 
@@ -250,6 +256,7 @@ const FilingDetailsPage = () => {
         ornamentWeight: ornamentWeight,
         scrapReceivedWeight: scrapReceivedWeight,
         dustReceivedWeight: dustReceivedWeight,
+        findingReceived: findingReceived,
         grindingLoss: grindingLoss,
         pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
           pouchId,
@@ -487,6 +494,21 @@ const FilingDetailsPage = () => {
                     <p className="text-red-500 text-xs mt-1">{formErrors.dustReceivedWeight}</p>
                   )}
                 </div>
+
+                 <div>
+                               <label className="text-sm text-gray-600 block mb-1.5">
+                                 Finding Weight (g)
+                               </label>
+                               <Input
+                                 type="number"
+                                 step="0.0001"
+                                 value={findingReceived || ''}
+                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                 className="w-full h-9"
+                               />
+                </div>
+
+
                 <div>
                   <label className="text-sm text-gray-600 block mb-1.5">
                     Filing Loss (g)

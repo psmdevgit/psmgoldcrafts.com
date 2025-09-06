@@ -63,6 +63,9 @@ const PlatingDetailsPage = () => {
   const [totalReceivedWeight, setTotalReceivedWeight] = useState<number>(0);
 
   
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
+
+  
   const router = useRouter();
 
   // Update pouch weight handler
@@ -205,7 +208,8 @@ const PlatingDetailsPage = () => {
             ornamentWeight: parseFloat(ornamentWeight.toFixed(4)),
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
             dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
-            platingLoss: parseFloat(platingLoss.toFixed(4)),
+            platingLoss: parseFloat(platingLoss.toFixed(4)),            
+               findingReceived: parseFloat(findingReceived.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
               receivedWeight: parseFloat(weight.toFixed(4))
@@ -376,6 +380,20 @@ const PlatingDetailsPage = () => {
                       disabled={true}
                     />
                   </div>
+
+                    <div>
+                                               <label className="text-sm text-gray-600 block mb-1.5">
+                                                 Finding Weight (g)
+                                               </label>
+                                               <Input
+                                                 type="number"
+                                                 step="0.0001"
+                                                 value={findingReceived || ''}
+                                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                                 className="w-full h-9"
+                                               />
+                                </div>
+                                
 
                   <div>
                     <Label>Plating Loss (g)</Label>
