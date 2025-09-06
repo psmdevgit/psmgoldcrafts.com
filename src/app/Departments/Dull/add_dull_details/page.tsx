@@ -47,6 +47,7 @@ const apiBaseUrl ="http://localhost:5001";
       if (!sourceId) {
         console.log('[Add Dull] No source ID provided');
         toast.error('No source ID provided');
+        // alert('No source ID provided');
         setLoading(false);
         return;
       }
@@ -55,7 +56,7 @@ const apiBaseUrl ="http://localhost:5001";
         const [prefix, date, month, year, number, subnumber] = sourceId.split('/');
         console.log(`[Add Dull] ${sourceType} ID parts:`, { prefix, date, month, year, number, subnumber });
 
-//const newDid = Math.floor(Math.random() * 999) + 1;
+
 
         const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${subnumber}`;
         // const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${subnumber}`;
@@ -151,6 +152,7 @@ console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, { url: apiEndpoin
         console.error('[Add Dull] Error:', error);
         console.error('[Add Dull] Full error details:', JSON.stringify(error, null, 2));
         toast.error(error.message || 'Failed to initialize dull');
+        // alert(error.message || 'Failed to initialize dull');
       } finally {
         console.log('[Add Dull] Setting loading to false');
         setLoading(false);
@@ -181,6 +183,22 @@ console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, { url: apiEndpoin
     
     try {
       setIsSubmitting(true);
+
+       // 🔹 Validation: Check if entered dull weight > received weight
+    const invalidPouch = pouches.find((pouch) => {
+      const receivedWeight = pouch.Received_Weight_Grinding__c || 0; // From polishing/grinding
+      const enteredWeight = pouchWeights[pouch.Id] || 0; // Entered dull weight
+      return enteredWeight > receivedWeight;
+    });
+
+    if (invalidPouch) {
+      alert(
+        `Error: Entered Dull weight for pouch ${invalidPouch.Name} is greater than its received weight!`
+      );
+      setIsSubmitting(false);
+      return; // ⛔ Stop submission
+    }
+
 
       // Prepare pouch data
       const pouchesWithWeights = pouches.map(pouch => ({
@@ -243,6 +261,7 @@ console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, { url: apiEndpoin
         });
         
         toast.success('Dull details saved successfully');
+        alert('Dull details saved successfully');
         
         // Reset form
         setPouches([]);
@@ -254,6 +273,11 @@ console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, { url: apiEndpoin
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Dull/Dull_Table');
+        }, 1000);
+
+
       } else {
         console.error('[Add Dull] API returned error:', result);
         throw new Error(result.message || 'Failed to save dull details');
@@ -262,6 +286,7 @@ console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, { url: apiEndpoin
       console.error('[Add Dull] Error:', error);
       console.error('[Add Dull] Full error details:', JSON.stringify(error, null, 2));
       toast.error(error.message || 'Failed to save dull details');
+      alert(error.message || 'Failed to save dull details');
     } finally {
       setIsSubmitting(false);
     }

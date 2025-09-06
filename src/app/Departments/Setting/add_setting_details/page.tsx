@@ -48,7 +48,10 @@ const apiBaseUrl = "http://localhost:5001";
     const initializeSetting = async () => {
       if (!filingId && !grindingId && !correctionId) {
         toast.error('No ID provided');
+
         console.error('No ID provided in URL', { filingId, grindingId, correctionId });
+
+
         return;
       }
 
@@ -72,7 +75,6 @@ const apiBaseUrl = "http://localhost:5001";
 
         console.log('[AddSetting] ID parts:', { prefix, date, month, year, number, subnumber });
 
-        
 
         
         const generatedSettingId = `SETTING/${date}/${month}/${year}/${number}/${subnumber}`;
@@ -138,6 +140,18 @@ const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+     for (const pouch of pouches) {
+    const enteredWeight = pouchWeights[pouch.Id] || 0;
+    const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+
+    if (enteredWeight > receivedWeight) {
+      alert(
+        `Entered Setting Weight (${enteredWeight}g) cannot be greater than Received Grinding Weight (${receivedWeight}g) for pouch ${pouch.Name}`
+      );
+      return; // ❌ Stop form submission
+    }
+  }
+
     try {
       setIsSubmitting(true);
 
@@ -178,7 +192,7 @@ const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => ({
 
       if (result.success) {
         toast.success('Setting details saved successfully');
-        
+        alert('Setting details saved successfully');
         // Reset form
         setPouches([]);
         setPouchWeights({});
@@ -192,7 +206,9 @@ const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => ({
         setLoading(false);
         
         // Optionally redirect to the setting list page
-        
+         setTimeout(() => {
+          router.push('/Departments/Setting/Setting_Table');
+        }, 1000);
         
       } else {
         throw new Error(result.message || 'Failed to save setting details');
@@ -200,6 +216,7 @@ const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => ({
     } catch (error) {
       console.error('[AddSetting] Error:', error);
       toast.error(error.message || 'Failed to save setting details');
+      alert(error.message || 'Failed to save setting details');
     } finally {
       setIsSubmitting(false);
     }

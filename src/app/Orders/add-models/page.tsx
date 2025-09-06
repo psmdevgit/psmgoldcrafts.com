@@ -1393,7 +1393,7 @@ const generatePDF = async (pdfDoc) => {
 const generateImagesOnlyPDF = async (pdfDoc) => {
   try {
     if (models.length === 0) {
-      alert('No models available');
+      // alert('No models available');
       return pdfDoc;
     }
 
@@ -1725,7 +1725,7 @@ const handleRemoveRow = (index: number) => {
                    window.open(URL.createObjectURL(blob), '_blank');
                  } catch (error) {
                    console.error('Error generating PDF:', error);
-                   alert('Error generating PDF');
+                  //  alert('Error generating PDF');
                  }
                }}
                className="bg-blue-500 hover:bg-blue-600"
@@ -1744,7 +1744,7 @@ const handleRemoveRow = (index: number) => {
                    window.open(URL.createObjectURL(blob), '_blank');
                  } catch (error) {
                    console.error('Error generating images PDF:', error);
-                   alert('Error generating images PDF');
+                  //  alert('Error generating images PDF');
                  }
                }}
                className="bg-blue-500 hover:bg-blue-600"

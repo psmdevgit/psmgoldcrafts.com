@@ -28,6 +28,7 @@ export default function Login() {
       return;
     }
 
+
     try {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
@@ -40,8 +41,42 @@ export default function Login() {
 
       if (response.ok && data.success) {
         console.log("✅ Login successful!", data);
-        localStorage.setItem("userId", data.userId); // Store user ID if needed
-        router.push("/Orders"); // Redirect user to dashboard
+        localStorage.setItem("username", username); 
+console.log(username);
+     // Determine redirect URL
+    let redirectUrl: string;
+    switch (username?.toLowerCase()) {
+      case "casting":
+        redirectUrl = "/Departments/Casting/casting_table";
+        break;
+      case "pouch":
+        redirectUrl = "/Departments/Filing/add_filing_details/Grinding_Table";
+        break;
+      case "grinding":
+        redirectUrl = "/Departments/Grinding/Grinding_Table";
+        break;
+      case "setting":
+        redirectUrl = "/Departments/Setting/Setting_Table";
+        break;
+      case "polishing":
+        redirectUrl = "/Departments/Polishing/Polishing_Table";
+        break;
+      case "dull":
+        redirectUrl = "/Departments/Dull/Dull_Table";
+        break;
+      case "plating":
+        redirectUrl = "/Departments/Plating/Plating_Table";
+        break;
+      case "cutting":
+        redirectUrl = "/Departments/Cutting/Cutting_Table";
+        break;
+      default:
+        redirectUrl = "/Orders"; // 👈 Default Orders URL
+        break;
+    }
+        
+// Redirect user
+    router.push(redirectUrl);
       } else {
         setError(data.error || "Invalid login credentials.");
       }
@@ -52,9 +87,10 @@ export default function Login() {
     }
   };
 
+  
   return (
   
-    <div className="container bods ">
+    <div className="container bods " >
       <div className="form">
         <div className="sign-in-section">
 <div className="flex justify-center items-center flex-col">

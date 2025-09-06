@@ -72,17 +72,22 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const fetchDetails = async () => {
       if (!grindingId) {
         toast.error('No grinding ID provided');
+        alert('No grinding ID provided');
         setLoading(false);
         return;
       }
 
       try {
-        const [prefix, date, month, year, number] = grindingId.split('/');
+        const [prefix, date, month, year, number,subnumber] = grindingId.split('/');
+
+        console.log(subnumber)
+
         const response = await fetch(
-          `${apiBaseUrl}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );
         const result = await response.json();
         
+
         if (result.success) {
           const { data, summary } = result;
           setData({
@@ -92,10 +97,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           });
         } else {
           toast.error(result.message || 'Grinding record not found');
+          alert(result.message || 'Grinding record not found');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching grinding details');
+        alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }

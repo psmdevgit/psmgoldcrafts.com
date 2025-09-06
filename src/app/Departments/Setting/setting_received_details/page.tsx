@@ -6,8 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 import { Label } from "@/components/ui/label";
+import { parse } from "path";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
+
+// const apiBaseUrl = "http://localhost:5001"; 
+
 
 interface Setting {
   Id: string;
@@ -63,6 +68,11 @@ const SettingDetailsPage = () => {
   const [pouchStoneWeights, setPouchStoneWeights] = useState<{ [key: string]: number }>({});
   const [totalStoneWeight, setTotalStoneWeight] = useState<number>(0);
   const [stoneWeightAdded, setStoneWeightAdded] = useState<number>(0);
+
+  
+  const [findingReceived,setfindingReceived ] = useState<number>(0);
+
+
   const [ornamentWeight, setOrnamentWeight] = useState<number>(0);
   const [scrapReceivedWeight, setScrapReceivedWeight] = useState<number>(0);
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
@@ -169,6 +179,7 @@ const SettingDetailsPage = () => {
       if (!settingId) {
         console.log('No settingId provided');
         toast.error('Setting ID is required');
+        // alert('Setting ID is required');
         setLoading(false);
         return;
       }
@@ -238,6 +249,7 @@ const SettingDetailsPage = () => {
       } catch (error) {
         console.error('[Setting Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch setting details');
+        // alert(error.message || 'Failed to fetch setting details');
       } finally {
         setLoading(false);
       }
@@ -277,6 +289,13 @@ const SettingDetailsPage = () => {
       
       if (!data) return;
 
+       if (totalReceivedWeight > data.setting.Issued_Weight__c) {
+      alert("Total received weight cannot be greater than issued weight!");
+      setIsSubmitting(false);
+      return;
+    }
+
+
       const combinedReceivedDateTime = `${receivedDate}T${receivedTime}:00.000Z`;
 
       const [prefix, date, month, year, number, subnumber] = data.setting.Name.split('/');
@@ -295,6 +314,7 @@ const SettingDetailsPage = () => {
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
             dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
             settingLoss: parseFloat(settingLoss.toFixed(4)),
+              findingReceived: parseFloat(findingReceived.toFixed(4)),
             totalStoneWeight: parseFloat(totalStoneWeight.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
@@ -313,13 +333,14 @@ const SettingDetailsPage = () => {
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Setting/Setting_Table';
-        }, 1500);
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update setting details');
       }
     } catch (error) {
       console.error('[SettingReceived] Error:', error);
       toast.error(error.message || 'Failed to update setting details');
+      alert(error.message || 'Failed to update setting details');
     } finally {
       setIsSubmitting(false);
     }
@@ -362,6 +383,7 @@ const SettingDetailsPage = () => {
             <div>
               <Label>Issued Weight</Label>
               <div className="mt-1">{setting.Issued_Weight__c}g</div>
+              
             </div>
             <div>
               <Label>Status</Label>
@@ -506,6 +528,20 @@ const SettingDetailsPage = () => {
                     disabled={true}
                   />
                 </div>
+
+                <div>
+                               <label className="text-sm text-gray-600 block mb-1.5">
+                                 Finding Weight (g)
+                               </label>
+                               <Input
+                                 type="number"
+                                 step="0.0001"
+                                 value={findingReceived || ''}
+                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                 className="w-full h-9"
+                               />
+                </div>
+
 
                 <div>
                   <Label>Setting Loss (g)</Label>

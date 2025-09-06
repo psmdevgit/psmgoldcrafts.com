@@ -73,6 +73,8 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       if (!dullId) {
         console.log('[Show Dull] No dull ID provided');
         toast.error('No dull ID provided');
+        // alert('No dull ID provided');
+        
         setLoading(false);
         return;
       }
@@ -106,11 +108,13 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         } else {
           console.error('[Show Dull] API returned error:', result);
           toast.error(result.message || 'Dull record not found');
+          // alert(result.message || 'Dull record not found');
         }   
       } catch (error) {
         console.error('[Show Dull] Error:', error);
         console.error('[Show Dull] Full error details:', JSON.stringify(error, null, 2));
         toast.error('Error fetching dull details');
+        // alert('Error fetching dull details');
       } finally {
         console.log('[Show Dull] Setting loading to false');
         setLoading(false);

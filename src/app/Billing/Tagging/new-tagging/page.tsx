@@ -560,7 +560,7 @@ const NewTagging = () => {
 
     } catch (error) {
       console.error('Error in handleSubmitModels:', error);
-      alert(`Error submitting models: ${error.message}`);
+      // alert(`Error submitting models: ${error.message}`);
     } finally {
       setIsSubmittingModels(false);
     }
@@ -578,7 +578,9 @@ const NewTagging = () => {
       window.open(url, '_blank');
     } catch (error) {
       console.error('Error previewing PDF:', error);
-      alert('Error opening PDF preview');
+      // alert('Error opening PDF preview');
+
+
     }
   };
 
@@ -596,7 +598,7 @@ const NewTagging = () => {
       window.open(url, '_blank');
     } catch (error) {
       console.error('Error previewing PDF:', error);
-      alert(`Error generating PDF preview: ${error.message}`);
+      // alert(`Error generating PDF preview: ${error.message}`);
     }
   };
 
@@ -739,7 +741,7 @@ const NewTagging = () => {
         selectedModels: selectedModels.length,
         submittedItems: submittedItems.length
       });
-      alert(`Error submitting tagging: ${error.message}`);
+      // alert(`Error submitting tagging: ${error.message}`);
     } finally {
       setIsSubmittingTagging(false);
     }
@@ -848,7 +850,7 @@ const NewTagging = () => {
       window.open(url, '_blank');
     } catch (error) {
       console.error('Error previewing summary PDF:', error);
-      alert(`Error generating summary PDF preview: ${error.message}`);
+      // alert(`Error generating summary PDF preview: ${error.message}`);
     }
   };
 
@@ -887,7 +889,7 @@ const NewTagging = () => {
       window.open(url, '_blank');
     } catch (error) {
       console.error('Error previewing Excel:', error);
-      alert('Error generating Excel preview');
+      // alert('Error generating Excel preview');
     }
   };
 

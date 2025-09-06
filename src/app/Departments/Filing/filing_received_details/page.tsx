@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+// const apiBaseUrl = "http://locaLhost:5001"; 
+
 
 interface Details {
   Name: string;
@@ -47,6 +49,9 @@ const FilingDetailsPage = () => {
   const [receivedDate, setReceivedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [receivedWeight, setReceivedWeight] = useState<number>(0);
   const [grindingLoss, setGrindingLoss] = useState<number>(0);
+  
+  const [findingReceived,setfindingReceived ] = useState<number>(0);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
   const [pouchReceivedWeights, setPouchReceivedWeights] = useState<{ [key: string]: number }>({});
@@ -69,10 +74,28 @@ const FilingDetailsPage = () => {
   const [departmentRecords, setDepartmentRecords] = useState<any[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<string>("");
 
+  
+  const [checkIsuuedWt, setCheckIsuuedWt] = useState<number>(0);
+
+  const checkWeight = (value: number) => {
+    let recieved = value;
+    console.log(recieved);
+    console.log(checkIsuuedWt);
+    if(checkIsuuedWt < recieved){
+      alert("received weight in higher than issued Wt.");
+    }
+      // setPouchReceivedWeights((prev) => ({
+      //   ...prev,
+      //   [pouch.Id]: "" // 🔥 clear this field
+      // }))
+};
+
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!filingId) {
         toast.error('No filing ID provided');
+        // alert('No filing ID provided');
         setLoading(false);
         return;
       }
@@ -85,10 +108,12 @@ const FilingDetailsPage = () => {
           setData(result.data);
         } else {
           toast.error(result.message || 'Failed to fetch grinding details');
+          // alert(result.message || 'Failed to fetch grinding details');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching grinding details');
+        // alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }
@@ -100,8 +125,13 @@ const FilingDetailsPage = () => {
   useEffect(() => {
     const totalWeight = ornamentWeight + scrapReceivedWeight + dustReceivedWeight;
     setTotalReceivedWeight(totalWeight);
+    
     if (data) {
+      console.log("data : ",data.filing.Issued_weight__c)
       const issuedWeight = data.filing.Issued_weight__c;
+      
+          setCheckIsuuedWt(data.filing.Issued_weight__c);
+          console.log(setCheckIsuuedWt);
       const loss = issuedWeight - totalWeight;
       setGrindingLoss(loss);
     }
@@ -129,7 +159,8 @@ const FilingDetailsPage = () => {
           ornamentWeight: parseFloat(updateData.ornamentWeight.toFixed(4)),
           scrapReceivedWeight: parseFloat(updateData.scrapReceivedWeight.toFixed(4)),
           dustReceivedWeight: parseFloat(updateData.dustReceivedWeight.toFixed(4)),
-          grindingLoss: parseFloat(updateData.grindingLoss.toFixed(4))
+          grindingLoss: parseFloat(updateData.grindingLoss.toFixed(4)),
+          findingReceived: parseFloat(updateData.findingReceived.toFixed(4))
         })
       });
 
@@ -183,10 +214,12 @@ const FilingDetailsPage = () => {
       if (result.success) {
         setData(result.data);
         toast.success('Data refreshed successfully');
+       
       }
     } catch (error) {
       console.error('Error refreshing data:', error);
       toast.error('Failed to refresh data');
+      
     }
   };
 
@@ -223,6 +256,7 @@ const FilingDetailsPage = () => {
         ornamentWeight: ornamentWeight,
         scrapReceivedWeight: scrapReceivedWeight,
         dustReceivedWeight: dustReceivedWeight,
+        findingReceived: findingReceived,
         grindingLoss: grindingLoss,
         pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
           pouchId,
@@ -238,23 +272,23 @@ const FilingDetailsPage = () => {
       if (result.success) {
       
         console.log('[FilingReceived] Update successful');
-          alert('Filing details updated successfully');
-        toast.success('Filing details updated successfully');
-
+          alert('Pouch Creation updated successfully');
+        toast.success('Pouch Creation updated successfully');      
         await refreshData();
         
         // Redirect back to the filing table page after successful submission
         setTimeout(() => {
           window.location.href = '/Departments/Filing/add_filing_details/Grinding_Table';
-        }, 1500); // Short delay to allow the user to see the success message
+        }, 1000); // Short delay to allow the user to see the success message
       } else {
         console.log('[FilingReceived] Update failed:', result.message);
         throw new Error(result.message || 'Failed to update filing details');
       }
     } catch (error) {
       console.error('[FilingReceived] Error in submission:', error);
-       alert('Failed to update filing details');
+       alert('Failed to update pouch details');
       toast.error(error.message || 'Failed to update filing details');
+      // alert(error.message || 'Failed to update filing details');
     } finally {
       console.log('[FilingReceived] Submission completed');
       setIsSubmitting(false);
@@ -287,10 +321,12 @@ const FilingDetailsPage = () => {
         {/* Grinding Details Section */}
         <div className="bg-white shadow rounded-lg mb-6">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Water Grinding Details</h2>
+
+            <h2 className="text-xl font-semibold mb-4">Pouch Creation Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-sm text-gray-600">Water Grinding Number</label>
+                <label className="text-sm text-gray-600">Pouch Creation Number</label>
+
                 <p className="font-medium">{data.filing.Name}</p>
               </div>
               <div>
@@ -326,13 +362,15 @@ const FilingDetailsPage = () => {
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Name}</td>
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Order_Id__c}</td>
                       <td className="px-4 py-3 whitespace-nowrap">{pouch.Issued_Pouch_weight__c}g</td>
+ 
+
                       <td className="px-4 py-3 whitespace-nowrap">
                         <Input
                           type="number"
                           step="0.0001"
                           min="0"
-                          value={pouchReceivedWeights[pouch.Id] || ''}
-                          onChange={(e) => handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0)}
+                          value={pouchReceivedWeights[pouch.Id] || '0'}
+                          onChange={(e) => {handlePouchWeightChange(pouch.Id, parseFloat(e.target.value) || 0); checkWeight(e.target.value);}}
                           className="w-32 h-8"
                           placeholder="Enter weight"
                           disabled={isSubmitting}
@@ -458,6 +496,21 @@ const FilingDetailsPage = () => {
                     <p className="text-red-500 text-xs mt-1">{formErrors.dustReceivedWeight}</p>
                   )}
                 </div>
+
+                 <div>
+                               <label className="text-sm text-gray-600 block mb-1.5">
+                                 Finding Weight (g)
+                               </label>
+                               <Input
+                                 type="number"
+                                 step="0.0001"
+                                 value={findingReceived || ''}
+                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                 className="w-full h-9"
+                               />
+                </div>
+
+
                 <div>
                   <label className="text-sm text-gray-600 block mb-1.5">
                     Water Grinding Loss (g)

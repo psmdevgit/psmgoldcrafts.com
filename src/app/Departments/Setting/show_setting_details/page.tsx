@@ -71,6 +71,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     const fetchDetails = async () => {
       if (!settingId) {
         toast.error('No setting ID provided');
+        // alert('No setting ID provided');
         setLoading(false);
         return;
       }
@@ -91,10 +92,12 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           });
         } else {
           toast.error(result.message || 'Setting record not found');
+          // alert(result.message || 'Setting record not found');
         }   
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Error fetching setting details');
+        // alert('Error fetching setting details');
       } finally {
         setLoading(false);
       }

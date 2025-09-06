@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams , useRouter} from 'next/navigation';
 import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,12 @@ const PlatingDetailsPage = () => {
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
   const [totalReceivedWeight, setTotalReceivedWeight] = useState<number>(0);
 
+  
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
+
+  
+  const router = useRouter();
+
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
     setPouchReceivedWeights(prev => {
@@ -99,6 +105,7 @@ const PlatingDetailsPage = () => {
     const fetchPlatingDetails = async () => {
       if (!platingId) {
         toast.error('No plating ID provided');
+        // alert('No plating ID provided');
         setLoading(false);
         return;
       }
@@ -142,6 +149,7 @@ const PlatingDetailsPage = () => {
       } catch (error) {
         console.error('[Plating Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch plating details');
+        // alert(error.message || 'Failed to fetch plating details');
       } finally {
         setLoading(false);
       }
@@ -175,7 +183,15 @@ const PlatingDetailsPage = () => {
     try {
       setIsSubmitting(true);
       
+      
       if (!data || !platingId) return;
+
+         // 🔥 Validation: Stop if total received weight is greater than issued weight
+    if (totalReceivedWeight > (data.plating.Issued_Weight__c || 0)) {
+      alert("Received Weight cannot be greater than Issued Weight!");
+      setIsSubmitting(false);
+      return; // Stop execution
+    }
 
       // Use the Salesforce ID directly for the update
       const response = await fetch(
@@ -192,7 +208,8 @@ const PlatingDetailsPage = () => {
             ornamentWeight: parseFloat(ornamentWeight.toFixed(4)),
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
             dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
-            platingLoss: parseFloat(platingLoss.toFixed(4)),
+            platingLoss: parseFloat(platingLoss.toFixed(4)),            
+               findingReceived: parseFloat(findingReceived.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
               receivedWeight: parseFloat(weight.toFixed(4))
@@ -205,9 +222,12 @@ const PlatingDetailsPage = () => {
 
       if (result.success) {
         toast.success('Plating details updated successfully');
-        // Redirect to plating list page after successful update
         alert('Plating details updated successfully');
-        window.location.href = '/Departments/Plating/Plating_Table';
+        // Redirect to plating list page after successful update
+         setTimeout(() => {
+          router.push('/Departments/Plating/Plating_Table');
+        }, 1000);
+
       } else {
         throw new Error(result.message || 'Failed to update plating details');
       }
@@ -215,6 +235,7 @@ const PlatingDetailsPage = () => {
       console.error('[PlatingReceived] Error:', error);
       alert('Failed to update plating details');
       toast.error(error.message || 'Failed to update plating details');
+      // alert(error.message || 'Failed to update plating details');
     } finally {
       setIsSubmitting(false);
     }
@@ -359,6 +380,20 @@ const PlatingDetailsPage = () => {
                       disabled={true}
                     />
                   </div>
+
+                    <div>
+                                               <label className="text-sm text-gray-600 block mb-1.5">
+                                                 Finding Weight (g)
+                                               </label>
+                                               <Input
+                                                 type="number"
+                                                 step="0.0001"
+                                                 value={findingReceived || ''}
+                                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                                 className="w-full h-9"
+                                               />
+                                </div>
+                                
 
                   <div>
                     <Label>Plating Loss (g)</Label>

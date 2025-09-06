@@ -80,6 +80,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       if (!platingId) {
         console.log('[Plating Details] No plating ID provided');
         toast.error('No plating ID provided');
+        // alert('No plating ID provided');
         setLoading(false);
         return;
       }
@@ -150,6 +151,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           fullError: error
         });
         toast.error(error.message || 'Failed to fetch plating details');
+        // alert(error.message || 'Failed to fetch plating details');
       } finally {
         setLoading(false);
       }
