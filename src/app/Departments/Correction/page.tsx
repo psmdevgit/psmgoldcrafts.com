@@ -54,8 +54,8 @@ export default function CreateGrindingFromDepartment() {
 
   const router = useRouter();
 
-//const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-const apiBaseUrl = "http://localhost:5001"; 
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+//const apiBaseUrl = "http://localhost:5001"; 
   // Fetch department records when department changes
   useEffect(() => {
     const fetchDepartmentRecords = async () => {

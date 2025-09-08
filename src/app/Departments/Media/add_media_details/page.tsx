@@ -36,10 +36,9 @@ export default function AddSettingDetails() {
   const [orderId, setOrderId] = useState<string>('');
   const router = useRouter();
 
-  
-//const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+  const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
-const apiBaseUrl = "http://localhost:5001";
+//const apiBaseUrl = "http://localhost:5001";
 
   useEffect(() => {
     const initializeSetting = async () => {
@@ -164,8 +163,11 @@ const handleSubmit = async (e: React.FormEvent) => {
     const result = await response.json();
 
     if (result.success) {
-      toast.success('Correction details saved successfully');
-       
+      alert('Media details saved successfully');
+      toast.success('Media details saved successfully');
+        setTimeout(() => {
+          window.location.href = '/Departments/Media/media_Table'; // Redirect to the list page
+        }, 1000);
       // Reset form
       setPouches([]);
       setPouchWeights({});
@@ -285,7 +287,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 disabled={isSubmitting || totalWeight === 0}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                {isSubmitting ? 'Saving...' : 'Submit Correction Details'}
+                {isSubmitting ? 'Saving...' : 'Submit Media Details'}
               </Button>
             </div>
           </form>
