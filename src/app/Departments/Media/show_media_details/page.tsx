@@ -77,9 +77,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       }
 
       try {
-        const [prefix, date, month, year, number] = grindingId.split('/');
+        const [prefix, date, month, year, number,subnumber] = grindingId.split('/');
+        console.log('Fetching Media  details for Grinding ID:', grindingId);
         const response = await fetch(
-          `${apiBaseUrl}/api/media-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/media-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );
         const result = await response.json();
         

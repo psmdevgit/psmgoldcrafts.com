@@ -248,7 +248,7 @@ const calculateSummary = () => {
   return [
     {
       iconClass: "fa-light fa-gem",
-      title: "Filing Issued",
+      title: "Pouch Issued",
       value: totalFilings.toString(),
       description: "Total filing jobs",
       percentageChange: "",
@@ -280,7 +280,7 @@ const calculateSummary = () => {
     },
     {
       iconClass: "fa-light fa-arrow-trend-down",
-      title: "Filing Loss",
+      title: "Pouch Loss",
       value: totalFilingLoss.toFixed(2) + " g",
       description: filingLossPercentage + "% of issued",
       percentageChange: filingLossPercentage,

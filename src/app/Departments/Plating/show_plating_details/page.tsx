@@ -73,8 +73,9 @@ const PlatingDetailsPage = () => {
   const platingId = searchParams.get('platingId');
 
   
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+//const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+const apiBaseUrl = "http://localhost:5001";
   useEffect(() => {
     const fetchPlatingDetails = async () => {
       if (!platingId) {
@@ -86,14 +87,14 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       }
 
       try {
-        const [prefix, date, month, year, number] = platingId.split('/');
+        const [prefix, date, month, year, number,subnumber] = platingId.split('/');
         
-        if (!prefix || !date || !month || !year || !number) {
+        if (!prefix || !date || !month || !year   || !number || !subnumber) {
           console.log('[Plating Details] Invalid ID parts:', { prefix, date, month, year, number });
           throw new Error('Invalid plating ID format');
         }
 
-        const apiUrl = `${apiBaseUrl}/api/plating-details/${prefix}/${date}/${month}/${year}/${number}`;
+        const apiUrl = `${apiBaseUrl}/api/plating-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`;
         console.log('[Plating Details] Fetching from:', apiUrl);
 
         const response = await fetch(apiUrl);

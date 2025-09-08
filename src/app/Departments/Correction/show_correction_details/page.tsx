@@ -67,7 +67,7 @@ const GrindingDetailsPage = () => {
 
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-
+// const apiBaseUrl = "http://localhost:5001"; // Use this for local development
   useEffect(() => {
     const fetchDetails = async () => {
       if (!grindingId) {
@@ -77,9 +77,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       }
 
       try {
-        const [prefix, date, month, year, number] = grindingId.split('/');
+        const [prefix, date, month, year, number,subnumber] = grindingId.split('/');
         const response = await fetch(
-          `${apiBaseUrl}/api/grinding-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/correction-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );
         const result = await response.json();
         

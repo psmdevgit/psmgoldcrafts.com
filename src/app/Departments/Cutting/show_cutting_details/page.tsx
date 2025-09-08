@@ -37,10 +37,10 @@ interface Order {
 }
 
 interface Pouch {
+  Isssued_Weight_Dull__c: number;
   Id: string;
   Name: string;
   Order_Id__c: string;
-  Isssued_Weight_Grinding__c: number;
   order: Order | null;
   models: Model[];
 }
@@ -55,57 +55,76 @@ interface Summary {
   grindingLoss: number;
 }
 
-const SettingDetailsPage = () => {
+const CuttingPage = () => {
   const [data, setData] = useState<{
-    setting: Details;
+    dull: Details;
     pouches: Pouch[];
     summary: Summary;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
-  const settingId = searchParams.get('settingId');
+  const dullId = searchParams.get('cuttingId');
 
+  
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
-//const apiBaseUrl = "http://localhost:5001"; 
+//const apiBaseUrl = "http://localhost:5001";
   useEffect(() => {
     const fetchDetails = async () => {
-      if (!settingId) {
-        toast.error('No setting ID provided');
-        // alert('No setting ID provided');
+      if (!dullId) {
+        console.log('[Show Dull] No dull ID provided');
+        toast.error('No dull ID provided');
+        // alert('No dull ID provided');
+        
         setLoading(false);
         return;
       }
 
       try {
-        const [prefix, date, month, year, number,subnumber] = settingId.split('/');
+        const [prefix, date, month, year, number ,subnumber] = dullId.split('/');
+        console.log('[Show cutting] Fetching details for:', {
+          prefix, date, month, year, number,subnumber,
+          url: `${apiBaseUrl}/api/cutting-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
+        });
+
         const response = await fetch(
-          `${apiBaseUrl}/api/setting-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
-        );
+          `${apiBaseUrl}/api/cutting-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
+        );      
         const result = await response.json();
         
+        console.log('[Show cutting] API Response:', result);
+        
         if (result.success) {
-          const { data, summary } = result;
-          setData({
-            setting: data.setting,
-            pouches: data.pouches,
-            summary: summary
+          console.log('[Show cutting]  data:', {
+            dull: result.data.cutting,
+            pouches: result.data.pouches,
+            summary: result.summary
           });
+
+         setData({
+  dull: result.data.cutting,   // 👈 fix here
+  pouches: result.data.pouches,
+  summary: result.summary
+});
         } else {
-          toast.error(result.message || 'Setting record not found');
-          // alert(result.message || 'Setting record not found');
+          console.error('[Show Dull] API returned error:', result);
+          toast.error(result.message || 'Dull record not found');
+          // alert(result.message || 'Dull record not found');
         }   
       } catch (error) {
-        console.error('Error fetching details:', error);
-        toast.error('Error fetching setting details');
-        // alert('Error fetching setting details');
+        console.error('[Show Dull] Error:', error);
+        console.error('[Show Dull] Full error details:', JSON.stringify(error, null, 2));
+        toast.error('Error fetching dull details');
+        // alert('Error fetching dull details');
       } finally {
+        console.log('[Show Dull] Setting loading to false');
         setLoading(false);
       }
     };
 
+    console.log('[Show Dull] Component mounted with dullId:', dullId);
     fetchDetails();
-  }, [settingId]);
+  }, [dullId]);
 
   if (loading) {
     return (
@@ -118,7 +137,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 text-xl">Failed to load setting details</div>
+        <div className="text-red-500 text-xl">Failed to load dull details</div>
       </div>
     );
   }
@@ -154,42 +173,42 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         {/* Grinding Details Section */}
         <div className="bg-white shadow rounded-lg mb-6">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Setting Details</h2>
+            <h2 className="text-xl font-semibold mb-4">Cutting Details</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm text-gray-600">Setting Number</label>
-                    <p className="font-medium">{data.setting.Name}</p>
+                <label className="text-sm text-gray-600">Cutting Number</label>
+                    <p className="font-medium">{data.dull.Name}</p>
               </div>
               <div>
                 <label className="text-sm text-gray-600">Status</label>
-                <p className="font-medium">{data.setting.Status__c}</p>
-              </div>
+                <p className="font-medium">{data.dull.Status__c}</p>
+                  </div>
               <div>
                 <label className="text-sm text-gray-600">Issued Date</label>
                 <p className="font-medium">
-                  {data.setting.Issued_Date__c ? new Date(data.setting.Issued_Date__c).toLocaleDateString() : '-'}
+                  {data.dull.Issued_Date__c ? new Date(data.dull.Issued_Date__c).toLocaleDateString() : '-'}
                 </p>
               </div>
               <div>
                 <label className="text-sm text-gray-600">Issued Weight</label>
-                <p className="font-medium">{data.setting.Issued_Weight__c}g</p>
+                <p className="font-medium">{data.dull.Issued_Weight__c}g</p>
               </div>
               <div>
                 <label className="text-sm text-gray-600">Received Date</label>
                 <p className="font-medium">
-                  {data.setting.Received_Date__c ? new Date(data.setting.Received_Date__c).toLocaleDateString() : '-'}
+                  {data.dull.Received_Date__c ? new Date(data.dull.Received_Date__c).toLocaleDateString() : '-'}
                 </p>
               </div>
               <div>
                 <label className="text-sm text-gray-600">Received Weight</label>
                 <p className="font-medium">
-                  {data.setting.Received_Weight__c ? `${data.setting.Received_Weight__c}g` : '-'}
+                        {data.dull.Returned_weight__c ? `${data.dull.Returned_weight__c}g` : '-'}
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600">Grinding Loss</label>
+                <label className="text-sm text-gray-600">Cutting Loss</label>
                 <p className="font-medium">
-                  {data.setting.Setting_l__c ? `${data.setting.Setting_l__c}g` : '-'}
+                  {data.dull.Cutting_loss__c ? `${data.dull.Cutting_loss__c}g` : '-'}
                 </p>
               </div>
             </div>
@@ -198,11 +217,11 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
         {/* Pouches Section with Orders and Models */}
         {data.pouches.map((pouch, index) => (
-          <div key={pouch.Id} className="bg-white shadow rounded-lg mb-6">
+          <div key={pouch.Id} className="bg-white shadow rounded-lg mb-6">      
             <div className="p-6">
               <h3 className="text-lg font-semibold mb-4">
-                Pouch {pouch.Name} - {pouch.Issued_weight_setting__c}g
-              </h3>
+                Pouch {pouch.Name} - {pouch.Isssued_Weight_Cutting__c}g
+              </h3> 
               
               {/* Order Details */}
               {pouch.order && (
@@ -271,4 +290,4 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   );
 };
 
-export default SettingDetailsPage;
+export default CuttingPage;

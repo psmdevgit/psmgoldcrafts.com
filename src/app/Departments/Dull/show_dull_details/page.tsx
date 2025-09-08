@@ -68,6 +68,7 @@ const DullDetailsPage = () => {
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+//const apiBaseUrl = "http://localhost:5001";
   useEffect(() => {
     const fetchDetails = async () => {
       if (!dullId) {
@@ -80,14 +81,14 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       }
 
       try {
-        const [prefix, date, month, year, number] = dullId.split('/');
+        const [prefix, date, month, year, number ,subnumber] = dullId.split('/');
         console.log('[Show Dull] Fetching details for:', {
           prefix, date, month, year, number,
-          url: `${apiBaseUrl}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}`
+          url: `${apiBaseUrl}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         });
 
         const response = await fetch(
-          `${apiBaseUrl}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/dull-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );      
         const result = await response.json();
         

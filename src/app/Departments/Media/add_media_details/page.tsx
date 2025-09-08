@@ -254,7 +254,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       </div>
                     </div>
                     <div>
-                      <Label>Weight for Correction (g)</Label>
+                      <Label>Weight for Media (g)</Label>
                       <Input
                         type="number"
                         step="0.00001"
