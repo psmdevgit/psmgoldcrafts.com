@@ -91,11 +91,11 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
             summary: summary
           });
         } else {
-          toast.error(result.message || 'Grinding record not found');
+          toast.error(result.message || 'Correction record not found');
         }
       } catch (error) {
         console.error('Error fetching details:', error);
-        toast.error('Error fetching grinding details');
+        toast.error('Error fetching Correction details');
       } finally {
         setLoading(false);
       }
@@ -115,7 +115,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 text-xl">Failed to load grinding details</div>
+        <div className="text-red-500 text-xl">Failed to load Correction details</div>
       </div>
     );
   }
@@ -151,10 +151,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         {/* Grinding Details Section */}
         <div className="bg-white shadow rounded-lg mb-6">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Grinding Details</h2>
+            <h2 className="text-xl font-semibold mb-4">Correction Details</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="text-sm text-gray-600">Grinding Number</label>
+                <label className="text-sm text-gray-600">Correction Number</label>
                 <p className="font-medium">{data.grinding.Name}</p>
               </div>
               <div>
@@ -184,7 +184,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                 </p>
               </div>
               <div>
-                <label className="text-sm text-gray-600">Grinding Loss</label>
+                <label className="text-sm text-gray-600">Correction Loss</label>
                 <p className="font-medium">
                   {data.grinding.Grinding_loss__c ? `${data.grinding.Grinding_loss__c}g` : '-'}
                 </p>
