@@ -132,6 +132,10 @@ export default function SummaryPage() {
 
   const API_URL = "https://erp-server-r9wh.onrender.com";
 
+  
+  // const API_URL = "http://localhost:5001";
+
+
   // Fetch summary
   const fetchSummary = async () => {
     if (fromDate && toDate) {
@@ -165,6 +169,12 @@ export default function SummaryPage() {
   const fetchDetails = async (processName: string) => {
     setDetailLoading(true);
     try {
+
+      console.log(processName);
+
+      if(processName.toLowerCase() == 'pouch creation'){
+        processName = 'Filing';
+      }
       const res = await fetch(`${API_URL}/api/${processName}`);
       const result = await res.json();
       if (!result.success) {
@@ -364,7 +374,7 @@ const filteredDetailData = detailData.filter((item) => {
                   <th className="border p-2">ID</th>
                   <th className="border p-2">Issued Wt (gm)</th>
                   <th className="border p-2">Received Wt (gm)</th>
-                  <th className="border p-2">Casting Loss</th>    
+                  <th className="border p-2">Loss Wt (gm)</th>    
                   <th className="border p-2">Issued Date</th>
                   <th className="border p-2">Received Date</th>              
                   <th className="border p-2">Status</th>
