@@ -72,6 +72,7 @@ const GrindingDetailsPage = () => {
 
     const [newissuedWeight, setNewIssuedWeight] = useState<number>(0);
 
+    
 
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
@@ -171,11 +172,11 @@ const GrindingDetailsPage = () => {
             setGrindingLoss(Number(grinding.Grinding_loss__c));
           }
         } else {
-          toast.error(result.message || 'Grinding record not found');
+          toast.error(result.message || 'Correction record not found');
         }
       } catch (error) {
         console.error('Error:', error);
-        toast.error('Error fetching grinding details');
+        toast.error('Error fetching Correction details');
       } finally {
         setLoading(false);
       }
@@ -211,9 +212,19 @@ const GrindingDetailsPage = () => {
       setIsSubmitting(true);
       
       if (!data) {
-        console.log('[GrindingReceived] No data available');
+        console.log('[CorrectionReceived] No data available');
         return;
       }
+
+          // Validate each pouch: Issued weight must be >= received weight
+    for (const pouch of data.pouches) {
+      const received = pouchReceivedWeights[pouch.Id] || 0;
+      const issued = newissuedWeight || 0;
+      if (issued < received) {
+        alert(`Received weight is Greater than Issued Weight.`);
+        return setIsSubmitting(false);
+      }
+    }
 
       // Calculate total received weight from pouches
       const totalReceivedWeight = Object.values(pouchReceivedWeights)
@@ -242,6 +253,7 @@ const GrindingDetailsPage = () => {
         receivedWeight: totalWeight,
         receivedDate: currentDateTime,
         scrapWeight: scrapReceivedWeight || 0,
+        findingReceived: parseFloat(findingReceived.toFixed(4)),
         dustWeight: dustReceivedWeight || 0,
         status: 'Completed',
         grindingLoss: newissuedWeight - totalWeight,
@@ -268,11 +280,11 @@ const GrindingDetailsPage = () => {
         toast.success('correction details updated successfully');
         alert('correction details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
-        setTimeout(() => {
-          window.location.href = '/Departments/Correction/correction_Table';
-        }, 1500);
+
+        router.push('/Departments/Correction/correction_Table');
+      
       } else {
-        throw new Error(result.message || 'Failed to update grinding details');
+        throw new Error(result.message || 'Failed to update correction details');
       }
     } catch (error) {
       console.error('[CorrectionReceived] Error:', error);
