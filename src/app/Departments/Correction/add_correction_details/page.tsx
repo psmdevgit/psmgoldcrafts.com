@@ -135,6 +135,24 @@ const handleSubmit = async (e: React.FormEvent) => {
   try {
     setIsSubmitting(true);
 
+        // Validate each pouch's correction weight
+    for (const pouch of pouches) {
+      const correctionWeight = pouchWeights[pouch.Id] || 0;
+      const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+
+      if (correctionWeight === 0) {
+        alert(`Correction weight cannot be zero.`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (correctionWeight > receivedWeight) {
+        alert(`Correction weight cannot greater than received weight.`);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     // Combine date and time for issued datetime
     const combinedDateTime = `${issuedDate}T${issuedTime}:00.000Z`;
 
@@ -172,6 +190,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     if (result.success) {
       toast.success('Correction details saved successfully');
+      alert('Correction details saved successfully');
       
       // Reset form
       setPouches([]);
@@ -182,11 +201,15 @@ const handleSubmit = async (e: React.FormEvent) => {
       setIssuedTime(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
       setFormattedId('');
       setLoading(false);
+
+      router.push('/Departments/Correction/correction_Table');
     } else {
+      alert('Failed to save correction details');
       throw new Error(result.message || 'Failed to save correction details');
     }
   } catch (error: any) {
     console.error('[AddCorrection] Error:', error);
+    alert('Failed to save correction details');
     toast.error(error.message || 'Failed to save correction details');
   } finally {
     setIsSubmitting(false);
