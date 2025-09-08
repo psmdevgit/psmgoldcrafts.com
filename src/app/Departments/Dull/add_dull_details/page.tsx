@@ -40,8 +40,8 @@ export default function AddDullDetails() {
   const [orderId, setOrderId] = useState<string>('');
   const router = useRouter();
 
-//const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-const apiBaseUrl ="http://localhost:5001";
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+// const apiBaseUrl ="http://localhost:5001";
   useEffect(() => {
     const initializeDull = async () => {
       if (!sourceId) {
