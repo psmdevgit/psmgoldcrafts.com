@@ -43,7 +43,6 @@ export default function AddSettingDetails() {
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
-// const apiBaseUrl = "http://localhost:5001";
 
   useEffect(() => {
     const initializeSetting = async () => {
@@ -186,10 +185,12 @@ if (invalidPouch) {
     const result = await response.json();
 
     if (result.success) {
+
       toast.success('Media details saved successfully');
 
       alert('Media details saved successfully');
        
+
       // Reset form
       setPouches([]);
       setPouchWeights({});

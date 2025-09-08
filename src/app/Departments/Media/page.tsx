@@ -55,7 +55,7 @@ export default function CreateGrindingFromDepartment() {
   const router = useRouter();
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-// const apiBaseUrl = "http://localhost:5001"; 
+
   // Fetch department records when department changes
   useEffect(() => {
     const fetchDepartmentRecords = async () => {
@@ -342,7 +342,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     <div className="p-6">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm">
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-6">Create Correction from Department</h2>
+          <h2 className="text-xl font-semibold mb-6">Create Media from Department</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Department Selection with white background */}
@@ -482,7 +482,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
               disabled={loading || totalWeight === 0}
               className="w-full"
             >
-              {loading ? 'Creating...' : 'Create Grinding Record'}
+              {loading ? 'Creating...' : 'Create  Record'}
             </Button>
           </form>
         </div>

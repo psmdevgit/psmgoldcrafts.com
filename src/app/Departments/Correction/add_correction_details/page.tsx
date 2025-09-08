@@ -40,7 +40,7 @@ export default function AddSettingDetails() {
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
-// const apiBaseUrl = "http://localhost:5001";
+
 
   useEffect(() => {
     const initializeSetting = async () => {
@@ -189,9 +189,9 @@ const handleSubmit = async (e: React.FormEvent) => {
     const result = await response.json();
 
     if (result.success) {
-      toast.success('Correction details saved successfully');
       alert('Correction details saved successfully');
-      
+      toast.success('Correction details saved successfully');
+
       // Reset form
       setPouches([]);
       setPouchWeights({});

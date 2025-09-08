@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
-//  const apiBaseUrl = "http://localhost:5001";
 
 interface Details {
   Id: string;
@@ -267,8 +266,8 @@ if (invalidPouch) {
       };
 
       console.log('Submitting data:', formData);
-      alert('Submitting grinding details...');
-      console.log('[GrindingReceived] Submitting data:', formData);
+      alert('Submitting Media details...');
+      console.log('[MediaReceived] Submitting data:', formData);
       const response = await fetch(
         `${apiBaseUrl}/api/media/update/${idParts.prefix}/${idParts.date}/${idParts.month}/${idParts.year}/${idParts.number}/${idParts.subnumber}`,
         {
@@ -283,21 +282,23 @@ if (invalidPouch) {
       const result = await response.json();
 
       if (result.success) {
-        toast.success('Media details updated successfully');
+
+        toast.success('Grinding details updated successfully');
         alert('Media details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
+        setTimeout(() => {
+          window.location.href = '/Departments/Media/media_Table'; // Redirect to the list page
+        }, 1500);
 
-        router.push('/Departments/Media/media_Table');
-        // setTimeout(() => {
-        //   window.location.href = '/Departments/Media/media_Table';
-        // }, 1500);
       } else {
         throw new Error(result.message || 'Failed to update media details');
       }
     } catch (error) {
+
       console.error('[GrindingReceived] Error:', error);
       alert('Failed to update media details');
       toast.error(error.message || 'Failed to update media details');
+
     } finally {
       setIsSubmitting(false);
     }
@@ -314,7 +315,7 @@ if (invalidPouch) {
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 text-xl">Failed to load grinding details</div>
+        <div className="text-red-500 text-xl">Failed to load Media details</div>
       </div>
     );
   }
@@ -589,6 +590,7 @@ if (invalidPouch) {
             className="px-6"
           >
             {isSubmitting ? 'Updating...' : 'Update media Details'}
+
           </Button>
         </div>
       </div>
