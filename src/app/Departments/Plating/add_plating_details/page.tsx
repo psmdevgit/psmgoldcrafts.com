@@ -43,6 +43,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       if (!dullId) {
         console.log('[Add Plating] No dull ID provided');
         toast.error('No dull ID provided');
+        // alert('No dull ID provided');
         setLoading(false);
         return;
       }
@@ -51,10 +52,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number, subnumber] = dullId.split('/');
         console.log('[Add Plating] Dull ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newPid = Math.floor(Math.random() * 99) + 1;
+        // const newPid = Math.floor(Math.random() * 99) + 1;
 
         
-        const generatedPlatingId = `PLAT/${date}/${month}/${year}/${number}/${newPid}`;
+        const generatedPlatingId = `PLAT/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedPlatingId);
 
         console.log('[Add Plating] Fetching pouches from:', {
@@ -109,6 +110,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         console.error('[Add Plating] Error:', error);
         console.error('[Add Plating] Full error details:', JSON.stringify(error, null, 2));
         toast.error(error.message || 'Failed to initialize plating');
+        // alert(error.message || 'Failed to initialize plating');
       } finally {
         console.log('[Add Plating] Setting loading to false');
         setLoading(false);
@@ -139,6 +141,18 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     
     try {
       setIsSubmitting(true);
+
+        // ✅ Validation check
+  for (const pouch of pouches) {
+    const platingWeight = pouchWeights[pouch.Id] || 0;
+    const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+
+    if (platingWeight > receivedWeight) {
+      alert(`Plating weight for pouch ${pouch.Name} cannot be greater than received weight (${receivedWeight.toFixed(4)}g)`);
+      return; // Stop submission
+    }
+  }
+  
 
       // Prepare pouch data
       const pouchData = pouches.map(pouch => ({
@@ -197,6 +211,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         });
         
         toast.success('Plating details saved successfully');
+        alert('Plating details saved successfully');
         
         // Reset form
         setPouches([]);
@@ -208,6 +223,11 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Plating/Plating_Table');
+        }, 1000);
+
+
       } else {
         console.error('[Add Plating] API returned error:', result);
         throw new Error(result.message || 'Failed to save plating details');
@@ -216,6 +236,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       console.error('[Add Plating] Error:', error);
       console.error('[Add Plating] Full error details:', JSON.stringify(error, null, 2));
       toast.error(error.message || 'Failed to save plating details');
+      alert('Failed to save plating details');
     } finally {
       setIsSubmitting(false);
     }

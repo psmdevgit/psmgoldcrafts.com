@@ -55,6 +55,7 @@ const CastingAllDetailsPage = () => {
 
       if (!castingId) {
         console.error('Missing casting ID');
+        // alert('Missing casting ID');
         toast.error('Missing casting ID');
         setLoading(false);
         return;
@@ -66,6 +67,7 @@ const CastingAllDetailsPage = () => {
 
       if (!date || !month || !year || !number) {
         console.error('Invalid casting ID format');
+        // alert('Invalid casting ID format');
         toast.error('Invalid casting ID format');
         setLoading(false);
         return;
@@ -97,10 +99,12 @@ const CastingAllDetailsPage = () => {
           console.log('Inventory Items:', result.data.inventoryItems);
         } else {
           console.error('API returned error:', result.message);
+          // alert(result.message || 'Failed to fetch casting details');
           toast.error(result.message || 'Failed to fetch casting details');
         }
       } catch (error) {
         console.error('Error in fetch operation:', error);
+        // alert('Error fetching casting details');
         toast.error('Error fetching casting details');
       } finally {
         console.log('Fetch operation completed');

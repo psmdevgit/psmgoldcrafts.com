@@ -468,6 +468,26 @@ export interface IFiling {
   grindingLoss: number;
 }
 
+export interface IMedia {
+  id: string;
+  issuedWeight: number;
+  issuedDate: string;
+  receivedWeight: number;
+  receivedDate: string;
+  status: string;
+  grindingLoss: number;
+}
+
+export interface ICorrection {
+  id: string;
+  issuedWeight: number;
+  issuedDate: string;
+  receivedWeight: number;
+  receivedDate: string;
+  status: string;
+  grindingLoss: number;
+}
+
 export interface ISetting {
   id: string;
   issuedWeight: number;

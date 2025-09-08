@@ -42,6 +42,8 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
     const initializeCutting = async () => {
       if (!platingId) {
         console.log('[Add Cutting] No filing ID provided');
+        // alert('No filing ID provided');
+
         toast.error('No filing ID provided');
         setLoading(false);
         return;
@@ -51,9 +53,9 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number, subnumber] = platingId.split('/');
         console.log('[Add Cutting] Plating ID parts:', { prefix, date, month, year, number, subnumber });
 
-        const newCid = Math.floor(Math.random() * 99) + 1;
+        // const newCid = Math.floor(Math.random() * 99) + 1;
         
-        const generatedCuttingId = `CUT/${date}/${month}/${year}/${number}/${newCid}`;
+        const generatedCuttingId = `CUT/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedCuttingId);
 
         console.log('[Add Cutting] Fetching pouches from:', {
@@ -105,6 +107,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
       } catch (error) {
         console.error('[Add Cutting] Error:', error);
         console.error('[Add Cutting] Full error details:', JSON.stringify(error, null, 2));
+        // alert(error.message || 'Failed to initialize cutting');
         toast.error(error.message || 'Failed to initialize cutting');
       } finally {
         console.log('[Add Cutting] Setting loading to false');
@@ -137,6 +140,20 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
     
     try {
       setIsSubmitting(true);
+       // Validation: Check if cutting weight exceeds received weight
+    for (const pouch of pouches) {
+      const cuttingWeight = pouchWeights[pouch.Id] || 0;
+      const receivedWeight = pouch.Received_Weight_Plating__c || 0;
+
+      if (cuttingWeight > receivedWeight) {
+        alert(
+          `Cutting weight (${cuttingWeight.toFixed(4)}g) for pouch ${pouch.Name} exceeds the received weight (${receivedWeight.toFixed(4)}g) from plating.`
+        );
+        setIsSubmitting(false);
+        return; // Stop form submission
+      }
+    }
+    
 
       // Prepare pouch data
       const pouchData = pouches.map(pouch => ({
@@ -194,6 +211,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
         });
         
         toast.success('Cutting details saved successfully');
+        alert('Cutting details saved successfully');
         
         // Reset form
         setPouches([]);
@@ -205,6 +223,10 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Cutting/Cutting_Table');
+        }, 1000);
+
       } else {
         console.error('[Add Cutting] API returned error:', result);
         throw new Error(result.message || 'Failed to save cutting details');
@@ -213,6 +235,7 @@ const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
       console.error('[Add Cutting] Error:', error);
       console.error('[Add Cutting] Full error details:', JSON.stringify(error, null, 2));
       toast.error(error.message || 'Failed to save cutting details');
+      // alert(error.message || 'Failed to save cutting details');
     } finally {
       setIsSubmitting(false);
     }

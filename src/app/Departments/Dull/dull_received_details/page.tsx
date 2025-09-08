@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+// const apiBaseUrl = "http://localhost:5001"; 
+
 interface Setting {
   Id: string;
   Name: string;
@@ -72,6 +74,11 @@ const DullDetailsPage = () => {
   const [dullLoss, setDullLoss] = useState<number>(0);
   const [totalReceivedWeight, setTotalReceivedWeight] = useState<number>(0);
 
+  
+
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
+
+
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
     setPouchReceivedWeights(prev => {
@@ -116,6 +123,7 @@ const DullDetailsPage = () => {
     const fetchDullDetails = async () => {
       if (!dullId) {
         toast.error('No dull ID provided');
+        // alert('No dull ID provided');
         setLoading(false);
         return;
       }
@@ -155,6 +163,7 @@ const DullDetailsPage = () => {
       } catch (error) {
         console.error('[Dull Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch dull details');
+        // alert(error.message || 'Failed to fetch dull details');
       } finally {
         setLoading(false);
       }
@@ -191,6 +200,15 @@ const DullDetailsPage = () => {
       
       if (!data) return;
 
+          // 🚨 Validation: Check if total received weight > issued weight
+    if (totalReceivedWeight > (data.dull.Issued_Weight__c || 0)) {
+      alert("Received Weight cannot be greater than Issued Weight!");
+      setIsSubmitting(false);
+      return;
+    }
+
+
+
       const [prefix, date, month, year, number, subnumber] = dullId!.split('/');
 
       const response = await fetch(
@@ -205,7 +223,8 @@ const DullDetailsPage = () => {
             receivedWeight: parseFloat(totalReceivedWeight.toFixed(4)),
             ornamentWeight: parseFloat(ornamentWeight.toFixed(4)),
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
-            dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
+            dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),            
+               findingReceived: parseFloat(findingReceived.toFixed(4)),
             dullLoss: parseFloat(dullLoss.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
@@ -219,16 +238,18 @@ const DullDetailsPage = () => {
 
       if (result.success) {
         toast.success('Dull details updated successfully');
+        alert('Dull details updated successfully');
         // Add a slight delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           router.push('/Departments/Dull/Dull_Table');
-        }, 1500);
+        }, 1000); 
       } else {
         throw new Error(result.message || 'Failed to update dull details');
       }
     } catch (error) {
       console.error('[DullReceived] Error:', error);
       toast.error(error.message || 'Failed to update dull details');
+      alert(error.message || 'Failed to update dull details');
     } finally {
       setIsSubmitting(false);
     }
@@ -376,6 +397,21 @@ const DullDetailsPage = () => {
                       disabled={true}
                     />
                   </div>
+
+                  
+                                        <div>
+                                                                 <label className="text-sm text-gray-600 block mb-1.5">
+                                                                   Finding Weight (g)
+                                                                 </label>
+                                                                 <Input
+                                                                   type="number"
+                                                                   step="0.0001"
+                                                                   value={findingReceived || ''}
+                                                                   onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                                                   className="w-full h-9"
+                                                                 />
+                                                  </div>
+
 
                   <div>
                     <Label>Dull Loss (g)</Label>

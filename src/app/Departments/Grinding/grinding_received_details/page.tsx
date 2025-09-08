@@ -59,6 +59,7 @@ const GrindingDetailsPage = () => {
   const [ornamentWeight, setOrnamentWeight] = useState<number>(0);
   const [scrapReceivedWeight, setScrapReceivedWeight] = useState<number>(0);
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
   const [grindingLoss, setGrindingLoss] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<UpdateFormData>>({});
@@ -104,6 +105,7 @@ const GrindingDetailsPage = () => {
     const fetchDetails = async () => {
       if (!grindingId) {
         toast.error('No grinding ID provided');
+        // alert('No grinding ID provided');
         setLoading(false);
         return;
       }
@@ -171,10 +173,12 @@ const GrindingDetailsPage = () => {
           }
         } else {
           toast.error(result.message || 'Grinding record not found');
+          // alert(result.message || 'Grinding record not found');
         }
       } catch (error) {
         console.error('Error:', error);
         toast.error('Error fetching grinding details');
+        // alert('Error fetching grinding details');
       } finally {
         setLoading(false);
       }
@@ -206,6 +210,18 @@ const GrindingDetailsPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    for (const pouch of data?.pouches || []) {
+    const issued = pouch.Issued_Weight__c || 0;
+    const received = pouchReceivedWeights[pouch.Id] || 0;
+
+    if (received > issued) {
+      alert(
+        `Received weight (${received}g) cannot be greater than issued weight (${issued}g) for pouch ${pouch.Name}`
+      );
+      return; // ❌ Stop form submission
+    }
+  }
+
     try {
       setIsSubmitting(true);
       
@@ -240,6 +256,7 @@ const GrindingDetailsPage = () => {
         issuedWeight: newissuedWeight,
         receivedWeight: totalWeight,
         receivedDate: currentDateTime,
+        findingReceived: findingReceived,
         scrapWeight: scrapReceivedWeight || 0,
         dustWeight: dustReceivedWeight || 0,
         status: 'Completed',
@@ -248,7 +265,7 @@ const GrindingDetailsPage = () => {
       };
 
       console.log('Submitting data:', formData);
-      alert('Submitting grinding details...');
+      // alert('Submitting grinding details...');
       console.log('[GrindingReceived] Submitting data:', formData);
       const response = await fetch(
         `${apiBaseUrl}/api/grinding/update/${idParts.prefix}/${idParts.date}/${idParts.month}/${idParts.year}/${idParts.number}/${idParts.subnumber}`,
@@ -269,7 +286,7 @@ const GrindingDetailsPage = () => {
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
           window.location.href = '/Departments/Grinding/Grinding_Table';
-        }, 1500);
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update grinding details');
       }
@@ -277,6 +294,7 @@ const GrindingDetailsPage = () => {
       console.error('[GrindingReceived] Error:', error);
       alert('Failed to update grinding details');
       toast.error(error.message || 'Failed to update grinding details');
+  
     } finally {
       setIsSubmitting(false);
     }
@@ -487,6 +505,19 @@ const GrindingDetailsPage = () => {
                     step="0.0001"
                     value={dustReceivedWeight || ''}
                     onChange={(e) => setDustReceivedWeight(parseFloat(e.target.value) || 0)}
+                    className="w-full h-9"
+                    disabled={data?.grinding.Status__c === 'Completed'}
+                  />
+                </div>
+                 <div>
+                  <label className="text-sm text-gray-600 block mb-1.5">
+                    Finding Weight (g)
+                  </label>
+                  <Input
+                    type="number"
+                    step="0.0001"
+                    value={findingReceived || ''}
+                    onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
                     className="w-full h-9"
                     disabled={data?.grinding.Status__c === 'Completed'}
                   />

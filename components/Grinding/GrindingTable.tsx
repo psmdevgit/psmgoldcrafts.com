@@ -47,7 +47,7 @@ interface Department {
 }
 
 const departments: Department[] = [
-  { value: 'grinding', label: 'Grinding', path: '/Departments/Grinding/add_grinding_details' },
+   { value: 'Media', label: 'Media', path: '/Departments/Media/add_media_details' },
   { value: 'setting', label: 'Setting', path: '/Departments/Setting/add_setting_details' },
   { value: 'polish', label: 'Polish', path: '/Departments/Polishing/add_polishing_details' },
   { value: 'dull', label: 'Dull', path: '/Departments/Dull/add_dull_details' }
@@ -538,6 +538,8 @@ const GrindingTable = () => {
                                     </button>
                                   </Link>
 
+
+                                  {deal.status?.toLowerCase() !== 'finished' ? (
                                     <Link href={`/Departments/Grinding/grinding_received_details?grindingId=${deal.id}`} passHref>
                                       <button
                                         type="button"
@@ -557,7 +559,27 @@ const GrindingTable = () => {
                                         <i className="fa-sharp fa-light fa-pen"></i>
                                       </button>
                                     </Link>
-                         
+                                ) : (
+                                              <button
+                                                type="button"
+                                                className="table__icon edit"
+                                                style={{
+                                                  display: 'inline-block',
+                                                  backgroundColor: 'gray',
+                                                  color: 'white',
+                                                  borderRadius: '4px',
+                                                  padding: '5px',
+                                                  textDecoration: 'none',
+                                                  border: 'none',
+                                                  cursor: 'not-allowed',
+                                                  opacity: 0.6,
+                                                }}
+                                                disabled
+                                                title="Cannot edit finished items"
+                                              >
+                                                <i className="fa-sharp fa-light fa-pen"></i>
+                                              </button>
+                                            )}
 
                                   <button
                                     type="button"

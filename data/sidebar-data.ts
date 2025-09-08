@@ -29,6 +29,7 @@ const sidebarData: SidebarCategory[] = [
           { label: "Current Process", link: " /DashBoard/Overallprocess " },
           { label: "Inventory Items", link: "/Reports/InventoryItems" },
           { label: "Inventory Transactions", link: "/Reports/InventoryIssued" },
+          { label: "Party Ledger", link: "/Reports/VendorRep/PartyLedger" },
         ]
       },
       /*{
@@ -59,7 +60,8 @@ const sidebarData: SidebarCategory[] = [
         icon: "fa-solid fa-gear",
         subItems: [
           { label: "Inventory", link: "/Inventory" },
-          { label: "Models", link: "/Models/add-models" }
+          { label: "Models", link: "/Models/add-models" },
+             { label: "Vendor", link: "/Reports/VendorRep/VendorList" },
         ],
       },
        {
@@ -85,15 +87,19 @@ const sidebarData: SidebarCategory[] = [
         label: "Making Progress",
         icon: "fa-solid fa-arrow-progress",
         subItems: [
+
           { label: "Casting", link: "/Departments/Casting/casting_table" },
-          { label: "Filing", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
-          { label: "Grinding", link: "/Departments/Grinding/Grinding_Table" },
+           { label: " Pouch Creation", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
+          { label: " Grinding", link: "/Departments/Grinding/Grinding_Table" },
+          { label: "Media", link: "/Departments/Media/media_Table" },
+          { label: "Correction", link: "/Departments/Correction/correction_Table" },
           { label: "Setting", link: "/Departments/Setting/Setting_Table" },
           { label: "Polishing", link: "/Departments/Polishing/Polishing_Table" },
           { label: "Dull", link: "/Departments/Dull/Dull_Table" },
           {label: "Plating", link: "/Departments/Plating/Plating_Table"},
           {label: "Cutting", link: "/Departments/Cutting/Cutting_Table"},
           { label: "Refinery", link: "/Refinery" },
+
           
           
         ],
@@ -470,5 +476,31 @@ const sidebarData: SidebarCategory[] = [
     ],
   },*/
 ];
+
+// Function to filter ONLY "Making Progress" based on username
+export const getSidebarData = (): SidebarCategory[] => {
+  const username = localStorage.getItem("username")?.toLowerCase();
+
+  if (!username) return sidebarData; // If no username, return all menus
+
+  return sidebarData.map((category) => {
+    const filteredItems = category.items.map((item) => {
+      if (item.label === "Making Progress") {
+        // Only filter this section
+        const filteredSubItems = item.subItems?.filter(
+          (sub) => sub.key === username
+        );
+
+        return filteredSubItems?.length
+          ? { ...item, subItems: filteredSubItems }
+          : { ...item, subItems: [] }; // Keep section but empty
+      }
+      return item; // Other sections stay untouched
+    });
+
+    return { ...category, items: filteredItems };
+  });
+};
+
 
 export default sidebarData;

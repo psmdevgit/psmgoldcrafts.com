@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -69,6 +69,13 @@ const CuttingDetailsPage = () => {
   const [dustReceivedWeight, setDustReceivedWeight] = useState<number>(0);
   const [totalReceivedWeight, setTotalReceivedWeight] = useState<number>(0);
 
+  
+    const [findingReceived,setfindingReceived ] = useState<number>(0);
+
+
+  
+  const router = useRouter();
+
   // Update pouch weight handler
   const handlePouchWeightChange = (pouchId: string, weight: number) => {
     setPouchReceivedWeights(prev => {
@@ -113,6 +120,7 @@ const CuttingDetailsPage = () => {
     const fetchCuttingDetails = async () => {
       if (!cuttingId) {
         toast.error('No cutting ID provided');
+        // alert('No cutting ID provided');
         setLoading(false);
         return;
       }
@@ -163,6 +171,7 @@ const CuttingDetailsPage = () => {
       } catch (error) {
         console.error('[Cutting Details] Error fetching details:', error);
         toast.error(error.message || 'Failed to fetch cutting details');
+        // alert(error.message || 'Failed to fetch cutting details');
       } finally {
         setLoading(false);
       }
@@ -206,6 +215,14 @@ const CuttingDetailsPage = () => {
       
       if (!data) return;
 
+        // Check if total received weight > issued weight
+  if (totalReceivedWeight > data.cutting.Issued_Weight__c) {
+    alert("Received weight cannot be greater than issued weight!");
+    toast.error("Received weight cannot be greater than issued weight!");
+    return; // Stop form submission
+  }
+  
+
       const [prefix, date, month, year, number, subnumber] = cuttingId!.split('/');
 
       // Create full ISO datetime string
@@ -225,6 +242,7 @@ const CuttingDetailsPage = () => {
             scrapReceivedWeight: parseFloat(scrapReceivedWeight.toFixed(4)),
             dustReceivedWeight: parseFloat(dustReceivedWeight.toFixed(4)),
             cuttingLoss: parseFloat(cuttingLoss.toFixed(4)),
+               findingReceived: parseFloat(findingReceived.toFixed(4)),
             pouches: Object.entries(pouchReceivedWeights).map(([pouchId, weight]) => ({
               pouchId,
               receivedWeight: parseFloat(weight.toFixed(4))
@@ -238,13 +256,18 @@ const CuttingDetailsPage = () => {
       if (result.success) {
         alert('Cutting details updated successfully');
         toast.success('Cutting details updated successfully');
-        window.location.reload();
+        // alert('Cutting details updated successfully');
+        
+ setTimeout(() => {
+          router.push('/Departments/Cutting/Cutting_Table');
+        }, 1000);
       } else {
         throw new Error(result.message || 'Failed to update cutting details');
       }
     } catch (error) {
       console.error('[CuttingReceived] Error:', error);
       toast.error(error.message || 'Failed to update cutting details');
+      alert(error.message || 'Failed to update cutting details');
     } finally {
       setIsSubmitting(false);
     }
@@ -395,6 +418,22 @@ const CuttingDetailsPage = () => {
                       disabled={true}
                     />
                   </div>
+
+
+                      <div>
+                                               <label className="text-sm text-gray-600 block mb-1.5">
+                                                 Finding Weight (g)
+                                               </label>
+                                               <Input
+                                                 type="number"
+                                                 step="0.0001"
+                                                 value={findingReceived || ''}
+                                                 onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                                                 className="w-full h-9"
+                                               />
+                                </div>
+
+                                
 
                   <div>
                     <Label>Cutting Loss (g)</Label>

@@ -21,8 +21,9 @@ export default function AddDullDetails() {
   const searchParams = useSearchParams();
   const polishingId = searchParams.get('polishingId');
   const grindingId = searchParams.get('grindingId');
-  const sourceId = polishingId || grindingId || '';
-  const sourceType = polishingId ? 'polishing' : grindingId ? 'grinding' : '';
+  const correctionId = searchParams.get('correctionID');
+  const sourceId = polishingId || grindingId || correctionId || '';
+  const sourceType = polishingId ? 'polishing' : grindingId ? 'grinding' : correctionId ? 'correction' : '';
   
   const [loading, setLoading] = useState(true);
   const [formattedId, setFormattedId] = useState<string>('');
@@ -40,12 +41,13 @@ export default function AddDullDetails() {
   const router = useRouter();
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-
+//const apiBaseUrl ="http://localhost:5001";
   useEffect(() => {
     const initializeDull = async () => {
       if (!sourceId) {
         console.log('[Add Dull] No source ID provided');
         toast.error('No source ID provided');
+        // alert('No source ID provided');
         setLoading(false);
         return;
       }
@@ -54,25 +56,30 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         const [prefix, date, month, year, number, subnumber] = sourceId.split('/');
         console.log(`[Add Dull] ${sourceType} ID parts:`, { prefix, date, month, year, number, subnumber });
 
-const newDid = Math.floor(Math.random() * 999) + 1;
 
-        const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${newDid}`;
+
+        const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${subnumber}`;
         // const generatedDullId = `DULL/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedDullId);
 
         // Determine the API endpoint based on source type
-        let apiEndpoint;
-        if (sourceType === 'polishing') {
-          apiEndpoint = `${apiBaseUrl}/api/polish/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
-        } else if (sourceType === 'grinding') {
-          apiEndpoint = `${apiBaseUrl}/api/grinding/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
-        } else {
-          throw new Error('Invalid source type');
-        }
+       let apiEndpoint;
 
-        console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, {
-          url: apiEndpoint
-        });
+if (sourceType === 'polishing') {
+  apiEndpoint = `${apiBaseUrl}/api/polish/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+
+} else if (sourceType === 'grinding') {
+  apiEndpoint = `${apiBaseUrl}/api/grinding/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+
+} else if (sourceType === 'correction') {
+  apiEndpoint = `${apiBaseUrl}/api/correction/${correctionId}/pouches`;
+
+} else {
+  throw new Error('Invalid source type');
+}
+
+console.log(`[Add Dull] Fetching pouches from ${sourceType}:`, { url: apiEndpoint });
+
 
         const pouchResponse = await fetch(apiEndpoint);
         const pouchResult = await pouchResponse.json();
@@ -83,27 +90,39 @@ const newDid = Math.floor(Math.random() * 999) + 1;
         }
 
         // Format pouches differently based on source type
-        const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => {
-          if (sourceType === 'polishing') {
-            return {
-              ...pouch,
-              Name: pouch.Name,
-              Issued_Pouch_weight__c: pouch.Issued_Weight_Polishing__c || 0,
-              Received_Weight_Grinding__c: pouch.Received_Weight_Polishing__c || 0,
-              Product__c: pouch.Product__c || '',
-              Quantity__c: pouch.Quantity__c || 0
-            };
-          } else { // grinding
-            return {
-              ...pouch,
-              Name: pouch.Name,
-              Issued_Pouch_weight__c: pouch.Issued_Weight_Grinding__c || 0,
-              Received_Weight_Grinding__c: pouch.Received_Weight_Grinding__c || 0,
-              Product__c: pouch.Product__c || '',
-              Quantity__c: pouch.Quantity__c || 0
-            };
-          }
-        });
+    const formattedPouches = pouchResult.data.pouches.map((pouch: Pouch) => {
+  if (sourceType === 'polishing') {
+    return {
+      ...pouch,
+      Name: pouch.Name,
+      Issued_Pouch_weight__c: pouch.Issued_Weight_Polishing__c || 0,
+      Received_Weight_Grinding__c: pouch.Received_Weight_Polishing__c || 0,
+      Product__c: pouch.Product__c || '',
+      Quantity__c: pouch.Quantity__c || 0
+    };
+
+  } else if (sourceType === 'correction') {
+    return {
+      ...pouch,
+      Name: pouch.Name,
+      Issued_Pouch_weight__c: pouch.Issued_Weight_Correction__c || 0,
+      Received_Weight_Grinding__c: pouch.Received_Weight_Correction__c || 0,
+      Product__c: pouch.Product__c || '',
+      Quantity__c: pouch.Quantity__c || 0
+    };
+
+  } else { // grinding (default)
+    return {
+      ...pouch,
+      Name: pouch.Name,
+      Issued_Pouch_weight__c: pouch.Issued_Weight_Grinding__c || 0,
+      Received_Weight_Grinding__c: pouch.Received_Weight_Grinding__c || 0,
+      Product__c: pouch.Product__c || '',
+      Quantity__c: pouch.Quantity__c || 0
+    };
+  }
+});
+
 
         console.log('[Add Dull] Formatted pouches:', formattedPouches);
 
@@ -133,6 +152,7 @@ const newDid = Math.floor(Math.random() * 999) + 1;
         console.error('[Add Dull] Error:', error);
         console.error('[Add Dull] Full error details:', JSON.stringify(error, null, 2));
         toast.error(error.message || 'Failed to initialize dull');
+        // alert(error.message || 'Failed to initialize dull');
       } finally {
         console.log('[Add Dull] Setting loading to false');
         setLoading(false);
@@ -163,6 +183,22 @@ const newDid = Math.floor(Math.random() * 999) + 1;
     
     try {
       setIsSubmitting(true);
+
+       // 🔹 Validation: Check if entered dull weight > received weight
+    const invalidPouch = pouches.find((pouch) => {
+      const receivedWeight = pouch.Received_Weight_Grinding__c || 0; // From polishing/grinding
+      const enteredWeight = pouchWeights[pouch.Id] || 0; // Entered dull weight
+      return enteredWeight > receivedWeight;
+    });
+
+    if (invalidPouch) {
+      alert(
+        `Error: Entered Dull weight for pouch ${invalidPouch.Name} is greater than its received weight!`
+      );
+      setIsSubmitting(false);
+      return; // ⛔ Stop submission
+    }
+
 
       // Prepare pouch data
       const pouchesWithWeights = pouches.map(pouch => ({
@@ -225,6 +261,7 @@ const newDid = Math.floor(Math.random() * 999) + 1;
         });
         
         toast.success('Dull details saved successfully');
+        alert('Dull details saved successfully');
         
         // Reset form
         setPouches([]);
@@ -236,6 +273,11 @@ const newDid = Math.floor(Math.random() * 999) + 1;
         setFormattedId('');
         setLoading(false);
         
+         setTimeout(() => {
+          router.push('/Departments/Dull/Dull_Table');
+        }, 1000);
+
+
       } else {
         console.error('[Add Dull] API returned error:', result);
         throw new Error(result.message || 'Failed to save dull details');
@@ -244,6 +286,7 @@ const newDid = Math.floor(Math.random() * 999) + 1;
       console.error('[Add Dull] Error:', error);
       console.error('[Add Dull] Full error details:', JSON.stringify(error, null, 2));
       toast.error(error.message || 'Failed to save dull details');
+      alert(error.message || 'Failed to save dull details');
     } finally {
       setIsSubmitting(false);
     }

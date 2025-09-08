@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,12 @@ import { z } from "zod";
 
 
 
-const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
+// const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
 const apiUrl = "https://erp-server-r9wh.onrender.com";
+
+
+// const apiUrl = "http://localhost:5001";
+
 // Define the interfaces for inventory items and orders
 
 interface InventoryItem {
@@ -41,6 +46,7 @@ interface InventoryApiItem {
 }
 
 const CastingForm = () => {
+
   // Main form state
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [waxTreeWeight, setWaxTreeWeight] = useState<number>(0);
@@ -56,6 +62,8 @@ const CastingForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+
+  const router = useRouter();
   // Add state for showing/hiding dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -453,7 +461,8 @@ const CastingForm = () => {
 
       // Basic validation for required fields
       if (!selectedOrders.length || !purity || !waxTreeWeight || inventoryItems.length === 0 || !castingLastNumber) {
-        toast.error('Please fill all required fields including casting number');
+    console.log('Please fill all required fields including casting number');
+        // alert('Please fill all required fields including casting number');
         return;
       }
 
@@ -543,7 +552,9 @@ console.log("taking update inventory weights:", inventoryItems)
         throw new Error(inventoryResult.message || 'Failed to update inventory');
       }
 
-      toast.success('Casting created successfully');
+      // toast.success('Casting created successfully');
+      alert('Casting created successfully')
+      router.push("/Departments/Casting/casting_table");
       
       // Reset form
       const today = new Date();
@@ -577,6 +588,7 @@ console.log("taking update inventory weights:", inventoryItems)
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       toast.error(error.message || 'Failed to process casting');
+      // alert('Failed to process casting');
     } finally {
       setLoading(false);
     }
@@ -957,10 +969,10 @@ console.log("taking update inventory weights:", inventoryItems)
     if (confirmed) {
       try {
         await handleSubmit(); // Wait for the async process
-        alert("Issue is successful ✅");
+        // alert("Issue is successful ✅");
       } catch (error) {
         console.error("Issue failed:", error);
-        alert("Something went wrong while issuing!");
+        // alert("Something went wrong while issuing!");
       }
     }
   }}
@@ -1044,7 +1056,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Required Pure Metal</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Pure Metal</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Required Alloy</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Alloy</th>
+
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Weight Issued</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Issued Date</th>
                       </tr>
@@ -1058,7 +1070,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().pureGold.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{remainingPureMetalRequired.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().alloy.toFixed(2)}</td>
-                        <td className="px-3 py-2 text-sm">{remainingAlloyRequired.toFixed(2)}</td>
+
                         <td className="px-3 py-2 text-sm">
                           {inventoryItems.reduce((total, item) => total + item.issueWeight, 0).toFixed(2)}
                         </td>
@@ -1080,7 +1092,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Required Pure Metal</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Pure Metal</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Required Alloy</th>
-                        <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Alloy</th>
+                        {/* <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Remaining Alloy</th> */}
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Weight Issued</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Issued Date</th>
                       </tr>
@@ -1094,7 +1106,7 @@ console.log("taking update inventory weights:", inventoryItems)
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().pureGold.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{remainingPureMetalRequired.toFixed(2)}</td>
                         <td className="px-3 py-2 text-sm">{calculateRequiredMetals().alloy.toFixed(2)}</td>
-                        <td className="px-3 py-2 text-sm">{remainingAlloyRequired.toFixed(2)}</td>
+
                         <td className="px-3 py-2 text-sm">
                           {inventoryItems.reduce((total, item) => total + item.issueWeight, 0).toFixed(2)}
                         </td>

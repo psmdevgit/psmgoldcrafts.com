@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
+
 
 interface Pouch {
   Id: string;
@@ -22,10 +23,12 @@ interface Pouch {
 export default function AddPolishingDetails() {
   const [isFromGrinding, setIsFromGrinding] = useState(false);
   const [isSetting, setIsSetting] = useState(false);
+   const [isCorrection, setisCorrection] = useState(false);
   const searchParams = useSearchParams();
   const filingId = searchParams.get('filingId');
   const grindingId = searchParams.get('grindingId');
   const settingId = searchParams.get('settingId');
+  const correctionId = searchParams.get('correctionID');
   const [loading, setLoading] = useState(true);
   const [formattedId, setFormattedId] = useState<string>('');
   const [pouches, setPouches] = useState<Pouch[]>([]);
@@ -42,18 +45,25 @@ export default function AddPolishingDetails() {
   const [totalReceivedFromSetting, setTotalReceivedFromSetting] = useState(0);
 
   
+
+  const router = useRouter();
+
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
 
   useEffect(() => {
     const initializePolishing = async () => {
-      if (!filingId && !grindingId && !settingId) {
+      if (!filingId && !grindingId && !settingId  && !correctionId ) {
         toast.error('No ID provided');
+
+        console.error('[AddPolishing] Initialization failed: No ID provided in URL parameters.');
+
         return;
       }
 
       try {
         // Get the source ID from parameters
-        const sourceId = filingId || grindingId || settingId;
+        const sourceId = filingId || grindingId || settingId || correctionId;
         console.log('[AddPolishing] Processing source ID:', sourceId);
 
         const idParts = sourceId!.split('/');
@@ -62,6 +72,8 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         // Determine source type by checking the prefix
         const isGrinding = prefix === 'GRIND';
         const fromSetting = prefix === 'SETTING';
+        const isCorrection = prefix === 'CORRECT';
+        setisCorrection(isCorrection);
         setIsFromGrinding(isGrinding);
         setIsSetting(fromSetting);
         console.log('[AddPolishing] ID Analysis:', {
@@ -71,22 +83,29 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
           fullId: sourceId
         });
 
-        const newPolid = Math.floor(Math.random() * 99) + 1;
+
 
         
         // Generate polishing ID
-        const generatedPolishingId = `POLISH/${date}/${month}/${year}/${number}/${newPolid}`;
+        const generatedPolishingId = `POLISH/${date}/${month}/${year}/${number}/${subnumber}`;
         setFormattedId(generatedPolishingId);
 
         // Construct the endpoint based on the API structure
-        let endpoint;
-        if (isGrinding) {
-          endpoint = `${apiBaseUrl}/api/grinding/GRIND/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
-        } else if (fromSetting) {
-          endpoint = `${apiBaseUrl}/api/setting/SETTING/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
-        } else {
-          endpoint = `${apiBaseUrl}/api/setting/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
-        }
+let endpoint;
+
+if (isGrinding) {
+  endpoint = `${apiBaseUrl}/api/grinding/GRIND/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+
+} else if (fromSetting) {
+  endpoint = `${apiBaseUrl}/api/setting/SETTING/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+
+} else if (isSetting) {
+  endpoint = `${apiBaseUrl}/api/setting/${prefix}/${date}/${month}/${year}/${number}/${subnumber}/pouches`;
+
+} else {
+  endpoint = `${apiBaseUrl}/api/correction/${correctionId}/pouches`;
+}
+
 
         console.log('[AddPolishing] Endpoint details:', {
           isGrinding,
@@ -113,10 +132,16 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setPouches(result.data.pouches);
         
         // Calculate total received weight using the correct field based on source
-        const weightField = isGrinding ? 'Received_Weight_Grinding__c' : 
-                          fromSetting ? 'Received_Weight_Setting__c' : 
-                          'Received_Weight_Setting__c';
-        console.log('[AddPolishing] Using weight field:', weightField);
+      const weightField = isGrinding
+  ? 'Received_Weight_Grinding__c'
+  : isCorrection
+  ? 'Received_Weight_Correction__c'
+  : fromSetting
+  ? 'Received_Weight_Setting__c'
+  : 'Received_Weight_Setting__c';
+
+console.log('[AddPolishing] Using weight field:', weightField);
+
 
         const totalReceived = result.data.pouches.reduce((sum: number, pouch: Pouch) => 
           sum + (pouch[weightField] || 0), 0
@@ -171,6 +196,28 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
     try {
       setIsSubmitting(true);
 
+         // 🔹 Validation: Check entered polishing weight vs received weight
+    const invalidPouch = pouches.find((pouch) => {
+      const receivedWeight = isFromGrinding
+        ? pouch.Received_Weight_Grinding__c || 0
+        : isSetting
+        ? pouch.Received_Weight_Setting__c || 0
+        : pouch.Received_Weight_Setting__c || 0;
+
+      const enteredWeight = pouchWeights[pouch.Id] || 0;
+
+      return enteredWeight > receivedWeight; // ❌ Invalid if entered > received
+    });
+
+    if (invalidPouch) {
+      alert(
+        `Error: Entered polishing weight for pouch ${invalidPouch.Name} is greater than its received weight!`
+      );
+      setIsSubmitting(false);
+      return; // ⛔ Stop submission
+    }
+
+
       // Combine date and time for issued datetime
       const combinedDateTime = `${issuedDate}T${issuedTime}:00.000Z`;
       console.log('[AddPolishing] Combined datetime:', combinedDateTime);
@@ -215,6 +262,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       if (result.success) {
         toast.success('Polishing details saved successfully');
+        alert('Polishing details saved successfully');
         // Reset form
         setPouches([]);
         setPouchWeights({});
@@ -225,12 +273,19 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         setIssuedTime(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
         setFormattedId('');
         setLoading(false);
+
+         setTimeout(() => {
+          router.push('/Departments/Polishing/Polishing_Table');
+        }, 1000);
+
+
       } else {
         throw new Error(result.message || 'Failed to save polishing details');
       }
     } catch (error) {
       console.error('[AddPolishing] Error:', error);
       toast.error(error.message || 'Failed to save polishing details');
+      alert(error.message || 'Failed to save polishing details');
     } finally {
       setIsSubmitting(false);
     }
@@ -303,13 +358,16 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                             ? 'Received Weight from Setting' 
                             : 'Received Weight from Filing'}
                       </Label>
-                      <div className="h-10 flex items-center">
-                        {isFromGrinding 
-                          ? (pouch.Received_Weight_Grinding__c?.toFixed(4) || '0.0000')
-                          : isSetting 
-                            ? (pouch.Received_Weight_Setting__c?.toFixed(4) || '0.0000')
-                            : (pouch.Received_Weight_Setting__c?.toFixed(4) || '0.0000')}g
-                      </div>
+                     <div className="h-10 flex items-center">
+  {isFromGrinding
+    ? (pouch.Received_Weight_Grinding__c?.toFixed(4) || '0.0000')
+    : isCorrection
+      ? (pouch.Received_Weight_Correction__c?.toFixed(4) || '0.0000')
+      : isSetting
+        ? (pouch.Received_Weight_Setting__c?.toFixed(4) || '0.0000')
+        : '0.0000'}g
+</div>
+
                     </div>
                     <div>
                       <Label>Weight for Polishing</Label>

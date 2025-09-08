@@ -47,7 +47,7 @@ interface Department {
 }
 
 const departments: Department[] = [
-  { value: 'grinding', label: 'Grinding', path: '/Departments/Grinding/add_grinding_details' },
+  { value: 'grinding', label: 'MEDIA', path: '/Departments/Grinding/add_grinding_details' },
   { value: 'setting', label: 'Setting', path: '/Departments/Setting/add_setting_details' },
   { value: 'polish', label: 'Polish', path: '/Departments/Polishing/add_polishing_details' },
   { value: 'dull', label: 'Dull', path: '/Departments/Dull/add_dull_details' }
@@ -415,7 +415,7 @@ console.log("Deals State:", deals);
                             size="small"
                           />
                         </TableCell>
-                        <TableCell>Filing Id</TableCell>
+                        <TableCell>Pouch Id</TableCell>
                         <TableCell>Issued Weight</TableCell>
                         <TableCell>Received Weight</TableCell>
                         <TableCell>Issued Date</TableCell>
@@ -424,7 +424,7 @@ console.log("Deals State:", deals);
                         <TableCell>Product</TableCell>
                         <TableCell>Quantity</TableCell>
                         <TableCell>Status</TableCell>
-                        <TableCell>Filing Loss</TableCell>
+                        <TableCell>Pouch Loss</TableCell>
                         <TableCell>Actions</TableCell>
                       </TableRow>
                     </TableHead>
@@ -492,6 +492,8 @@ console.log("Deals State:", deals);
                                     </button>
                                   </Link>
 
+
+                                  {deal.status?.toLowerCase() !== 'finished' ? (
                                     <Link href={`/Departments/Filing/filing_received_details?filingId=${deal.id}`} passHref>
                                       <button
                                         type="button"
@@ -511,6 +513,28 @@ console.log("Deals State:", deals);
                                         <i className="fa-sharp fa-light fa-pen"></i>
                                       </button>
                                     </Link>
+                                          ) : (
+                                              <button
+                                                type="button"
+                                                className="table__icon edit"
+                                                style={{
+                                                  display: 'inline-block',
+                                                  backgroundColor: 'gray',
+                                                  color: 'white',
+                                                  borderRadius: '4px',
+                                                  padding: '5px',
+                                                  textDecoration: 'none',
+                                                  border: 'none',
+                                                  cursor: 'not-allowed',
+                                                  opacity: 0.6,
+                                                }}
+                                                disabled
+                                                title="Cannot edit finished items"
+                                              >
+                                                <i className="fa-sharp fa-light fa-pen"></i>
+                                              </button>
+                                            )}
+
                                  
 
                                   <button
