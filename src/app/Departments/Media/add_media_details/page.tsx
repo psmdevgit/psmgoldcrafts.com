@@ -36,6 +36,10 @@ export default function AddSettingDetails() {
   const [orderId, setOrderId] = useState<string>('');
   const router = useRouter();
 
+
+  
+    const [mediaWT,setmediaWt ] = useState<number>(0);
+
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
@@ -128,6 +132,24 @@ const handleSubmit = async (e: React.FormEvent) => {
   try {
     setIsSubmitting(true);
 
+
+  console.log('Pouches:', pouches);
+
+const invalidPouch = pouches.find(pouch => {
+  const receivedWeight = pouch.Received_Weight_Grinding__c || 0;
+  const correctionWeight = pouchWeights[pouch.Id] || 0;
+  return correctionWeight <= 0 || correctionWeight > receivedWeight;
+});
+
+if (invalidPouch) {
+  alert(`Media weight must be greater than 0 and ≤ received weight`);
+  setIsSubmitting(false);
+  return;
+}
+
+
+
+
     // Combine date and time for issued datetime
     const combinedDateTime = `${issuedDate}T${issuedTime}:00.000Z`;
 
@@ -164,7 +186,9 @@ const handleSubmit = async (e: React.FormEvent) => {
     const result = await response.json();
 
     if (result.success) {
-      toast.success('Correction details saved successfully');
+      toast.success('Media details saved successfully');
+
+      alert('Media details saved successfully');
        
       // Reset form
       setPouches([]);
@@ -175,12 +199,17 @@ const handleSubmit = async (e: React.FormEvent) => {
       setIssuedTime(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
       setFormattedId('');
       setLoading(false);
+
+      router.push('/Departments/Media/media_Table');
     } else {
-      throw new Error(result.message || 'Failed to save correction details');
+      
+      alert('Failed to save media details');
+      throw new Error(result.message || 'Failed to save media details');
     }
   } catch (error: any) {
     console.error('[AddCorrection] Error:', error);
-    toast.error(error.message || 'Failed to save correction details');
+    alert('Failed to save media details');
+    toast.error(error.message || 'Failed to save media details');
   } finally {
     setIsSubmitting(false);
   }
@@ -252,12 +281,12 @@ const handleSubmit = async (e: React.FormEvent) => {
                       </div>
                     </div>
                     <div>
-                      <Label>Weight for Correction (g)</Label>
+                      <Label>Weight for Media (g)</Label>
                       <Input
                         type="number"
                         step="0.00001"
                         value={pouchWeights[pouch.Id] || ''}
-                        onChange={(e) => handleWeightChange(pouch.Id, parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {handleWeightChange(pouch.Id, parseFloat(e.target.value) || 0); setmediaWt(e.target.value)}}
                         className="h-10"
                       />
                     </div>
@@ -285,7 +314,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 disabled={isSubmitting || totalWeight === 0}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                {isSubmitting ? 'Saving...' : 'Submit Correction Details'}
+                {isSubmitting ? 'Saving...' : 'Submit Media Details'}
               </Button>
             </div>
           </form>

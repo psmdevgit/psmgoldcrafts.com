@@ -21,7 +21,7 @@ const GrindingMainArea = () => {
                 <li className="breadcrumb-item">
                   <Link href="/">Home</Link>
                 </li>
-                <li className="breadcrumb-item active">Correction</li>
+                <li className="breadcrumb-item active">Media</li>
               </ol>
             </nav>
             <div className="breadcrumb__btn">
@@ -29,7 +29,7 @@ const GrindingMainArea = () => {
                 href="/Departments/Correction/"
                 className="btn btn-primary"
               >
-                Correction Back Order
+                Media Back Order
               </Link>
             </div>
           </div>

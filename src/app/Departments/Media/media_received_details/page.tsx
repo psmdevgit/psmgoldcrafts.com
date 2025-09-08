@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 
 
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
+// const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
-//  const apiBaseUrl = "http://localhost:5001";
+ const apiBaseUrl = "http://localhost:5001";
 
 interface Details {
   Id: string;
@@ -72,6 +72,7 @@ const GrindingDetailsPage = () => {
   const router = useRouter();
 
     const [newissuedWeight, setNewIssuedWeight] = useState<number>(0);
+
 
 
   // Update pouch weight handler
@@ -216,6 +217,21 @@ const GrindingDetailsPage = () => {
         return;
       }
 
+      // Before submitting, validate pouch weights
+const invalidPouch = data.pouches.find(pouch => {
+  const issuedWeight = newissuedWeight || 0;
+  const receivedWeight = pouchReceivedWeights[pouch.Id] || 0;
+  return receivedWeight > issuedWeight;
+});
+
+if (invalidPouch) {
+  alert(
+    `Received weight cannot be greater than issued weight.`
+  );
+  setIsSubmitting(false);
+  return; // Stop submitting
+}
+
       // Calculate total received weight from pouches
       const totalReceivedWeight = Object.values(pouchReceivedWeights)
         .reduce((sum, weight) => sum + (weight || 0), 0);
@@ -242,7 +258,8 @@ const GrindingDetailsPage = () => {
         issuedWeight: newissuedWeight,
         receivedWeight: totalWeight,
         receivedDate: currentDateTime,
-        scrapWeight: scrapReceivedWeight || 0,
+        scrapWeight: scrapReceivedWeight || 0,        
+        findingReceived: parseFloat(findingReceived.toFixed(4)),
         dustWeight: dustReceivedWeight || 0,
         status: 'Completed',
         grindingLoss: newissuedWeight - totalWeight,
@@ -266,19 +283,21 @@ const GrindingDetailsPage = () => {
       const result = await response.json();
 
       if (result.success) {
-        toast.success('Grinding details updated successfully');
-        alert('Grinding details updated successfully');
+        toast.success('Media details updated successfully');
+        alert('Media details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
-        setTimeout(() => {
-          window.location.href = '/Departments/Grinding/Grinding_Table';
-        }, 1500);
+
+        router.push('/Departments/Media/media_Table');
+        // setTimeout(() => {
+        //   window.location.href = '/Departments/Media/media_Table';
+        // }, 1500);
       } else {
-        throw new Error(result.message || 'Failed to update grinding details');
+        throw new Error(result.message || 'Failed to update media details');
       }
     } catch (error) {
       console.error('[GrindingReceived] Error:', error);
-      alert('Failed to update grinding details');
-      toast.error(error.message || 'Failed to update grinding details');
+      alert('Failed to update media details');
+      toast.error(error.message || 'Failed to update media details');
     } finally {
       setIsSubmitting(false);
     }
@@ -320,7 +339,7 @@ const GrindingDetailsPage = () => {
                 <p className="font-medium">{data?.grinding.Source_Department__c}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-600">Grinding Number</label>
+                <label className="text-sm text-gray-600">Media Number</label>
                 <p className="font-medium">{data.grinding.Name}</p>
               </div>
               <div>
@@ -501,14 +520,14 @@ const GrindingDetailsPage = () => {
                     type="number"
                     step="0.0001"
                     value={findingReceived || ''}
-                    onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
+                   onChange={(e) => setfindingReceived(parseFloat(e.target.value) || 0)}
                     className="w-full h-9"
                     disabled={data?.grinding.Status__c === 'Completed'}
                   />
                 </div>
                 <div>
                   <label className="text-sm text-gray-600 block mb-1.5">
-                    Grinding Loss (g)
+                    Media Loss (g)
                   </label>
                   <Input
                     type="number"
@@ -569,7 +588,7 @@ const GrindingDetailsPage = () => {
             disabled={isSubmitting || data?.grinding.Status__c === 'Completed'}
             className="px-6"
           >
-            {isSubmitting ? 'Updating...' : 'Update Grinding Details'}
+            {isSubmitting ? 'Updating...' : 'Update media Details'}
           </Button>
         </div>
       </div>
