@@ -50,9 +50,8 @@ const departments: Department[] = [
    { value: 'Correction', label: 'Correction', path: '/Departments/Correction/add_correction_details' }
 
 ];
-
-//const apiBaseUrl ="https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
-const apiBaseUrl = "http://localhost:5001";
+const apiBaseUrl ="https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
+//const apiBaseUrl = "http://localhost:5001";
 
 const downloadPDF = async (pdfUrl: string) => {
   try {
@@ -518,7 +517,7 @@ const GrindingTable = () => {
                               <TableCell>{deal.grindingLoss}</TableCell>
                               <TableCell className="table__icon-box">
                                 <div className="flex items-center justify-start gap-[10px]">
-                                  <Link href={`/Departments/Correction/show_media_details?grindingId=${deal.id}`} passHref>
+                                  <Link href={`/Departments/Media/show_media_details?grindingId=${deal.id}`} passHref>
                                     <button
                                       type="button"
                                       className="table__icon edit"

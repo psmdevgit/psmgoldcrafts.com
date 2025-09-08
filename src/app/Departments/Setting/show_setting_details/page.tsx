@@ -67,6 +67,7 @@ const SettingDetailsPage = () => {
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
+//const apiBaseUrl = "http://localhost:5001"; 
   useEffect(() => {
     const fetchDetails = async () => {
       if (!settingId) {
@@ -77,9 +78,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       }
 
       try {
-        const [prefix, date, month, year, number] = settingId.split('/');
+        const [prefix, date, month, year, number,subnumber] = settingId.split('/');
         const response = await fetch(
-          `${apiBaseUrl}/api/setting-details/${prefix}/${date}/${month}/${year}/${number}`
+          `${apiBaseUrl}/api/setting-details/${prefix}/${date}/${month}/${year}/${number}/${subnumber}`
         );
         const result = await response.json();
         

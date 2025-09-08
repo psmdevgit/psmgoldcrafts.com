@@ -235,7 +235,7 @@ import "react-datepicker/dist/react-datepicker.css";
     return [
       {
         iconClass: "fa-light fa-gem",
-        title: "Media Issued",
+        title: "Grinding Issued",
         value: totalGrinding.toString(),
         description: "Total grinding jobs",
         percentageChange: "",
@@ -267,7 +267,7 @@ import "react-datepicker/dist/react-datepicker.css";
       },  
       {
         iconClass: "fa-light fa-arrow-trend-down",
-        title: "Media Loss",
+        title: "Grinding Loss",
         value: totalGrindingLoss.toFixed(2) + " g",
         description: grindingLossPercentage + "% of issued",
         percentageChange: grindingLossPercentage,
@@ -393,7 +393,7 @@ import "react-datepicker/dist/react-datepicker.css";
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {loading ? (
           <div className="col-span-full text-center py-8 text-gray-500">
-            Loading casting data...
+            Loading Grinding data...
           </div>
         ) : (
           summaryData.map((item, index) => (
