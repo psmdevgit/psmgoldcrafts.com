@@ -235,7 +235,7 @@ import "react-datepicker/dist/react-datepicker.css";
     return [
       {
         iconClass: "fa-light fa-gem",
-        title: "Correction Issued",
+        title: "Media Issued",
         value: totalCorrection.toString(),
         description: "Total Media jobs",
         percentageChange: "",

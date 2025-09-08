@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
-//  const apiBaseUrl = "http://localhost:5001";
 
 interface Details {
   Id: string;
@@ -250,8 +249,8 @@ const GrindingDetailsPage = () => {
       };
 
       console.log('Submitting data:', formData);
-      alert('Submitting grinding details...');
-      console.log('[GrindingReceived] Submitting data:', formData);
+      alert('Submitting Media details...');
+      console.log('[MediaReceived] Submitting data:', formData);
       const response = await fetch(
         `${apiBaseUrl}/api/media/update/${idParts.prefix}/${idParts.date}/${idParts.month}/${idParts.year}/${idParts.number}/${idParts.subnumber}`,
         {
@@ -267,18 +266,18 @@ const GrindingDetailsPage = () => {
 
       if (result.success) {
         toast.success('Grinding details updated successfully');
-        alert('Grinding details updated successfully');
+        alert('Media details updated successfully');
         // Add a short delay before redirecting to allow the toast to be seen
         setTimeout(() => {
-          window.location.href = '/Departments/Grinding/Grinding_Table';
+          window.location.href = '/Departments/Media/media_Table'; // Redirect to the list page
         }, 1500);
       } else {
         throw new Error(result.message || 'Failed to update grinding details');
       }
     } catch (error) {
-      console.error('[GrindingReceived] Error:', error);
-      alert('Failed to update grinding details');
-      toast.error(error.message || 'Failed to update grinding details');
+      console.error('[MediaReceived] Error:', error);
+      alert('Failed to update Media details');
+      toast.error(error.message || 'Failed to update Media details');
     } finally {
       setIsSubmitting(false);
     }
@@ -295,7 +294,7 @@ const GrindingDetailsPage = () => {
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 text-xl">Failed to load grinding details</div>
+        <div className="text-red-500 text-xl">Failed to load Media details</div>
       </div>
     );
   }
@@ -569,7 +568,7 @@ const GrindingDetailsPage = () => {
             disabled={isSubmitting || data?.grinding.Status__c === 'Completed'}
             className="px-6"
           >
-            {isSubmitting ? 'Updating...' : 'Update Grinding Details'}
+            {isSubmitting ? 'Updating...' : 'Update Media Details'}
           </Button>
         </div>
       </div>

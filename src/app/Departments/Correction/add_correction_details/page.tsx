@@ -40,7 +40,7 @@ export default function AddSettingDetails() {
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
 
-// const apiBaseUrl = "http://localhost:5001";
+
 
   useEffect(() => {
     const initializeSetting = async () => {
@@ -171,8 +171,11 @@ const handleSubmit = async (e: React.FormEvent) => {
     const result = await response.json();
 
     if (result.success) {
+      alert('Correction details saved successfully');
       toast.success('Correction details saved successfully');
-      
+     setTimeout(() => {
+          window.location.href = '/Departments/Media/media_Table'; // Redirect to the list page
+        },500);
       // Reset form
       setPouches([]);
       setPouchWeights({});

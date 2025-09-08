@@ -67,7 +67,7 @@ const GrindingDetailsPage = () => {
 
   
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-// const apiBaseUrl ="http://localhost:5001";
+
   useEffect(() => {
     const fetchDetails = async () => {
       if (!grindingId) {
