@@ -107,14 +107,14 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   summary: result.summary
 });
         } else {
-          console.error('[Show Dull] API returned error:', result);
-          toast.error(result.message || 'Dull record not found');
+          console.error('[Show Cutting] API returned error:', result);
+          toast.error(result.message || 'Cutting record not found');
           // alert(result.message || 'Dull record not found');
         }   
       } catch (error) {
-        console.error('[Show Dull] Error:', error);
-        console.error('[Show Dull] Full error details:', JSON.stringify(error, null, 2));
-        toast.error('Error fetching dull details');
+        console.error('[Show Cutting] Error:', error);
+        console.error('[Show Cutting] Full error details:', JSON.stringify(error, null, 2));
+        toast.error('Error fetching Cutting details');
         // alert('Error fetching dull details');
       } finally {
         console.log('[Show Dull] Setting loading to false');
@@ -137,7 +137,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 text-xl">Failed to load dull details</div>
+        <div className="text-red-500 text-xl">Failed to load Cutting details</div>
       </div>
     );
   }

@@ -4,8 +4,9 @@ import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Input } from "@/components/ui/input";
 
-const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
+//const apiBaseUrl =  "https://erp-server-r9wh.onrender.com";
 
+const apiBaseUrl ="http://localhost:5001";
 interface CastingDetails {
 
   Id: string;
