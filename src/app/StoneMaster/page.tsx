@@ -12,7 +12,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
   const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
 const StoneMaster = () => {
-  const [type, setType] = useState("");
+  
+  const [stoneData, setStoneData] = useState([]);
+
+  const [types, setTypes] = useState([]);
+  const [selectedType, setSelectedType] = useState('');
+  const [customType, setCustomType] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
+
+  const [lastTypeRecord, setLastTypeRecord] = useState<any>(null);
+
   const [color, setColor] = useState("");
   const [shape, setShape] = useState("");
   const [size, setSize] = useState("");
@@ -34,53 +43,126 @@ const StoneMaster = () => {
     }
   };
 
-  useEffect(() => {
-    fetchInventory();
-  }, []);
+const fetchStonemaster = async () => {
+  try {
+    const res = await fetch(`${apiBaseUrl}/api/StoneMaster`);
+    const data = await res.json();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (data.success) {
+      const records = data.result.records;
+      setStoneData(records);
 
-    if (!type || !color || !shape || !size || !piece || !weight) {
-      toast.error("Please fill in all fields");
-      return;
+      // Extract unique types
+      const uniqueTypes = [...new Set(records.map((item) => item.Type__c))].map((typeName, index) => ({
+        id: index + 1,
+        name: typeName
+      }));
+
+      setTypes(uniqueTypes);
     }
+  } catch (err) {
+    console.error("Failed to load stone details", err);
+  }
+};
 
-    setIsSubmitting(true);
 
-    const formData = { type, color, shape, size, piece, weight };
+useEffect(() => {
+  console.log(selectedType)
+  if (selectedType && selectedType !== customType) {
+    console.log(stoneData)
+    const filtered = stoneData.filter(item => item.Type__c === selectedType);
+    
+    console.log("filter :",filtered);
 
-    try {
-      const response = await fetch(`${apiBaseUrl}/create/stone`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    if (filtered.length > 0) {
+      const lastRecord = filtered[filtered.length - 1]; // Use last record
+      setLastTypeRecord(lastRecord);
+      setColor(lastRecord.Colour__c);
+      setShape(lastRecord.Shape__c || '');
+      setSize(lastRecord.Size__c || '');
+    } else {
+      setColor("");
+      setShape("");
+      setSize("");
+    }
+  } else if (selectedType === customType) {
+    setColor("");
+    setShape("");
+    setSize("");
+  }
+}, [selectedType, stoneData]);
 
-      const result = await response.json();
-
-      if (result.success) {
-        toast.success("Stone details submitted successfully");
-        alert("Stone details submitted successfully");
-
-        setType("");
-        setColor("");
-        setShape("");
-        setSize("");
-        setPiece("");
-        setWeight("");
-
-        router.refresh();
-        fetchInventory();
-      } else {
-        throw new Error(result.message || "Failed to create record");
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Submission failed");
-    } finally {
-      setIsSubmitting(false);
+  
+    const handleTypeChange = (e) => {
+    const value = e.target.value;
+console.log("selected :",selectedType);
+console.log("value : ",selectedType);
+    if (value === 'custom') {
+      setShowCustomInput(true);
+      setSelectedType('');
+    } else {
+      setShowCustomInput(false);
+      setSelectedType(value);
     }
   };
+
+
+  useEffect(() => {
+    fetchInventory();
+    fetchStonemaster();
+  }, []);
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const finalType = showCustomInput ? customType : selectedType;
+
+  if (!finalType || !color || !shape || !size || !piece || !weight) {
+    toast.error("Please fill in all fields");
+    alert("Please fill in all fields");
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  const formData = { type: finalType, color, shape, size, piece, weight };
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/create/stone`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      toast.success("Stone details submitted successfully");
+      alert("Stone details submitted successfully");
+
+      // Reset fields
+      setSelectedType("");
+      setCustomType("");
+      setColor("");
+      setShape("");
+      setSize("");
+      setPiece("");
+      setWeight("");
+
+      router.refresh();
+      fetchInventory();
+    } else {
+      alert("Failed to create record");
+      throw new Error(result.message || "Failed to create record");
+    }
+  } catch (err: any) {
+    toast.error(err.message || "Submission failed");
+    alert("Failed to create record");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className="p-6 max-w-7xl mx-auto grid grid-cols-2 gap-8">
@@ -93,20 +175,35 @@ const StoneMaster = () => {
             <div>
               <label className="block mb-2 font-medium">Type</label>
               
-              <Input type="text" value={type} onChange={(e) => setType(e.target.value)} placeholder="Enter type" required />
-              {/* <Select onValueChange={setType} value={type}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem value="Diamond">Diamond</SelectItem>
-                  <SelectItem value="Ruby">Ruby</SelectItem>
-                  <SelectItem value="Pearl">Pearl</SelectItem>
-                  <SelectItem value="Garnet">Garnet</SelectItem>
-                  <SelectItem value="Aquamarine">Aquamarine</SelectItem>
-                  <SelectItem value="Moonstone">Moonstone</SelectItem>
-                </SelectContent>
-              </Select> */}
+              {/* <Input type="text" value={type} onChange={(e) => setType(e.target.value)} placeholder="Enter type" required /> */}
+             
+ <select
+  className="border rounded p-2 w-full"
+  value={selectedType}
+  onChange={handleTypeChange}
+  required={!showCustomInput}
+>
+  <option value="">Select type</option>
+  {types.map((typeItem) => (
+    <option key={typeItem.id} value={typeItem.name}>
+      {typeItem.name}
+    </option>
+  ))}
+  <option value="custom">Add custom type</option>
+</select>
+
+{showCustomInput && (
+  <Input
+    type="text"
+    value={customType}
+    onChange={(e) => setCustomType(e.target.value)}
+    placeholder="Enter custom type"
+    required
+    className="mt-2"
+  />
+)}
+
+
             </div>
 
             <div>
@@ -135,7 +232,7 @@ const StoneMaster = () => {
             </div>
 
             <div className="text-center">
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" >
                 {isSubmitting ? "Submitting....." : "Submit"}
               </Button>
             </div>
