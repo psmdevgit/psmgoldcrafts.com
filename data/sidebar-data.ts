@@ -62,7 +62,7 @@ const sidebarData: SidebarCategory[] = [
           { label: "Inventory", link: "/Inventory" },
           { label: "Models", link: "/Models/add-models" },
           { label: "Vendor", link: "/Reports/VendorRep/VendorList" },
-          // { label: "Stone", link: "/StoneMaster" },
+          { label: "Stone", link: "/StoneMaster" },
         ],
       },
        {
