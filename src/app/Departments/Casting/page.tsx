@@ -13,13 +13,12 @@ import "../../Orders/add-order/add-order.css";
 import CastingTable from "@/components/casting/castingtable";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-
-
+import { Portal } from "@radix-ui/react-portal"; // ✅
 
 const apiUrl = "https://erp-server-r9wh.onrender.com";
 
 
-// const apiUrl = "http://localhost:5001";
+//const apiUrl = "http://localhost:5001";
 
 // Define the interfaces for inventory items and orders
 
@@ -45,6 +44,164 @@ interface InventoryApiItem {
 }
 
 const CastingForm = () => {
+
+  const [trees, setTrees] = useState<any[]>([]);
+const [selectedTree, setSelectedTree] = useState<any | null>(null);
+
+useEffect(() => {
+  fetch(`${apiUrl}/casting-trees`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) setTrees(data.data);
+    });
+}, []);
+
+const handleTreeSelect = (treeId: string) => {
+  const tree = trees.find(t => t.Id === treeId);
+  if (tree) {
+
+    setSelectedTree(tree);
+     // auto-fill your main form
+    setCastingNumber(tree.Name);  // Casting Number
+    setWaxTreeWeight(tree.Tree_Weight__c || 0);
+    setStoneWeight(tree.stone_weight__c || 0);
+    setSelectedOrders(tree.OrderID__C||0); // Assuming OrderID__c is a comma-separated string of order IDs  
+    // set Issued Date & Time (today by default)
+    setSelectedOrders([tree.orderId__c||0]);
+    const now = new Date();
+    setIssuedDate(tree.Issue_Date__c || now.toISOString().split("T")[0]   // "2025-09-10"
+);
+    setIssuedTime( tree.issue_Date__C||now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
+    
+  }
+};
+const handleSubmit = async (e?: React.FormEvent) => {
+  if (e) e.preventDefault();
+
+  try {
+    console.log("Submit button clicked");
+    setLoading(true);
+
+    // Basic validation
+    if (!selectedOrders.length || !purity || !waxTreeWeight || inventoryItems.length === 0 || !castingNumber) {
+      alert('Please fill all required fields including casting number');
+      return;
+    }
+
+    // Use existing casting number (from tree or manually generated fallback)
+    const finalCastingNumber = castingNumber || generateCastingNumber();
+
+    // Combine date and time into proper ISO string
+  // Combine date and time into proper ISO string
+       const combinedDateTime = `${issuedDate}T${issuedTime}`;
+
+    // Total issued weight = inventory + stones
+    const totalIssuedFromInventory = inventoryItems.reduce(
+      (sum, item) => sum + Number(item.issueWeight), 0
+    );
+    const totalIssued = totalIssuedFromInventory + (stoneWeight || 0);
+
+    // Calculate required metals
+    const requiredMetals = calculateRequiredMetals();
+
+    // Round calculated weight
+    const roundedReceivedWeight = customRound(calculatedWeight);
+
+    // Prepare payload for API
+    const castingData = {
+      castingNumber: finalCastingNumber,
+      date: combinedDateTime, // tree-provided or manual
+      orders: selectedOrders, // from tree
+      waxTreeWeight: Number(waxTreeWeight),
+      purity: purity,
+      calculatedWeight: Number(roundedReceivedWeight),
+      purityPercentages: {
+        pureGold: Number(purityPercentages.pureGold),
+        alloy: Number(purityPercentages.alloy),
+      },
+      requiredMetals: {
+        pureGold: Number(requiredMetals.pureGold),
+        alloy: Number(requiredMetals.alloy),
+      },
+      issuedItems: inventoryItems.map(item => {
+        const purityNum = parseFloat(item.purity.replace(/[^0-9.]/g, '')) / 100;
+        return {
+          itemName: item.itemName,
+          purity: item.purity,
+          issueWeight: Number(item.issueWeight),
+          issuedGold: Number(item.issueWeight) * purityNum,
+          issuedAlloy: Number(item.issueWeight) * (1 - purityNum),
+        };
+      }),
+      totalIssued,
+      stoneWeight,
+      issuedWeight: totalIssued, // includes stone + inventory
+    };
+
+    console.log("Making casting API call with data:", castingData);
+
+    // Create casting record
+    const castingResponse = await fetch(`${apiUrl}/api/casting`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(castingData),
+    });
+
+    const castingResult = await castingResponse.json();
+    if (!castingResult.success) throw new Error(castingResult.message || 'Failed to create casting record');
+
+    // Update inventory weights
+    const inventoryUpdateResponse = await fetch(`${apiUrl}/api/update-inventoryweights`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        issuedItems: inventoryItems.map(item => ({
+          itemName: item.itemName,
+          purity: item.purity,
+          issueWeight: Number(item.issueWeight),
+        })),
+      }),
+    });
+
+    const inventoryResult = await inventoryUpdateResponse.json();
+    if (!inventoryResult.success) throw new Error(inventoryResult.message || 'Failed to update inventory');
+
+    alert('Casting created successfully');
+    router.push("/Departments/Casting/casting_table");
+
+    // Reset form
+    const today = new Date();
+    setSelectedOrders([]);
+    setPurity('');
+    setWaxTreeWeight(0);
+    setInventoryItems([]);
+    setSelectedItem({
+      id: '',
+      itemName: '',
+      purity: '',
+      availableWeight: 0,
+      metalToBeIssued: 0,
+      issueWeight: 0,
+    });
+    setPurityPercentages({
+      pureGold: defaultPercentages[purity as keyof typeof defaultPercentages]?.pureGold || 0,
+      alloy: defaultPercentages[purity as keyof typeof defaultPercentages]?.alloy || 0,
+    });
+    setIsDropdownOpen(false);
+    setCalculatedWeight(0);
+    setIssuedDate(today.toISOString().split("T")[0]); // reset to today (YYYY-MM-DD)
+    setIssuedTime(today.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
+    setCastingLastNumber('');
+    setStoneWeight(0);
+
+  } catch (error: any) {
+    console.error('Error in handleSubmit:', error);
+    toast.error(error.message || 'Failed to process casting');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Main form state
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
@@ -438,160 +595,7 @@ const CastingForm = () => {
   }, [issuedWeight, stoneWeight]);
 
   // Update handleSubmit function
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
-    }
 
-    const totalWeightWithStones = (calculatedWeight + (stoneWeight || 0));
-
-    const formData = {
-      // ... existing form fields ...
-      stoneWeight: stoneWeight,
-      issuedWeight: totalWeightWithStones, // Send the total weight including stones
-      Required_Pure_Metal_Casting__c: calculatedWeight,
-      Required_Alloy_for_Casting__c: remainingAlloyRequired,
-      // ... other fields ...
-    };
-
-    try {
-      console.log("Submit button clicked");
-      setLoading(true);
-
-      // Basic validation for required fields
-      if (!selectedOrders.length || !purity || !waxTreeWeight || inventoryItems.length === 0 || !castingLastNumber) {
-    console.log('Please fill all required fields including casting number');
-        // alert('Please fill all required fields including casting number');
-        return;
-      }
-
-      // Generate the casting number using the current date and manual number
-      const newCastingNumber = generateCastingNumber();
-      setCastingNumber(newCastingNumber);
-
-      // Combine date and time
-      const combinedDateTime = `${issuedDate}T${issuedTime}`;
-
-      // Calculate total issued weight
-      const totalIssuedFromInventory = inventoryItems.reduce((sum, item) => sum + Number(item.issueWeight), 0);
-      const totalIssued = totalIssuedFromInventory + (stoneWeight || 0);
-
-      // Calculate required metals
-      const requiredMetals = calculateRequiredMetals();
-
-      // Round the received weight using our custom function
-      const roundedReceivedWeight = customRound(calculatedWeight);
-
-      // Prepare casting data matching the backend API structure
-      const castingData = {
-        castingNumber: newCastingNumber,
-        date: combinedDateTime, // Now includes both date and time
-        orders: selectedOrders,
-        waxTreeWeight: Number(waxTreeWeight),
-        purity: purity,
-        calculatedWeight: Number(roundedReceivedWeight),
-        purityPercentages: {
-          pureGold: Number(purityPercentages.pureGold),
-          alloy: Number(purityPercentages.alloy)
-        },
-        requiredMetals: {
-          pureGold: Number(requiredMetals.pureGold),
-          alloy: Number(requiredMetals.alloy)
-        },
-        issuedItems: inventoryItems.map(item => ({
-          itemName: item.itemName,
-          purity: item.purity,
-          issueWeight: Number(item.issueWeight),
-          issuedGold: Number(item.issueWeight) * (parseFloat(item.purity.replace(/[^0-9.]/g, '')) / 100),
-          issuedAlloy: Number(item.issueWeight) * (1 - parseFloat(item.purity.replace(/[^0-9.]/g, '')) / 100)
-        })),
-        totalIssued: totalIssued, // Now includes both inventory items and stone weight
-        stoneWeight: stoneWeight,
-        issuedWeight: totalWeightWithStones, // Also includes stone weight
-      };
-
-      console.log("Making casting API call with data:", castingData);
-      
-      // Create casting record
-      const castingResponse = await fetch(`${apiUrl}/api/casting`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(castingData)
-      });
-
-      const castingResult = await castingResponse.json();
-
-      if (!castingResult.success) {
-        throw new Error(castingResult.message || 'Failed to create casting record');
-      }
-
-      // Now update inventory weights
-      const inventoryUpdateResponse = await fetch(`${apiUrl}/api/update-inventoryweights`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          issuedItems: inventoryItems.map(item => ({
-            itemName: item.itemName,
-            purity: item.purity,
-            issueWeight: Number(item.issueWeight)
-          }))
-          
-          
-        })
-        
-      })
-console.log("taking update inventory weights:", inventoryItems)
-      const inventoryResult = await inventoryUpdateResponse.json();
-      
-      if (!inventoryResult.success) {
-        throw new Error(inventoryResult.message || 'Failed to update inventory');
-      }
-
-      // toast.success('Casting created successfully');
-      alert('Casting created successfully')
-      router.push("/Departments/Casting/casting_table");
-      
-      // Reset form
-      const today = new Date();
-      const day = String(today.getDate()).padStart(2, '0');
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const year = today.getFullYear();
-      
-      setSelectedOrders([]);
-      setPurity('');
-      setWaxTreeWeight(0);
-      setInventoryItems([]);
-      setSelectedItem({
-        id: '',
-        itemName: '',
-        purity: '',
-        availableWeight: 0,
-        metalToBeIssued: 0,
-        issueWeight: 0
-      });
-      setPurityPercentages({
-        pureGold: defaultPercentages[purity as keyof typeof defaultPercentages]?.pureGold || 0,
-        alloy: defaultPercentages[purity as keyof typeof defaultPercentages]?.alloy || 0
-      });
-      setIsDropdownOpen(false);
-      setCalculatedWeight(0);
-      setIssuedDate(`${day}/${month}/${year}`);
-      setIssuedTime(today.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }));
-      setCastingLastNumber('');
-      setStoneWeight(0);
-
-    } catch (error) {
-      console.error('Error in handleSubmit:', error);
-      toast.error(error.message || 'Failed to process casting');
-      // alert('Failed to process casting');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // const handleRemoveInventoryItem = (id: string) => {
   //   setInventoryItems(inventoryItems.filter(item => item.id !== id));
@@ -652,140 +656,94 @@ console.log("taking update inventory weights:", inventoryItems)
     <div className="h-screen overflow-hidden">
       <div className="h-full overflow-y-auto p-4 pt-40 mt-[-30px] bg-gray-50">
         <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-6 mr-[300px] md:mr-[300px]">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold">Update Casting</h2>
-            <div className="flex items-center gap-4">
+               <div className="mb-4 bg-gray-100 p-4 rounded">
+  <Label className="text-sm mb-1.5">Select Casting Tree</Label>
+  <Select onValueChange={handleTreeSelect}>
+    <SelectTrigger className="h-10 bg-white border-gray-200 w-full">
+      <SelectValue placeholder="Choose Tree" />
+    </SelectTrigger>
+
+    <Portal> {/* 👈 renders outside modal stacking context */}
+      <SelectContent className="z-[1000] bg-white">
+        {trees.map((tree) => (
+          <SelectItem key={tree.Id} value={tree.Id}>
+            {tree.Name} (Weight: {tree.Tree_Weight__c} g, Stones: {tree.stone_weight__c} g)
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Portal>
+  </Select>
+</div>
+          <div>
+
+
+
+         
+            <div>
               {/* Date and Time inputs */}
-              <div className="flex items-center gap-4">
-                <div>
-                  <Label className="text-sm">Issue Date:</Label>
-                  <Input
-                    type="date"
-                    value={issuedDate}
-                    onChange={(e) => setIssuedDate(e.target.value)}
-                    className="w-32 h-8 text-sm"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Issue Time:</Label>
-                  <Input
-                    type="time"
-                    value={issuedTime}
-                    onChange={(e) => setIssuedTime(e.target.value)}
-                    className="w-32 h-8 text-sm"
-                  />
-                </div>
-              </div>
-              
-              {/* Existing casting number input */}
-              <div className="flex items-center gap-2">
-                <Label className="text-sm">Casting Number:</Label>
-                <Input
-                  type="number"
-                  value={castingLastNumber}
-                  onChange={(e) => setCastingLastNumber(e.target.value)}
-                  className="w-20 h-8 text-sm"
-                  placeholder="##"
-                  min="1"
-                  max="99"
-                />
-              </div>
-              <div className="text-sm font-medium">
-                Preview: <span className="text-blue-600">
-                  {castingLastNumber ? generateCastingNumber() : 'DD/MM/YYYY/##'}
-                </span>
-              </div>
+            <div>
+  {/* Date and Time display */}
+<div className="flex items-center gap-4">
+  {/* Date and Time display */}
+  <div className="flex items-center gap-4">
+    <div>
+      <Label className="text-sm">Issue Date:</Label>
+      <span className="block w-32 h-8 text-sm border px-2 py-1 rounded bg-gray-100">
+        {issuedDate || "—"}
+      </span>
+    </div>
+    <div>
+      <Label className="text-sm">Issue Time:</Label>
+      <span className="block w-32 h-8 text-sm border px-2 py-1 rounded bg-gray-100">
+        {issuedTime || "—"}
+      </span>
+    </div>
+  </div>
+
+  {/* Casting number display */}
+  <div className="flex items-center gap-2">
+    <Label className="text-sm">Casting Number:</Label>
+    <span className="block w-20 h-8 text-sm border px-2 py-1 rounded bg-gray-100">
+      {castingNumber || "—"}
+    </span>
+  </div>
+
+  {/* Preview */}
+  
+</div>
+<div></div>
+{/* Orders display */}
+
+</div>
+
             </div>
+
           </div>
-          
+                      <div className="mt-4">
+  <Label className="text-sm mb-1.5">Selected Orders</Label>
+  {selectedOrders.length > 0 ? (
+    <div className="mt-2 space-y-1">
+      {selectedOrders.map(orderId => {
+        const order = orders.find(o => o.id === orderId);
+        return (
+          <div
+            key={orderId}
+            className="flex items-center justify-between bg-blue-50 px-3 py-1.5 rounded-md text-sm"
+          >
+            <span className="text-blue-700">
+              {order ? `${order.id} - ${order.partyName}` : orderId}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  ) : (
+    <span className="block text-sm text-gray-500">No orders selected</span>
+  )}
+</div>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm mb-1.5">Select Orders</Label>
-                <div className="relative">
-                  <Button 
-                    type="button"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="w-full h-10 text-sm justify-between bg-white border-gray-200"
-                    variant="outline"
-                  >
-                    {selectedOrders.length ? `${selectedOrders.length} orders selected` : 'Select Orders'}
-                    <span className="ml-2">▼</span>
-                  </Button>
-                  
-                  {isDropdownOpen && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-[400px] overflow-hidden">
-                      <div className="p-2 border-b sticky top-0 bg-white z-20">
-                        <Input
-                          type="text"
-                          placeholder="Search orders..."
-                          value={searchOrder}
-                          onChange={(e) => setSearchOrder(e.target.value)}
-                          className="h-8 text-sm"
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                      </div>
-                      <div className="overflow-y-auto max-h-[300px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                        {filteredOrders.length > 0 ? (
-                          filteredOrders.map(order => (
-                            <div 
-                              key={order.id}
-                              className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm border-b border-gray-100"
-                              onClick={() => {
-                                const isSelected = selectedOrders.includes(order.id);
-                                setSelectedOrders(isSelected 
-                                  ? selectedOrders.filter(id => id !== order.id)
-                                  : [...selectedOrders, order.id]
-                                );
-                              }}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={selectedOrders.includes(order.id)}
-                                onChange={() => {}}
-                                className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600"
-                              />
-                              <span>{`${order.id} - ${order.partyName}`}</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="px-3 py-2 text-sm text-gray-500 text-center">
-                            No orders found
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Selected Orders Display */}
-                {selectedOrders.length > 0 && (
-                  <div className="mt-2 space-y-1">
-                    {selectedOrders.map(orderId => {
-                      const order = orders.find(o => o.id === orderId);
-                      return (
-                        <div 
-                          key={orderId}
-                          className="flex items-center justify-between bg-blue-50 px-3 py-1.5 rounded-md text-sm"
-                        >
-                          <span className="text-blue-700">
-                            {order ? `${order.id} - ${order.partyName}` : orderId}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedOrders(selectedOrders.filter(id => id !== orderId));
-                            }}
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+            
 
               <div>
                 <Label className="text-sm mb-1.5">Purity *</Label>
@@ -1120,6 +1078,8 @@ console.log("taking update inventory weights:", inventoryItems)
             {/* Stone Weight Input */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
+              
+
                 <label className="text-sm text-gray-600 block mb-1.5">
                   Weight Issued (g)
                 </label>

@@ -34,19 +34,10 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+// const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-import { Input } from "@/components/ui/input";
 
 const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
-
-// const apiBaseUrl = "http://localhost:5001"; 
 
 const downloadPDF = async (pdfUrl: string) => {
   try {
@@ -114,33 +105,31 @@ const getStatusClass = (status: string) => {
 };
 
 const departments = [
-// { 
-//     value: 'Grinding', 
-//     label: 'Grinding',
-//     path: '/Departments/Grinding/add_grinding_details'
-//   },
+  /*{ 
+    value: 'Grinding', 
+    label: 'Grinding',
+    path: '/Departments/Grinding/add_grinding_details'
+  },*/
   { 
-
-    value: 'Pouch Creation', 
-    label: 'Pouch Creation',
-
+    value: 'Filing', 
+    label: 'Filing',
     path: '/Departments/Filing/add_filing_details'
   },
-//  { 
-//     value: 'Setting', 
-//     label: 'Setting',
-//     path: '/Departments/Setting/add_setting_details'
-//   },
-//  { 
-//     value: 'Polishing', 
-//     label: 'Polishing',
-//     path: '/Departments/Polishing/add_polishing_details'
-//   },
-// {  
-//     value: 'Dull', 
-//     label: 'Dull',
-//     path: '/Departments/Dull/add_dull_details'
-//   },
+ /* { 
+    value: 'Setting', 
+    label: 'Setting',
+    path: '/Departments/Setting/add_setting_details'
+  },*/
+ /* { 
+    value: 'Polishing', 
+    label: 'Polishing',
+    path: '/Departments/Polishing/add_polishing_details'
+  },*/
+  /*{ 
+    value: 'Dull', 
+    label: 'Dull',
+    path: '/Departments/Dull/add_dull_details'
+  },*/
 ];
 
 // Add this type for weight breakdown
@@ -151,64 +140,6 @@ interface WeightBreakdown {
 }
 
 export default function CastingTable() {
-
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-  const [castingScrap, setCastingScrap] = useState("Casting Scrap");
-  const [receivedWeight, setReceivedWeight] = useState("");
-  const [updatedBy, setUpdatedBy] = useState("");
-
-const handleScrapUpSubmit = async () => {
-
-  if (!receivedWeight || !updatedBy) {
-    alert("⚠️ Please fill in both Received Weight and Updated By.");
-    return; // Stop function here
-  }  
-  console.log({
-    castingScrap,
-    receivedWeight,
-    updatedBy,
-  });
-
-  try {
-    // Prepare the payload without weight conversion
-    const payload = {
-      itemName: castingScrap,
-      purity: "91.7%",
-      availableWeight: parseFloat(receivedWeight),
-      unitOfMeasure: "gram",
-      partyLedger: ""
-    };
-
-    console.log('Submitting payload:', payload);
-
-    const response = await fetch(`${apiBaseUrl}/update-inventory`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to update inventory');
-    }
-
-    alert("Inventory updated successfully!");
-  } catch (err) {
-    console.error('Error updating inventory:', err);    
-    alert("Error updating inventory!");
-  }
-
-  // Reset modal and fields
-  setIsModalOpen(false);
-  setCastingScrap("");
-  setReceivedWeight("");
-  setUpdatedBy("");
-};
-
   const [modalOpen, setModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [editData, setEditData] = useState<IDeal | null>(null);
@@ -526,71 +457,18 @@ const handleScrapUpSubmit = async () => {
         <div className="card__wrapper">
           <div className="manaz-common-mat-list w-full table__wrapper table-responsive">
             <TableControls
-              rowsPerPage={rowsPerPage}
-              searchQuery={searchQuery}
-              handleRowsPerPageChange={handleRowsPerPageChange}
-              handleSearchChange={handleSearchChange}
+              currentPage={page}
+              rowCount={filteredDeals.length}
               startDate={startDate}
               endDate={endDate}
               handleDateChange={handleDateChange}
-              handleResetDates={handleResetFilters}
               statusFilter={statusFilter}
               handleStatusChange={handleStatusChange}
+              onSearchChange={handleSearchChange}
+              onRowsPerPageChange={(value) => handleRowsPerPageChange(parseInt(value))}
+              searchValue={searchQuery}
+              rowsPerPageValue={rowsPerPage.toString()}
             />
-
-
-              {/* 🔹 New Update Button */}
-       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-  <DialogTrigger asChild>
-    {/* <Button variant="default" style={{background:"#F7DEB1",color:"black"}}>Update Scrap</Button> */}
-  </DialogTrigger>
-  <DialogContent className="bg-white"> {/* Solid white background */}
-    <DialogHeader>
-      <DialogTitle>Update Casting Scrap</DialogTitle>
-    </DialogHeader>
-
-    <div className="flex flex-col gap-4 mt-4">
-      <div>
-        <label className="text-sm font-medium">Casting Scrap</label>
-        <Input
-          type="text"
-          disabled
-          value={castingScrap}
-          onChange={(e) => setCastingScrap(e.target.value)}
-          placeholder="Enter Casting Scrap"
-        />
-      </div>
-
-      <div>
-        <label className="text-sm font-medium">Received Weight</label>
-        <Input
-          type="number"
-          value={receivedWeight}
-          onChange={(e) => setReceivedWeight(e.target.value)}
-          placeholder="Enter Received Weight"
-        />
-      </div>
-
-      <div>
-        <label className="text-sm font-medium">Updated By</label>
-        <Input
-          type="text"
-          value={updatedBy}
-          onChange={(e) => setUpdatedBy(e.target.value)}
-          placeholder="Enter Updated By"
-        />
-      </div>
-
-      <Button onClick={handleScrapUpSubmit} className="mt-2" style={{background:"#FEC769",color:"black"}}>
-        Submit
-      </Button>
-    </div>
-  </DialogContent>
-</Dialog>
-
-
-
-
             <Box sx={{ width: "100%" }} className="table-responsive">
               <Paper sx={{ width: "100%", mb: 2 }}>
                 <TableContainer className="table mb-[20px] hover multiple_tables w-full">
@@ -610,12 +488,12 @@ const handleScrapUpSubmit = async () => {
                             size="small"
                           />
                         </TableCell>
-                        <TableCell>ID</TableCell>
+                        <TableCell>Casting Id</TableCell>
                         <TableCell>Issued Weight</TableCell>
                         <TableCell>Received Weight</TableCell>
                         <TableCell>Issued Date</TableCell>
                         <TableCell>Received Date</TableCell>
-                        
+                        <TableCell>Created Date</TableCell>
                         <TableCell>Status</TableCell>
                         <TableCell>Casting Loss</TableCell>
                         <TableCell>Actions</TableCell>
@@ -661,7 +539,146 @@ const handleScrapUpSubmit = async () => {
                               </TableCell>
                               <TableCell>{deal.issuedDate}</TableCell>
                               <TableCell>{deal.receivedDate}</TableCell>
-                              
+                              <TableCell>{deal.created_date}</TableCell>
+                              <TableCell>
+                                <span 
+                                  className={`bd-badge ${getStatusClass(deal.status)}`}
+                                  style={{
+                                    padding: '4px 8px',
+                                    borderRadius: '4px',
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    fontWeight: '500'
+                                  }}
+                                >
+                                  {deal.status}
+                                </span>
+                              </TableCell>
+                              <TableCell>{deal.castingLoss}</TableCell>
+                              <TableCell className="table__icon-box">
+                                <div className="flex items-center justify-start gap-[10px]">
+                                  <Link href={`/Departments/Casting/show_casting_details?castingId=${deal.id}`} passHref>
+                                    <button
+                                      type="button"
+                                      className="table__icon edit"
+                                      style={{
+                                        display: 'inline-block',
+                                        backgroundColor: 'green',
+                                        color: 'white',
+                                        borderRadius: '4px',
+                                        padding: '5px',
+                                        textDecoration: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                      }}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <i className="fa-regular fa-eye"></i>
+                                    </button>
+                                  </Link>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={10} align="center">
+                            No records found
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableCell colSpan={10} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            </Box>
+            <Pagination
+              count={Math.ceil(filteredDeals.length / rowsPerPage)}
+              page={page + 1}
+              onChange={(e, value) => {
+                // Convert 1-based UI page number to 0-based state
+                const newPage = value - 1;
+                console.log(`Pagination clicked: ${value} (state: ${newPage})`);
+                // Directly set page state for immediate update
+                setPage(newPage);
+              }}
+              variant="outlined"
+              shape="rounded"
+              className="manaz-pagination-button"
+            />
+          </div>
+        </div>
+      </div>
+                      <TableRow className="table__title">
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            className="custom-checkbox checkbox-small"
+                            color="primary"
+                            indeterminate={selected.length > 0 && selected.length < filteredDeals.length}
+                            checked={filteredDeals.length > 0 && selected.length === filteredDeals.length}
+                            onChange={(e) => handleSelectAllClick(e.target.checked, filteredDeals)}
+                            size="small"
+                          />
+                        </TableCell>
+                        <TableCell>Casting Id</TableCell>
+                        <TableCell>Issued Weight</TableCell>
+                        <TableCell>Received Weight</TableCell>
+                        <TableCell>Issued Date</TableCell>
+                        <TableCell>Received Date</TableCell>
+                        <TableCell>Created Date</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Casting Loss</TableCell>
+                        <TableCell>Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody className="table__body">
+                      {paginatedDeals.length > 0 ? (
+                        paginatedDeals.map((deal, index) => {
+                          const stausClass = useTableStatusHook(deal?.status);
+                          const phaseClass = useTablePhaseHook(deal?.phase);
+                          return (
+                            <TableRow
+                              key={deal.id}
+                              selected={selected.includes(index)}
+                              onClick={() => handleClick(index)}
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  className="custom-checkbox checkbox-small"
+                                  checked={selected.includes(index)}
+                                  size="small"
+                                  onChange={() => handleClick(index)}
+                                />
+                              </TableCell>
+                              <TableCell>{deal.id}</TableCell>
+                              <TableCell>{deal.issuedWeight}</TableCell>
+                              <TableCell>
+                                <div 
+                                  className="relative group cursor-help"
+                                  title="Hover to see weight breakdown"
+                                >
+                                  <span className="hover:text-blue-600 transition-colors">
+                                    {formatWeight(deal.receivedWeight)}g
+                                  </span>
+                                  <div className="absolute z-[1000] invisible group-hover:visible 
+                                                left-0 top-full mt-1
+                                                animate-fade-in duration-200">
+                                    {renderWeightBreakdown(deal)}
+                                    <div className="absolute -top-2 left-4 
+                                                  border-8 border-transparent border-b-white"></div>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>{deal.issuedDate}</TableCell>
+                              <TableCell>{deal.receivedDate}</TableCell>
+                              <TableCell>{deal.created_date}</TableCell>
                               <TableCell>
                                 <span 
                                   className={`bd-badge ${getStatusClass(deal.status)}`}
@@ -700,7 +717,7 @@ const handleScrapUpSubmit = async () => {
                                   </Link>
 
                                   {/* Edit button - disabled when status is Finished */}
-  {deal.status?.toLowerCase() !== 'finished' ? (
+                                  {deal.status?.toLowerCase() !== 'finished' ? (
                                     <Link href={`/Departments/Casting/casting_received_details?castingId=${deal.id}`} passHref>
                                       <button
                                         type="button"
@@ -720,27 +737,27 @@ const handleScrapUpSubmit = async () => {
                                         <i className="fa-sharp fa-light fa-pen"></i>
                                       </button>
                                     </Link>
-                                ) : (
-                                      <button
-                                        type="button"
-                                        className="table__icon edit"
-                                        style={{
-                                          display: 'inline-block',
-                                          backgroundColor: 'gray',
-                                          color: 'white',
-                                          borderRadius: '4px',
-                                          padding: '5px',
-                                          textDecoration: 'none',
-                                          border: 'none',
-                                          cursor: 'not-allowed',
-                                          opacity: 0.6,
-                                        }}
-                                        disabled
-                                        title="Cannot edit finished items"
-                                      >
-                                        <i className="fa-sharp fa-light fa-pen"></i>
-                                      </button>
-                                    )}
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      className="table__icon edit"
+                                      style={{
+                                        display: 'inline-block',
+                                        backgroundColor: 'gray',
+                                        color: 'white',
+                                        borderRadius: '4px',
+                                        padding: '5px',
+                                        textDecoration: 'none',
+                                        border: 'none',
+                                        cursor: 'not-allowed',
+                                        opacity: 0.6,
+                                      }}
+                                      disabled
+                                      title="Cannot edit finished items"
+                                    >
+                                      <i className="fa-sharp fa-light fa-pen"></i>
+                                    </button>
+                                  )}
 
                                   <button
                                     type="button"
@@ -837,11 +854,21 @@ const handleScrapUpSubmit = async () => {
               <Pagination
                 count={Math.ceil(filteredDeals.length / rowsPerPage)}
                 page={page + 1}
-                onChange={(e, value) => handlePageChange(value - 1)}
+                onChange={(e, value) => {
+                  // Convert 1-based UI page number to 0-based state
+                  const newPage = value - 1;
+                  console.log(`Pagination clicked: ${value} (state: ${newPage})`);
+                  // Directly set page state for immediate update
+                  setPage(newPage);
+                }}
                 variant="outlined"
                 shape="rounded"
                 className="manaz-pagination-button"
               />
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
             </Box>
           </div>
         </div>

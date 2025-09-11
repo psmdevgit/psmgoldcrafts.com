@@ -87,8 +87,8 @@ const sidebarData: SidebarCategory[] = [
         label: "Making Progress",
         icon: "fa-solid fa-arrow-progress",
         subItems: [
-
-          { label: "Casting", link: "/Departments/Casting/casting_table" },
+          { label: "Waxing", link: "/Departments/Waxing/waxing_table" },
+          { label: "Casting Inventory", link: "/Departments/Casting/casting_table" },
            { label: " Pouch Creation", link: "/Departments/Filing/add_filing_details/Grinding_Table" },
           { label: " Grinding", link: "/Departments/Grinding/Grinding_Table" },
           { label: "Media", link: "/Departments/Media/media_Table" },
@@ -99,9 +99,6 @@ const sidebarData: SidebarCategory[] = [
           {label: "Plating", link: "/Departments/Plating/Plating_Table"},
           {label: "Cutting", link: "/Departments/Cutting/Cutting_Table"},
           { label: "Refinery", link: "/Refinery" },
-
-          
-          
         ],
       },
      {
