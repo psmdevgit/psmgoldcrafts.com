@@ -107,22 +107,22 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   summary: result.summary
 });
         } else {
-          console.error('[Show Dull] API returned error:', result);
+          console.error('[Show Cutting] API returned error:', result);
           toast.error(result.message || 'Dull record not found');
           // alert(result.message || 'Dull record not found');
         }   
       } catch (error) {
-        console.error('[Show Dull] Error:', error);
-        console.error('[Show Dull] Full error details:', JSON.stringify(error, null, 2));
+        console.error('[Show Cutting] Error:', error);
+        console.error('[Show Cutting] Full error details:', JSON.stringify(error, null, 2));
         toast.error('Error fetching dull details');
         // alert('Error fetching dull details');
       } finally {
-        console.log('[Show Dull] Setting loading to false');
+        console.log('[Show Cutting] Setting loading to false');
         setLoading(false);
       }
     };
 
-    console.log('[Show Dull] Component mounted with dullId:', dullId);
+    console.log('[Show Cutting] Component mounted with dullId:', dullId);
     fetchDetails();
   }, [dullId]);
 
