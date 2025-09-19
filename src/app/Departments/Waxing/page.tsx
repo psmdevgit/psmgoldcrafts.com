@@ -29,11 +29,14 @@ interface Order {
   partyName: string;
 }
 
+
 interface InventoryApiItem {
   name: string;
   availableWeight: number;
   purity: string;
 }
+
+
 
 interface Stone {
   Id: string;
@@ -45,6 +48,7 @@ interface Stone {
   Pieces__c: number;
   Weight__c: number;
 }
+
 
 const TreeForm = () => {
   const router = useRouter();
@@ -60,10 +64,6 @@ const [selectedColor, setSelectedColor] = useState("");
 const [selectedShape, setSelectedShape] = useState("");
 const [selectedSize, setSelectedSize] = useState("");
 const [filteredStones, setFilteredStones] = useState<Stone[]>([]);
-
-
-
-
 
   const [inventoryApiItems, setInventoryApiItems] = useState<InventoryApiItem[]>([]);
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
@@ -179,13 +179,42 @@ const generateCastingNumber = () => {
   return `${day}/${month}/${year}/${formattedNumber}`;
 };
 
-
 const handleSubmit = async (e?: React.FormEvent) => {
   e?.preventDefault();
+
+  // ✅ Validate required parent fields
+  if (!treecastingID && !waxTreeWeight) {
+    alert("Casting Number and Wax Tree Weight are mandatory");
+    return;
+  }
+
+  if (!waxTreeWeight || parseFloat(waxTreeWeight) <= 0) {
+    alert("Please enter a valid Wax Tree Weight");
+    return;
+  }
+
+  if (!selectedOrders || selectedOrders.length === 0) {
+    alert("Please select at least one Order");
+    return;
+  }
 
   if (stoneRows.length === 0) {
     alert("Please add at least one stone");
     return;
+  }
+
+  // ✅ Validate each stone row
+  for (let i = 0; i < stoneRows.length; i++) {
+    const row = stoneRows[i];
+    if (!row.type || !row.color || !row.shape || !row.size || !row.weight) {
+      alert(`Row ${i + 1}: All fields (Type, Color, Shape, Size, Weight) are mandatory`);
+      return;
+    }
+
+    if (parseFloat(row.weight) <= 0) {
+      alert(`Row ${i + 1}: Weight must be greater than 0`);
+      return;
+    }
   }
 
   // ✅ Calculate total stone weight
@@ -199,16 +228,16 @@ const handleSubmit = async (e?: React.FormEvent) => {
     Name: treecastingID || generateCastingNumber(), // safe fallback
     Tree_Weight__c: waxTreeWeight,
     orderId__c: selectedOrders.join(", "),
-    stone_weight__c: totalStoneWeight, // total weight
+    stone_weight__c: totalStoneWeight,
     stones: stoneRows.map((row) => ({
-      type: row.type || "",
-      color: row.color || "",
-      shape: row.shape || "",
-      size: row.size || "",
+      type: row.type,
+      color: row.color,
+      shape: row.shape,
+      size: row.size,
       pcs: row.pieces || 0,
-      weight: row.weight || 0,
-      name: row.name || "",
-      id: row.id || ""
+      weight: row.weight,
+      name: row.name,
+      id: row.id
     }))
   };
 
@@ -223,16 +252,17 @@ const handleSubmit = async (e?: React.FormEvent) => {
 
     const result = await res.json();
     if (result.success) {
-      alert("Tree Casting created successfully");
+      alert("✅ Tree Casting created successfully");
       router.push("/Departments/Waxing/waxing_table");
     } else {
-      alert(result.message || "Failed to save tree");
+      alert(result.message || "❌ Failed to save tree");
     }
   } catch (error) {
     console.error("Submit error:", error);
-    alert("Error saving tree");
+    alert("⚠️ Error saving tree");
   }
 };
+
 
  const [stoneRows, setStoneRows] = useState<any[]>([]); // multiple stone rows
 
@@ -338,12 +368,21 @@ const handleSubmit = async (e?: React.FormEvent) => {
 <div className="space-y-4">
   {stoneRows.map((row, index) => (
     <div key={index} className="grid grid-cols-6 gap-4 bg-gray-50 p-4 rounded">
-      
-      {/* Type */}
+
+      {/* Step 1: Type */}
       <div>
         <Label>Stone Type</Label>
         <Select
-          onValueChange={(val) => updateRow(index, "type", val)}
+          value={row.type}
+          onValueChange={(val) => {
+            updateRow(index, "type", val);
+            updateRow(index, "color", ""); // reset next steps
+            updateRow(index, "shape", "");
+            updateRow(index, "size", "");
+            updateRow(index, "id", "");
+            updateRow(index, "weight", "");
+            updateRow(index, "availableWeight", "");
+          }}
         >
           <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
           <Portal>
@@ -356,17 +395,26 @@ const handleSubmit = async (e?: React.FormEvent) => {
         </Select>
       </div>
 
-      {/* Color */}
+      {/* Step 2: Color (enabled only if type chosen) */}
       <div>
         <Label>Stone Color</Label>
         <Select
-          onValueChange={(val) => updateRow(index, "color", val)}
+          value={row.color}
+          onValueChange={(val) => {
+            updateRow(index, "color", val);
+            updateRow(index, "shape", "");
+            updateRow(index, "size", "");
+            updateRow(index, "id", "");
+            updateRow(index, "weight", "");
+            updateRow(index, "availableWeight", "");
+          }}
+          disabled={!row.type}
         >
           <SelectTrigger><SelectValue placeholder="Select Color" /></SelectTrigger>
           <Portal>
             <SelectContent className="z-[1000] bg-white">
               {[...new Set(
-                stones.filter(s => !row.type || s.Type__c === row.type).map(s => s.Colour__c)
+                stones.filter(s => s.Type__c === row.type).map(s => s.Colour__c)
               )].map(color => (
                 <SelectItem key={color} value={color}>{color}</SelectItem>
               ))}
@@ -375,19 +423,26 @@ const handleSubmit = async (e?: React.FormEvent) => {
         </Select>
       </div>
 
-      {/* Shape */}
+      {/* Step 3: Shape (enabled only if type + color chosen) */}
       <div>
         <Label>Stone Shape</Label>
         <Select
-          onValueChange={(val) => updateRow(index, "shape", val)}
+          value={row.shape}
+          onValueChange={(val) => {
+            updateRow(index, "shape", val);
+            updateRow(index, "size", "");
+            updateRow(index, "id", "");
+            updateRow(index, "weight", "");
+            updateRow(index, "availableWeight", "");
+          }}
+          disabled={!row.type || !row.color}
         >
           <SelectTrigger><SelectValue placeholder="Select Shape" /></SelectTrigger>
           <Portal>
             <SelectContent className="z-[1000] bg-white">
               {[...new Set(
                 stones.filter(s =>
-                  (!row.type || s.Type__c === row.type) &&
-                  (!row.color || s.Colour__c === row.color)
+                  s.Type__c === row.type && s.Colour__c === row.color
                 ).map(s => s.Shape__c)
               )].map(shape => (
                 <SelectItem key={shape} value={shape}>{shape}</SelectItem>
@@ -397,34 +452,36 @@ const handleSubmit = async (e?: React.FormEvent) => {
         </Select>
       </div>
 
-      {/* Size */}
+      {/* Step 4: Size (enabled only if type + color + shape chosen) */}
       <div>
         <Label>Stone Size</Label>
         <Select
+          value={row.size}
           onValueChange={(val) => {
             const selectedStone = stones.find(s =>
               s.Size__c === val &&
-              (!row.type || s.Type__c === row.type) &&
-              (!row.color || s.Colour__c === row.color) &&
-              (!row.shape || s.Shape__c === row.shape)
+              s.Type__c === row.type &&
+              s.Colour__c === row.color &&
+              s.Shape__c === row.shape
             );
             if (selectedStone) {
               updateRow(index, "size", selectedStone.Size__c);
-              updateRow(index, "id", selectedStone.Id);          // ✅ save Stone_Master__c.Id
-              updateRow(index, "name", selectedStone.Name);      // ✅ save name
-              updateRow(index, "weight", selectedStone.Weight__c || 0); // ✅ default weight
-              updateRow(index, "availableWeight", selectedStone.Weight__c || 0); // ✅ stock
+              updateRow(index, "id", selectedStone.Id);
+              updateRow(index, "name", selectedStone.Name);
+              updateRow(index, "weight", selectedStone.Weight__c || 0);
+              updateRow(index, "availableWeight", selectedStone.Weight__c || 0);
             }
           }}
+          disabled={!row.type || !row.color || !row.shape}
         >
           <SelectTrigger><SelectValue placeholder="Select Size" /></SelectTrigger>
           <Portal>
             <SelectContent className="z-[1000] bg-white">
               {[...new Set(
                 stones.filter(s =>
-                  (!row.type || s.Type__c === row.type) &&
-                  (!row.color || s.Colour__c === row.color) &&
-                  (!row.shape || s.Shape__c === row.shape)
+                  s.Type__c === row.type &&
+                  s.Colour__c === row.color &&
+                  s.Shape__c === row.shape
                 ).map(s => s.Size__c)
               )].map(size => (
                 <SelectItem key={size} value={size}>{size}</SelectItem>
@@ -434,14 +491,17 @@ const handleSubmit = async (e?: React.FormEvent) => {
         </Select>
       </div>
 
-      {/* Weight (editable) */}
+      {/* Step 5: Weight (enabled only if size chosen) */}
       <div>
-        <Label>Weight (Available: {row.availableWeight || 0})</Label>
+        <Label>
+          Weight {row.availableWeight ? `(Available: ${row.availableWeight})` : ""}
+        </Label>
         <input
           type="number"
           value={row.weight}
           onChange={(e) => updateRow(index, "weight", e.target.value)}
           className="w-full border rounded px-2 py-1"
+          disabled={!row.size}
         />
       </div>
     </div>
@@ -455,6 +515,7 @@ const handleSubmit = async (e?: React.FormEvent) => {
     <strong>Total Stone Weight: </strong> {stoneWeight}
   </div>
 </div>
+
 
 
           {/* Wax Tree Weight */}
@@ -497,16 +558,7 @@ const handleSubmit = async (e?: React.FormEvent) => {
 
 
 
-  <div>
-    <Label>Total Weight (with stones)</Label>
-    <Input
-      type="number"
-      value={(
-        inventoryItems.reduce((sum, item) => sum + item.issueWeight, 0) + (stoneWeight || 0)
-      ).toFixed(2)}
-      disabled
-    />
-  </div>
+
 </div>
 
             <div>
