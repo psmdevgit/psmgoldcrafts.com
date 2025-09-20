@@ -209,10 +209,6 @@ const handleScrapUpSubmit = async () => {
   setUpdatedBy("");
 };
 
-
-
-
-
   const [modalOpen, setModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [editData, setEditData] = useState<IDeal | null>(null);

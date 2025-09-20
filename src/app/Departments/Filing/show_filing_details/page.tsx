@@ -117,7 +117,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 text-xl">Failed to load filing details</div>
+        <div className="text-red-500 text-xl">Failed to load Pouch Creation details</div>
       </div>
     );
   }
@@ -128,7 +128,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
         {/* Filing Details Section */}
         <div className="bg-white shadow rounded-lg">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Filing Details</h2>
+            <h2 className="text-xl font-semibold mb-4">Pouch Creation Details</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <label className="text-sm text-gray-600">Filing Number</label>
