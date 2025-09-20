@@ -140,6 +140,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       const [_, date, month, year, number, subnumber] = selectedRecord.split('/');
       // Create prefix based on selected department (G + first letter of department)
       const deptPrefix = {
+        'Media': 'GM',
         'Setting': 'GS',
         'Polishing': 'GP',
         'Dull': 'GD'
@@ -365,6 +366,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                   className="bg-white border border-gray-200"
                   style={{ backgroundColor: 'white' }}
                 >
+                  <SelectItem value="Media">Media</SelectItem>
                   <SelectItem value="Setting">Setting</SelectItem>
                   <SelectItem value="Polishing">Polishing</SelectItem>
                   <SelectItem value="Dull">Dull</SelectItem>
@@ -417,6 +419,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                 <h3 className="text-lg font-semibold">Select Pouches to Include</h3>
                 {pouches.map((pouch) => {
                   const receivedWeightField = {
+                      'Media': 'Received_Weight_Media__c',
                     'Setting': 'Received_Weight_Setting__c',
                     'Polishing': 'Received_Weight_Polishing__c',
                     'Dull': 'Received_Weight_Dull__c'

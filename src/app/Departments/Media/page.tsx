@@ -24,6 +24,7 @@ interface Pouch {
   Received_Weight_Setting__c?: number;
   Received_Weight_Polishing__c?: number;
   Received_Weight_Dull__c?: number;
+  Received_Weight_correction__c?: number;
   categories?: Array<{Category__c: string, Quantity__c: number}>;
 }
 
@@ -54,7 +55,10 @@ export default function CreateGrindingFromDepartment() {
 
   const router = useRouter();
 
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+//const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+
+
+const apiBaseUrl = "http://localhost:5001";
 
   // Fetch department records when department changes
   useEffect(() => {
@@ -137,10 +141,9 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       const [_, date, month, year, number, subnumber] = selectedRecord.split('/');
       // Create prefix based on selected department (G + first letter of department)
       const deptPrefix = {
-        'Setting': 'GS',
-        'Polishing': 'GP',
-        'Dull': 'GD'
-      }[selectedDepartment] || 'G';
+
+        'Correction': 'CM'
+      }[selectedDepartment] || 'M';
       
       const newFilingId = `${deptPrefix}/${date}/${month}/${year}/${number}/${subnumber || '001'}`;
       setFilingId(newFilingId);
@@ -242,8 +245,8 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
             quantity: sourcePouch.Quantity__c,
             weight: parseFloat(weight.toFixed(4)),
             categories: categories.map(cat => ({
-              category: cat.Category__c,
-              quantity: cat.Quantity__c
+            category: cat.Category__c,
+            quantity: cat.Quantity__c
             }))
           };
         })
@@ -286,7 +289,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
       console.log('Full Request Payload:', JSON.stringify(requestData, null, 2));
 
-      const response = await fetch(`${apiBaseUrl}/api/grinding-record/create`, { // Updated endpoint
+      const response = await fetch(`${apiBaseUrl}/api/media-record/create`, { // Updated endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -359,9 +362,8 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                   className="bg-white border border-gray-200"
                   style={{ backgroundColor: 'white' }}
                 >
-                  <SelectItem value="Setting">Setting</SelectItem>
-                  <SelectItem value="Polishing">Polishing</SelectItem>
-                  <SelectItem value="Dull">Dull</SelectItem>
+                 
+                  <SelectItem value="Correction">Correction</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -411,9 +413,8 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                 <h3 className="text-lg font-semibold">Select Pouches to Include</h3>
                 {pouches.map((pouch) => {
                   const receivedWeightField = {
-                    'Setting': 'Received_Weight_Setting__c',
-                    'Polishing': 'Received_Weight_Polishing__c',
-                    'Dull': 'Received_Weight_Dull__c'
+                    
+                    'Correction': 'Received_Weight_Correction__c'
                   }[selectedDepartment];
                   
                   const maxWeight = pouch[receivedWeightField] || 0;
@@ -437,7 +438,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                           <div className="mt-1">{pouch.Name}</div>
                         </div>
                         <div>
-                          <Label>New Grinding Pouch</Label>
+                          <Label>New Media Pouch</Label>
                           <div className="mt-1">{newPouchId}</div>
                         </div>
                         <div>
@@ -445,7 +446,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                           <div className="mt-1">{maxWeight.toFixed(4)}g</div>
                         </div>
                         <div>
-                          <Label>Weight to Grinding</Label>
+                          <Label>Weight to Media</Label>
                           <Input
                             type="number"
                             step="0.0001"

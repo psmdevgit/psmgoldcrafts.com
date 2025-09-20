@@ -566,7 +566,7 @@ const handleSubmit = async (e?: React.FormEvent) => {
               <Input
                 type="number"
                 value={(
-                  inventoryItems.reduce((sum, item) => sum + item.issueWeight, 0) + (stoneWeight || 0)
+                  inventoryItems.reduce((sum, item) => sum + item.issueWeight, 0) + (stoneWeight || 0) + (waxTreeWeight || 0)
                 ).toFixed(2)}
                 disabled
               />
