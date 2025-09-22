@@ -137,10 +137,10 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
       const [_, date, month, year, number, subnumber] = selectedRecord.split('/');
       // Create prefix based on selected department (G + first letter of department)
       const deptPrefix = {
-        'Setting': 'GS',
-        'Polishing': 'GP',
-        'Dull': 'GD'
-      }[selectedDepartment] || 'G';
+        'Setting': 'CS',
+        'Polishing': 'CP',
+        'Dull': 'CD'
+      }[selectedDepartment] || 'C';
       
       const newFilingId = `${deptPrefix}/${date}/${month}/${year}/${number}/${subnumber || '001'}`;
       setFilingId(newFilingId);
@@ -437,7 +437,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                           <div className="mt-1">{pouch.Name}</div>
                         </div>
                         <div>
-                          <Label>New Grinding Pouch</Label>
+                          <Label>New Correction Pouch</Label>
                           <div className="mt-1">{newPouchId}</div>
                         </div>
                         <div>
@@ -445,7 +445,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
                           <div className="mt-1">{maxWeight.toFixed(4)}g</div>
                         </div>
                         <div>
-                          <Label>Weight to Grinding</Label>
+                          <Label>Weight to Correction</Label>
                           <Input
                             type="number"
                             step="0.0001"
@@ -482,7 +482,7 @@ const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
               disabled={loading || totalWeight === 0}
               className="w-full"
             >
-              {loading ? 'Creating...' : 'Create Grinding Record'}
+              {loading ? 'Creating...' : 'Create Correction Record'}
             </Button>
           </form>
         </div>

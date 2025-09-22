@@ -29,11 +29,14 @@ interface Order {
   partyName: string;
 }
 
+
 interface InventoryApiItem {
   name: string;
   availableWeight: number;
   purity: string;
 }
+
+
 
 interface Stone {
   Id: string;
@@ -45,6 +48,7 @@ interface Stone {
   Pieces__c: number;
   Weight__c: number;
 }
+
 
 const TreeForm = () => {
   const router = useRouter();
@@ -60,10 +64,6 @@ const [selectedColor, setSelectedColor] = useState("");
 const [selectedShape, setSelectedShape] = useState("");
 const [selectedSize, setSelectedSize] = useState("");
 const [filteredStones, setFilteredStones] = useState<Stone[]>([]);
-
-
-
-
 
   const [inventoryApiItems, setInventoryApiItems] = useState<InventoryApiItem[]>([]);
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
@@ -566,7 +566,7 @@ const handleSubmit = async (e?: React.FormEvent) => {
               <Input
                 type="number"
                 value={(
-                  inventoryItems.reduce((sum, item) => sum + item.issueWeight, 0) + (stoneWeight || 0)
+                  inventoryItems.reduce((sum, item) => sum + item.issueWeight, 0) + (stoneWeight || 0) + (waxTreeWeight || 0)
                 ).toFixed(2)}
                 disabled
               />
