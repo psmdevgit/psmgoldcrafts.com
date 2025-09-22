@@ -12,8 +12,8 @@ const InventoryItemSummary: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = "https://erp-server-r9wh.onrender.com";
-  // const API_URL = "http://localhost:5001";
+  // const API_URL = "https://erp-server-r9wh.onrender.com";
+  const API_URL = "http://localhost:5001";
 
   useEffect(() => {
     const fetchReports = async () => {
