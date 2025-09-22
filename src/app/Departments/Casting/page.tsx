@@ -15,10 +15,10 @@ import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { Portal } from "@radix-ui/react-portal"; // ✅
 
-// const apiUrl = "https://erp-server-r9wh.onrender.com";
+const apiUrl = "https://erp-server-r9wh.onrender.com";
 
 
-const apiUrl = "http://localhost:5001";
+// const apiUrl = "http://localhost:5001";
 
 // Define the interfaces for inventory items and orders
 

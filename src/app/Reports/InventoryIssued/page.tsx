@@ -141,7 +141,10 @@ const InventoryTransaction: React.FC = () => {
   const [allNames, setAllNames] = useState<string[]>([]);
   const [allOrders, setAllOrders] = useState<string[]>([]);
 
-  const API_URL = "http://localhost:5001";
+  // const API_URL = "http://localhost:5001";
+
+  
+  const API_URL = "https://erp-server-r9wh.onrender.com";
 
   useEffect(() => {
     const fetchReports = async () => {
