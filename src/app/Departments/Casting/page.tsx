@@ -156,6 +156,7 @@ const handleSubmit = async (e?: React.FormEvent) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         issuedItems: inventoryItems.map(item => ({
+          orders: selectedOrders,
           itemName: item.itemName,
           purity: item.purity,
           issueWeight: Number(item.issueWeight),
