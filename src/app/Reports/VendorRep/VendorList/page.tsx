@@ -40,7 +40,7 @@ const [formData, setFormData] = useState<Vendor>({
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/party-ledger");
+        const res = await fetch("https://erp-server-r9wh.onrender.com/api/party-ledger");
         const data = await res.json();
         setVendors(data);
       } catch (err) {
