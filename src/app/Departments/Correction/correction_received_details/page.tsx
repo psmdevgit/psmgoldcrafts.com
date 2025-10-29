@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 
 
-const apiBaseUrl = "https://kalsh.app";
+const apiBaseUrl = "https://kalash.app";
 
 
 
