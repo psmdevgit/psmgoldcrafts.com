@@ -66,7 +66,7 @@ const GrindingDetailsPage = () => {
   const grindingId = searchParams.get('grindingId');
 
   
-const apiBaseUrl = "https://erp-server-r9wh.onrender.com"; 
+const apiBaseUrl = "https://kalash.app"; 
 // const apiBaseUrl = "http://localhost:5001"; // Use this for local development
   useEffect(() => {
     const fetchDetails = async () => {
