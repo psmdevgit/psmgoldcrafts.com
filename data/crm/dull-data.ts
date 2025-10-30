@@ -1,6 +1,8 @@
 import { IDull } from "@/interface/table.interface";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const apiUrl = "https://erp-server-r9wh.onrender.com";
 
 // Function to fetch dull data from the server with date range filtering
 export const fetchDullData = async (startDate?: string, endDate?: string): Promise<IDull[]> => {
