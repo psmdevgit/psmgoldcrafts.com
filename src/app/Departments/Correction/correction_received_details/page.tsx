@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { z } from 'zod';
 
 
-const apiBaseUrl = "https://kalash.app";
+// const apiBaseUrl = "https://kalash.app";
 
+const apiUrl = "https://erp-server-r9wh.onrender.com";
 
 
 interface Details {
