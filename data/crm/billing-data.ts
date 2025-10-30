@@ -1,6 +1,6 @@
 import { Billing } from "@/interface/table.interface";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const apiUrl = "https://erp-server-r9wh.onrender.com";
 
