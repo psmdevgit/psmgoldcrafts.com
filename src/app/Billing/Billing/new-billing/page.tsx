@@ -96,6 +96,9 @@ export default function InvoiceGenerator() {
   const [deliveryIssueNo, setDeliveryIssueNo] = useState('');
   const [partyDetails, setPartyDetails] = useState<PartyDetails | null>(null);
 
+  
+      const router = useRouter();
+  
   // Add state for storing category selections
   const [itemCategories, setItemCategories] = useState<{ [key: string]: CategoryOption }>({});
 
@@ -1354,8 +1357,8 @@ export default function InvoiceGenerator() {
       const result = await response.json();
       console.log('Server response:', result);
       
-      toast.success(`Billing ${billingId} created successfully`);
-      
+      alert(`Billing ${billingId} created successfully`);
+          router.push(`/Billing/Billing`);
     } catch (error) {
       console.error('Error in submitBilling:', error);
       toast.error(error.message || "Failed to submit billing");
