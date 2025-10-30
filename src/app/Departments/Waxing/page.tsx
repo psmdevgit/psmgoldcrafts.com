@@ -12,8 +12,9 @@ import { Portal } from "@radix-ui/react-portal"; // ✅
 
 //const apiUrl = "http://localhost:5001";
 
+const apiUrl = "https://erp-server-r9wh.onrender.com";
 
-const apiUrl = "https://kalash.app";
+// const apiUrl = "https://kalash.app";
 // Interfaces
 interface InventoryItem {
   id: string;
