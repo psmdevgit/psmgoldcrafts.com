@@ -1,6 +1,7 @@
 import { IPlating } from "@/interface/table.interface";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = "https://erp-server-r9wh.onrender.com";
 
 // Function to fetch plating data from the server
 export const fetchPlatingData = async (): Promise<IPlating[]> => {
