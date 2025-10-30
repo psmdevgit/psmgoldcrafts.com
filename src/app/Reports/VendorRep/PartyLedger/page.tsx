@@ -14,7 +14,7 @@ export default function VendorLedgerPage() {
   const fetchLedger = async () => {
     try {
       const params = new URLSearchParams(filters).toString();
-      const res = await fetch(`http://localhost:5001/api/vendor-ledger?${params}`);
+      const res = await fetch(`https://erp-server-r9wh.onrender.com/api/api/vendor-ledger?${params}`);
       const data = await res.json();
       setLedger(data);
     } catch (err) {
