@@ -53,8 +53,8 @@ const departments: Department[] = [
   { value: 'dull', label: 'Dull', path: '/Departments/Dull/add_dull_details' }
 ];
 
-//const apiBaseUrl ="https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
-const apiBaseUrl = "http://localhost:5001";
+const apiBaseUrl ="https://erp-server-r9wh.onrender.com"; // Ensure this is set correctly
+// const apiBaseUrl = "http://localhost:5001";
 
 const downloadPDF = async (pdfUrl: string) => {
   try {
