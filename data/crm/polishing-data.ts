@@ -1,6 +1,8 @@
 import { IPolishing } from "@/interface/table.interface";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+// const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const apiUrl = "https://erp-server-r9wh.onrender.com";
 
 // Function to fetch grinding data from the server
 export const fetchPolishingData = async (): Promise<IPolishing[]> => {
