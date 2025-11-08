@@ -688,7 +688,10 @@ export default function AddTagging() {
   
     const router = useRouter();
 
-  const apiBaseUrl = "http://localhost:4001";
+  
+  const apiBaseUrl = "https://kalash.app";
+  
+  // const apiBaseUrl = "http://localhost:4001";
 
   useEffect(() => {
     if (!cuttingId) return;
@@ -895,3 +898,4 @@ const handleSubmit = async () => {
     </div>
   );
 }
+
